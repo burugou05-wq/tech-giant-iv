@@ -1,4 +1,4 @@
-import { FlaskConical, Wrench, Factory, Globe, Landmark, Network, Briefcase } from 'lucide-react';
+import { FlaskConical, Wrench, Factory, Globe, Landmark, Network, Briefcase, BarChart2, Trophy } from 'lucide-react';
 import { useGame } from '../context/GameContext.jsx';
 
 const NAV_ITEMS = [
@@ -6,6 +6,8 @@ const NAV_ITEMS = [
   { id: 'organization',icon: Network,     label: '事業部・組織 (Org)' },
   { id: 'corporate',  icon: Briefcase,    label: '企業方針 (Focus)' },
   { id: 'market',     icon: Globe,        label: 'グローバル市場' },
+  { id: 'statistics', icon: BarChart2,    label: '統計・分析' },
+  { id: 'ranking',    icon: Trophy,       label: '世界ランキング' },
   { id: 'production', icon: Factory,      label: '生産工場' },
   { id: 'design',     icon: Wrench,       label: '製品設計' },
   { id: 'research',   icon: FlaskConical, label: '技術開発' },

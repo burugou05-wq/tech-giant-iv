@@ -361,8 +361,15 @@ export function useGameEngine() {
       });
       if (newLogs.length > 0) setLogs(prev => [...newLogs.reverse(), ...prev].slice(0, 50));
       if (newTick % 2 === 0) {
+        const jpShare = nextMarkets.jp?.shares?.player || 0;
+        const naShare = nextMarkets.na?.shares?.player || 0;
+        const euShare = nextMarkets.eu?.shares?.player || 0;
         setChartData(prev =>
-          [...prev, { tick: newTick, revenue: currentRevenue, cost: totalTickCost, profit, stockPrice: s.stockPrice }].slice(-40)
+          [...prev, {
+            tick: newTick, year: calcYear, revenue: currentRevenue, cost: totalTickCost,
+            profit, stockPrice: s.stockPrice, money: s.money + profit,
+            jpShare, naShare, euShare,
+          }].slice(-200)
         );
       }
       if (loopEffects.openOverseas) {
