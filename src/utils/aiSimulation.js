@@ -53,6 +53,24 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs) {
       finalAppeal *= (0.8 + Math.random() * 0.4);
     }
 
+    // --- 史実イベント：Monyショック (2003-2012) ---
+    if (aiId === 'mony' && calcYear >= 2003 && calcYear <= 2012) {
+      finalAppeal *= 0.6; // 魅力度40%ダウン
+      if (calcYear === 2003 && Math.random() < 0.02) {
+        newLogs.push({ 
+          time: dateStr, 
+          msg: `【衝撃】ライバルMonyが巨額赤字を発表。「Monyショック」によりブランド力が失墜しています。`, 
+          type: 'alert' 
+        });
+      }
+    }
+
+    // --- 史実イベント：スマホショックによる伝統的メーカーの衰退 (2007-2015) ---
+    const isTraditional = ['mony', 'natio', 'genera', 'hitac', 'motora'].includes(aiId);
+    if (isTraditional && calcYear >= 2007 && calcYear <= 2015) {
+      finalAppeal *= 0.7; // デジタル・スマホへの対応遅れ
+    }
+
     const prevDecay = Math.max(0.4, 1 - Math.max(0, calcYear - (prevProduct.launchYear || calcYear) - 3) * 0.05);
     const currentPrevAppeal = prevProduct.appeal * prevDecay;
 
