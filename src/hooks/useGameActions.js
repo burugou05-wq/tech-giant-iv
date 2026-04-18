@@ -10,7 +10,7 @@ export function useGameActions(state, addLog, currentYear) {
   const {
     money, setMoney, leadershipPower, setLeadershipPower,
     setStockPrice, setEuExtraCost, setFlags, setMarkets, markets,
-    setOrgStructure, completedFocuses, setBlueprints, blueprints,
+    setOrgStructure, completedFocuses, setBlueprints, blueprints, setInventory,
     setResearchPoints, setUnlockedTrees, activeFocus, setActiveFocus,
     setSelectedFocusDetails, setIsPaused, setActiveEvent, setYenRate,
     setDivisions, divisions, setProductionLines
@@ -199,6 +199,92 @@ export function useGameActions(state, addLog, currentYear) {
     setIsPaused(false);
   };
 
+  /** @param {any} divId */
+  const spinOffDivision = (divId) => {
+    const div = /** @type {any} */(divisions)[divId];
+    const cost = 100000;
+    const lpCost = 100;
+
+    if (!div || div.isSubsidiary) return;
+    if (div.level < 5) {
+      addLog(`${div.name}のレベルが5以上である必要があります`, 'alert');
+      return;
+    }
+    if (money < cost) {
+      addLog('資金不足です（$100,000k必要）', 'alert');
+      return;
+    }
+    if (leadershipPower < lpCost) {
+      addLog('リーダーシップポイントが不足しています（100 LP必要）', 'alert');
+      return;
+    }
+
+    setMoney(prev => prev - cost);
+    setLeadershipPower(prev => prev - lpCost);
+    setDivisions(prev => ({
+      ...prev,
+      [divId]: { .../** @type {any} */(prev)[divId], isSubsidiary: true }
+    }));
+    addLog(`【子会社化】${div.name}を独立子会社化しました！組織の硬直化の影響を受けなくなります。`, 'info', 'text-indigo-300');
+  };
+
+  /** @param {any} divId */
+  const sellSubsidiary = (divId) => {
+    const div = /** @type {any} */(divisions)[divId];
+    if (!div || !div.isSubsidiary) return;
+
+    // --- 価格計算ロジック ---
+    // 1. 組織価値 (Level * 50,000k)
+    const orgValue = div.level * 50000;
+    
+    // 2. 市場シェア価値 (各地域のプレイヤーシェアの合計 * 500,000k)
+    // 本来はカテゴリごとのシェアを出すべきですが、簡易化のため現在の全シェア合計をベースにします
+    const totalShare = Object.values(markets).reduce((sum, m) => sum + (m.shares.player || 0), 0);
+    const shareValue = (totalShare / 3) * 1000000; // 平均シェア率ベース
+
+    // 3. 子会社プレミアム (1.5倍)
+    const finalPrice = Math.floor((orgValue + shareValue) * 1.5);
+
+    if (!confirm(`${div.name}を$${finalPrice.toLocaleString()}kで売却しますか？\n(このカテゴリの設計図と生産ラインはすべて消滅します)`)) return;
+
+    // --- 実行処理 ---
+    setMoney(prev => prev + finalPrice);
+    
+    // 設計図の削除 (その事業部のカテゴリに属するもの)
+    setBlueprints(prev => prev.filter(bp => bp.category !== divId));
+    
+    // 生産ラインの削除 (削除した設計図を使っていたライン)
+    setProductionLines(prev => prev.filter(line => {
+      const bp = blueprints.find(b => b.id === line.blueprintId);
+      return !bp || bp.category !== divId;
+    }));
+
+    // 在庫の削除
+    setInventory((/** @type {any} */ prev) => {
+      const next = { ...prev };
+      Object.keys(next).forEach(bpId => {
+        const bp = blueprints.find(b => b.id === bpId);
+        if (bp && bp.category === divId) delete next[bpId];
+      });
+      return next;
+    });
+
+    // 事業部のリセット (非アクティブ化)
+    setDivisions((/** @type {any} */ prev) => ({
+      ...prev,
+      [divId]: { 
+        .../** @type {any} */(prev)[divId], 
+        active: false, 
+        level: 1, 
+        xp: 0, 
+        isSubsidiary: false,
+        budgetShare: 5
+      }
+    }));
+
+    addLog(`【事業売却】${div.name}を$${finalPrice.toLocaleString()}kで他社へ売却しました。`, 'info', 'text-yellow-400');
+  };
+
   /** @param {string} focusId */
   const startCorporateFocus = (focusId) => {
     if (activeFocus) return; 
@@ -230,6 +316,6 @@ export function useGameActions(state, addLog, currentYear) {
     executeDecision, upgradeMarketing, buildDirectStore, closeDirectStore,
     deleteBlueprint, updateBudgetAllocation, refreshBlueprint,
     handleEventChoice, startCorporateFocus, updateDivisionBudgetShare,
-    setLineStrategy
+    setLineStrategy, spinOffDivision, sellSubsidiary
   };
 }

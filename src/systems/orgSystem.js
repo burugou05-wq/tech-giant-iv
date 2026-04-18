@@ -46,12 +46,16 @@ export function updateOrgSystem(nextOrgStructure, budget, loopEffects, calcYear,
   const avgCoordination = (depts.rnd.coordination + depts.production.coordination + depts.marketing.coordination + depts.hr.coordination) / 4;
   const avgMorale = (depts.rnd.morale + depts.production.morale + depts.marketing.morale + depts.hr.morale) / 4;
   
+  // 子会社の数によるボーナス
+  const subsidiaryCount = Object.values(nextDivisions || {}).filter(d => d.isSubsidiary).length;
+  const subsidiaryBonus = 1.0 + (subsidiaryCount * 0.05); // 1社につき5%生産性向上
+
   const riskFactor = 1.0 - Math.min(0.25, nextOrgStructure.siloRisk * 0.0025);
   const bMult = (key) => 0.5 + budget[key] / 100;
 
   return {
-    orgProductivity: (0.8 + avgEfficiency * 0.2) * riskFactor * bMult('production'),
-    orgInnovation: (0.8 + avgMorale * 0.002) * riskFactor * bMult('rnd'),
+    orgProductivity: (0.8 + avgEfficiency * 0.2) * riskFactor * bMult('production') * subsidiaryBonus,
+    orgInnovation: (0.8 + avgMorale * 0.002) * riskFactor * bMult('rnd') * (1.0 + subsidiaryCount * 0.02),
     orgCoordination: (0.75 + avgCoordination * 0.25) * riskFactor * bMult('marketing'),
     isSiloActive
   };

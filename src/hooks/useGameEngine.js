@@ -87,7 +87,7 @@ export function useGameEngine() {
 
       // 2. 各システムによる計算
       const hasFlagship = nextLines.some(l => l.strategy === 'flagship');
-      const orgResults = updateOrgSystem(nextOrgStructure, budget, baseEffects, calcYear, baseEffects, nextFlags, dateStr, newLogs);
+      const orgResults = updateOrgSystem(nextOrgStructure, budget, baseEffects, calcYear, baseEffects, nextFlags, dateStr, newLogs, nextDivisions);
       const loopEffects = { ...baseEffects, ...orgResults, hasFlagship };
 
       const nextYenRate = Math.max(0.6, Math.min(1.5, s.yenRate + (Math.random() - 0.5) * 0.01));
