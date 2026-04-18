@@ -13,7 +13,7 @@ export function useGameActions(state, addLog, currentYear) {
     setOrgStructure, completedFocuses, setBlueprints, blueprints,
     setResearchPoints, setUnlockedTrees, activeFocus, setActiveFocus,
     setSelectedFocusDetails, setIsPaused, setActiveEvent, setYenRate,
-    setDivisions, divisions
+    setDivisions, divisions, setProductionLines
   } = state;
 
   /** @param {any} dec */
@@ -219,9 +219,17 @@ export function useGameActions(state, addLog, currentYear) {
     }
   };
 
+  /** @param {string} lineId @param {string} strategy */
+  const setLineStrategy = (lineId, strategy) => {
+    setProductionLines(prev => prev.map(l => 
+      l.id === lineId ? { ...l, strategy } : l
+    ));
+  };
+
   return {
     executeDecision, upgradeMarketing, buildDirectStore, closeDirectStore,
     deleteBlueprint, updateBudgetAllocation, refreshBlueprint,
-    handleEventChoice, startCorporateFocus, updateDivisionBudgetShare
+    handleEventChoice, startCorporateFocus, updateDivisionBudgetShare,
+    setLineStrategy
   };
 }
