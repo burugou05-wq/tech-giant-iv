@@ -145,7 +145,6 @@ export default function Dashboard() {
           )}
         </div>
       </div>
-      </div>
 
       {/* 右1列: 緊急決議 */}
       <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl flex flex-col">
