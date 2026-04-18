@@ -256,37 +256,46 @@ export function useGameEngine() {
 
       currentFixedCost += repairCostThisTick;
 
-      const activeBlueprints = s.blueprints.filter(bp =>
-        nextLines.some(l => l.blueprintId === bp.id && l.factories > 0)
-      );
-      const bestItem = activeBlueprints.reduce((best, bp) => {
+      // --- 売却可能な全製品をリストアップして魅力度順にソート ---
+      const sellableProducts = s.blueprints.map(bp => {
         const app = calculateEffectiveAppeal(bp, calcYear, s.contentOwned, loopEffects);
-        return app > (best?.app || 0) ? { bp, app } : best;
-      }, null);
+        const stock = nextInv[bp.id]?.amount || 0;
+        const isOnLine = nextLines.some(l => l.blueprintId === bp.id && l.factories > 0);
+        return { bp, app, stock, isOnLine };
+      }).filter(p => p.stock > 0 || p.isOnLine)
+        .sort((a, b) => b.app - a.app);
 
-      // --- AI Simulation & Market Shares (Extracted) ---
+      const bestItem = sellableProducts.length > 0 ? { bp: sellableProducts[0].bp, app: sellableProducts[0].app } : null;
+
+      // --- AI Simulation & Market Shares ---
       simulateAI(nextAiProducts, calcYear, dateStr, newLogs);
       const totalPlayerDemandShare = simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calcYear, loopEffects);
 
+      // --- 各市場での販売処理 ---
       Object.keys(nextMarkets).forEach(mKey => {
         const m = nextMarkets[mKey];
         if (m.locked) return;
-        let demand   = Math.floor(m.demand * m.shares.player);
-        let revMulti = 1.0;
-        if (loopEffects.propBonus) {
-          if (m.shares.player >= 0.5) revMulti = 1.5;
-          else demand = Math.floor(demand * 0.6);
-        }
+        
+        let totalMarketDemand = Math.floor(m.demand * m.shares.player);
+        let revMulti = loopEffects.propBonus ? (m.shares.player >= 0.5 ? 1.5 : 0.6) : 1.0;
 
-        if (bestItem && demand > 0) {
-          if (!nextInv[bestItem.bp.id]) nextInv[bestItem.bp.id] = { amount: 0, sold: 0 };
-          const sold = Math.min(nextInv[bestItem.bp.id]?.amount || 0, demand);
+        // 魅力度が高い順に在庫を充当していく
+        for (const prod of sellableProducts) {
+          if (totalMarketDemand <= 0) break;
+
+          const invItem = nextInv[prod.bp.id];
+          if (!invItem || invItem.amount <= 0) continue;
+
+          const sold = Math.min(invItem.amount, totalMarketDemand);
           if (sold > 0) {
-            nextInv[bestItem.bp.id].amount -= sold;
-            nextInv[bestItem.bp.id].sold   += sold;
-            let revenue = sold * bestItem.bp.cost * 2.5 * revMulti;
+            invItem.amount -= sold;
+            invItem.sold   += sold;
+            totalMarketDemand -= sold;
+
+            let revenue = sold * prod.bp.cost * 2.5 * revMulti;
             if (mKey !== 'jp') revenue /= nextYenRate;
             currentRevenue += revenue;
+
             if (mKey === 'eu' && s.euExtraCost > 0) {
               currentVarCost += sold * s.euExtraCost;
             }
