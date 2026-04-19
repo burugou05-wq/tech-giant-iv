@@ -141,6 +141,32 @@ export default function CompanyDetailPanel({ companyId, onClose }) {
 
           {/* 地域別市場シェア */}
           <div className="bg-slate-800/50 rounded-xl p-5 border border-slate-700">
+            <div className="flex items-center gap-2 text-slate-200 text-sm font-black mb-4 pb-2 border-b border-slate-700">
+              <BarChart2 size={16} className="text-indigo-400" /> 地域別市場シェア
+            </div>
+            <div className="space-y-4">
+              {Object.entries(markets).filter(([, m]) => !m.locked).map(([mKey, m]) => {
+                const share = (m.shares[companyId] || 0) * 100;
+                const playerShare = m.shares.player * 100;
+                return (
+                  <div key={mKey}>
+                    <div className="flex justify-between text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
+                      <span>{m.name}</span>
+                      <span className={ai.textColor}>{share.toFixed(1)}%</span>
+                    </div>
+                    <div className="w-full bg-slate-950 rounded-full h-3 overflow-hidden flex border border-slate-700/50 shadow-inner">
+                      <div className={`${ai.color} h-full transition-all duration-1000`} style={{ width: `${share}%` }} />
+                      <div className="bg-green-500/30 h-full border-l border-white/5" style={{ width: `${playerShare}%` }} />
+                    </div>
+                  </div>
+                );
+              })}
+              <div className="pt-3 mt-1 border-t border-slate-700 flex justify-between items-center">
+                <span className="text-[10px] text-slate-500 font-bold uppercase">平均占有率</span>
+                <span className={`text-sm font-black ${ai.textColor}`}>{(getTotalShare(companyId) * 100).toFixed(1)}%</span>
+              </div>
+            </div>
+          </div>
 
           <div className="text-center pt-4">
             <p className="text-[9px] text-slate-600 font-bold uppercase tracking-tighter">
