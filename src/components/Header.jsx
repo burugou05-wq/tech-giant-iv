@@ -4,7 +4,7 @@ import { useGame } from '../context/GameContext.jsx';
 const IconMap = { TrendingUp, Wrench, Globe, Target, AlertTriangle, AlertCircle };
 
 export default function Header() {
-  const { money, leadershipPower, currentYear, isPaused, setIsPaused, currentSpirits, gameSpeed, setGameSpeed } = useGame();
+  const { money, leadershipPower, currentYear, currentMonth, isPaused, setIsPaused, currentSpirits, gameSpeed, setGameSpeed } = useGame();
 
   return (
     <header className="flex shrink-0 items-center justify-between bg-slate-900 p-4 md:px-8 rounded-3xl border-2 border-slate-800 mb-6 shadow-2xl">
