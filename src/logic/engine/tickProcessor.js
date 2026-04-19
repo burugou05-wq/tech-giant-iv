@@ -127,12 +127,12 @@ export function processGameTick(s) {
       divisions: nextDivisions
     },
     lastTickProfit: {
-      revenue: salesResults.currentRevenue, 
-      varCost: prodResults.currentVarCost, 
-      fixedCost: financeResults.currentFixedCost,
-      marketingCost: financeResults.currentMarketingCost, 
-      storeCost: financeResults.currentStoreCost,
-      repairCost: prodResults.repairCostThisTick, 
+      revenue: Number.isFinite(salesResults.currentRevenue) ? salesResults.currentRevenue : 0, 
+      varCost: Number.isFinite(prodResults.currentVarCost) ? prodResults.currentVarCost : 0, 
+      fixedCost: Number.isFinite(financeResults.currentFixedCost) ? financeResults.currentFixedCost : 0,
+      marketingCost: Number.isFinite(financeResults.currentMarketingCost) ? financeResults.currentMarketingCost : 0, 
+      storeCost: Number.isFinite(financeResults.currentStoreCost) ? financeResults.currentStoreCost : 0,
+      repairCost: Number.isFinite(prodResults.repairCostThisTick) ? prodResults.repairCostThisTick : 0, 
       b2b: 0
     },
     profit,

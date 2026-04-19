@@ -30,17 +30,22 @@ export function updateProductionSystem(
     nextInv[bp.id].amount += produced;
 
     // 製造原価の計算
-    const effectiveQuality = Math.min(qualityLevel, loopEffects.qualityCap);
+    const effectiveQuality = Number.isFinite(qualityLevel) ? Math.min(qualityLevel, loopEffects.qualityCap) : 80;
     const chassis = CHASSIS_TECH.find(c => c.id === bp.chassisId);
-    const smartMult = chassis?.category === 'smart_device' ? loopEffects.smartphoneCostMulti : 1.0;
-    const costMod = (effectiveQuality / 80) * loopEffects.costMulti * smartMult;
+    const smartMult = (chassis?.category === 'smart_device') ? (loopEffects.smartphoneCostMulti || 1.0) : 1.0;
+    const costMod = (effectiveQuality / 80) * (loopEffects.costMulti || 1.0) * smartMult;
     
-    currentVarCost += produced * bp.cost * costMod / loopEffects.orgProductivity;
+    const baseCost = Number.isFinite(bp.cost) ? bp.cost : 50;
+    const prodCost = produced * baseCost * costMod / (loopEffects.orgProductivity || 1.0);
+    if (Number.isFinite(prodCost)) {
+      currentVarCost += prodCost;
+    }
 
     // 不良品・リコールコスト
     const defectRate = (100 - effectiveQuality) / 200;
     if (Math.random() < defectRate && produced > 0) {
-      repairCostThisTick += produced * bp.cost * 1.5;
+      const repair = produced * baseCost * 1.5;
+      if (Number.isFinite(repair)) repairCostThisTick += repair;
     }
   });
 
