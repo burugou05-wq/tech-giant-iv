@@ -112,7 +112,7 @@ export default function Research() {
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: #334155;
         }
-      `}`}</style>
+      `}</style>
     </div>
   );
 }
