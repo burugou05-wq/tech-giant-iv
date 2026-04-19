@@ -65,8 +65,11 @@ export function useGameActions(state, addLog, currentYear) {
     ...eventActions,
     executeDecision,
     // 一部の固有ラッパー
+    /** @param {'jp'|'na'|'eu'} mKey */
     buildDirectStore: (mKey) => marketActions.buildDirectStore(mKey, completedFocuses),
+    /** @param {'jp'|'na'|'eu'} mKey */
     closeDirectStore: (mKey) => marketActions.closeDirectStore(mKey, completedFocuses),
+    /** @param {string} divId */
     sellSubsidiary: (divId) => orgActions.sellSubsidiary(divId, blueprints),
   };
 }
