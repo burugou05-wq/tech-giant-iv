@@ -80,6 +80,7 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs) {
     }
 
     // 製品名生成
+    /** @type {Record<string, string[]>} */
     const SUFFIXES = {
       home_appliance: ['Cooker', 'Heater', 'Appliance', 'Home', 'Master'],
       audio:          ['Sound', 'Acoustic', 'Voice', 'Beat', 'Wave'],
@@ -116,6 +117,11 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs) {
 
 /**
  * 市場シェアのシミュレーション
+ * @param {any} nextMarkets
+ * @param {any} nextAiProducts
+ * @param {any} bestItem
+ * @param {number} calcYear
+ * @param {any} loopEffects
  */
 export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calcYear, loopEffects) {
   let totalPlayerDemandShare = 0;
