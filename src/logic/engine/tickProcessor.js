@@ -59,6 +59,12 @@ export function processGameTick(s) {
   let nextCompletedFocuses = [...s.completedFocuses];
   let nextUnlockedTrees = [...(s.unlockedTrees || ['main'])];
 
+  // 【救済措置】方針が完了しているのに市場が閉じている場合の強制アンロック
+  if (nextCompletedFocuses.includes('fc_global_entry')) {
+    if (nextMarkets.na) nextMarkets.na.locked = false;
+    if (nextMarkets.eu) nextMarkets.eu.locked = false;
+  }
+
   // 1.5 重点方針（Focus）の進行
   if (nextActiveFocus) {
     nextActiveFocus.remainingTicks -= 1;
