@@ -52,88 +52,101 @@ export default function CompanyDetailPanel({ companyId, onClose }) {
         </div>
 
         <div className="p-6 space-y-8">
-          {/* 基本データ */}
-          <div className="p-4 bg-indigo-950/20 border border-indigo-500/20 rounded-xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
-              <Zap size={40} />
+          {/* 1. 基本データ・企業スローガン */}
+          <div className="p-5 bg-gradient-to-br from-indigo-950/40 to-slate-900/40 border border-indigo-500/30 rounded-2xl relative overflow-hidden shadow-inner">
+            <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+              <Landmark size={80} />
             </div>
-            <p className="text-xs text-indigo-300/80 italic leading-relaxed relative z-10">
-              "{ai.trait}として知られる{ai.name}は、{ai.strengths[0]}などを武器に市場で独自の地位を築いています。"
+            <div className="text-[10px] text-indigo-400 font-black uppercase tracking-[0.2em] mb-2">Corporate Profile</div>
+            <p className="text-sm text-slate-200 font-medium leading-relaxed relative z-10">
+              {ai.name}は{ai.trait}として知られ、<span className="text-indigo-300 font-bold">{ai.strengths[0]}</span>を核心的価値に据えています。
             </p>
           </div>
 
-          {/* 株価・売上 */}
+          {/* 2. 主要KPI（株価・売上） */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-slate-800/80 backdrop-blur-sm rounded-xl p-4 border border-slate-700 shadow-lg">
-              <div className="flex items-center gap-2 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
-                <TrendingUp size={12} className="text-indigo-400" /> 推定株価
+            <div className="bg-slate-800/80 backdrop-blur-md rounded-2xl p-4 border border-slate-700 shadow-xl group hover:border-indigo-500/50 transition-colors">
+              <div className="flex items-center gap-2 text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">
+                <TrendingUp size={12} className="text-indigo-400" /> Market Cap
               </div>
-              <div className="text-2xl font-black text-white">${getCompanyStock(companyId).toLocaleString()}</div>
-              <div className="text-[9px] text-slate-500 mt-1 font-bold">自社比: {((getCompanyStock(companyId) / stockPrice) * 100).toFixed(0)}%</div>
-            </div>
-            <div className="bg-slate-800/80 backdrop-blur-sm rounded-xl p-4 border border-slate-700 shadow-lg">
-              <div className="flex items-center gap-2 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
-                <BarChart2 size={12} className="text-emerald-400" /> 推定売上
-              </div>
-              <div className="text-2xl font-black text-emerald-400">${(getCompanyRevenue(companyId) / 1000).toFixed(0)}M</div>
-              <div className="text-[9px] text-slate-500 mt-1 font-bold">年間予測</div>
-            </div>
-          </div>
-
-          {/* 現在の主力製品 */}
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-5 border border-slate-700 shadow-xl relative overflow-hidden">
-            <div className="absolute -right-4 -top-4 text-white opacity-[0.03] rotate-12">
-              <Package size={100} />
-            </div>
-            <div className="flex items-center gap-2 text-slate-200 text-sm font-black mb-4">
-              <Zap size={16} className="text-yellow-400" /> 現在の主力製品
-            </div>
-            <div className="space-y-4 relative z-10">
-              <div className="p-4 bg-slate-950/50 rounded-lg border border-slate-700/50">
-                <div className={`text-lg font-black ${ai.textColor} leading-none mb-1`}>
-                  {aiProducts[companyId]?.productName || '研究開発中'}
-                </div>
-                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Current Flagship Model</div>
-                
-                <div className="mt-4">
-                  <div className="flex justify-between items-end mb-1">
-                    <span className="text-[10px] text-slate-400 font-bold uppercase">製品魅力度 (Appeal)</span>
-                    <span className="text-sm font-black text-white">{Math.floor(aiProducts[companyId]?.appeal || 0)}</span>
-                  </div>
-                  <div className="w-full bg-slate-900 rounded-full h-2 border border-slate-800 overflow-hidden">
-                    <div 
-                      className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 h-full transition-all duration-1000" 
-                      style={{ width: `${Math.min(100, (aiProducts[companyId]?.appeal || 0) * 1.5)}%` }}
-                    />
-                  </div>
+              <div className="text-2xl font-black text-white leading-none">${getCompanyStock(companyId).toLocaleString()}</div>
+              <div className="mt-2 flex items-center gap-1">
+                <div className="w-full bg-slate-900 h-1 rounded-full overflow-hidden">
+                  <div className="bg-indigo-500 h-full" style={{ width: `${Math.min(100, (getCompanyStock(companyId) / stockPrice) * 50)}%` }} />
                 </div>
               </div>
             </div>
+            <div className="bg-slate-800/80 backdrop-blur-md rounded-2xl p-4 border border-slate-700 shadow-xl group hover:border-emerald-500/50 transition-colors">
+              <div className="flex items-center gap-2 text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">
+                <BarChart2 size={12} className="text-emerald-400" /> Revenue
+              </div>
+              <div className="text-2xl font-black text-emerald-400 leading-none">${(getCompanyRevenue(companyId) / 1000).toFixed(0)}M</div>
+              <div className="text-[9px] text-slate-500 mt-2 font-bold uppercase">Estimated Annual</div>
+            </div>
           </div>
 
-          {/* 強みセクション */}
-          <div className="space-y-3">
-            <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest pl-1">Strengths & Core Competencies</div>
-            <div className="grid gap-2">
+          {/* 3. 企業の強み (重要度高) */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between px-1">
+              <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Core Competencies</div>
+              <Zap size={14} className="text-yellow-500 animate-pulse" />
+            </div>
+            <div className="grid grid-cols-1 gap-2">
               {ai.strengths.map((s, i) => (
-                <div key={i} className="flex items-center gap-3 p-3 bg-slate-800/40 rounded-lg border border-slate-700/30 text-xs text-slate-300">
-                  <div className={`w-1.5 h-1.5 rounded-full ${ai.color} shadow-[0_0_8px_rgba(0,0,0,0.5)]`} />
-                  {s}
+                <div key={i} className="flex items-center gap-3 p-3.5 bg-slate-800/50 rounded-xl border border-slate-700/50 hover:bg-slate-800 transition-colors shadow-sm">
+                  <div className={`shrink-0 w-2 h-2 rounded-full ${ai.color} shadow-[0_0_10px_rgba(255,255,255,0.2)]`} />
+                  <span className="text-xs font-bold text-slate-200">{s}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* 歴史タイムライン */}
-          <div className="space-y-4">
-            <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest pl-1">Historical Milestones</div>
-            <div className="relative pl-4 space-y-6 before:content-[''] before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-800">
+          {/* 4. 現在の主力製品 (フラグシップ) */}
+          <div className="bg-slate-950/80 rounded-2xl p-6 border-2 border-slate-800 shadow-2xl relative overflow-hidden group">
+             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-600/10 blur-[50px] -z-10 group-hover:bg-indigo-600/20 transition-all" />
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <Package size={18} className="text-indigo-400" />
+                <span className="text-xs font-black text-slate-300 uppercase tracking-tighter">Active Flagship</span>
+              </div>
+              <div className="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 text-[9px] font-black rounded uppercase">In Market</div>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <div className={`text-2xl font-black ${ai.textColor} tracking-tight leading-tight`}>
+                  {aiProducts[companyId]?.productName || 'Classified'}
+                </div>
+                <div className="text-[9px] text-slate-500 font-bold uppercase mt-1">Product Designation</div>
+              </div>
+              
+              <div className="pt-2">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Market Appeal Score</span>
+                  <span className="text-lg font-black text-white">{Math.floor(aiProducts[companyId]?.appeal || 0)}</span>
+                </div>
+                <div className="w-full bg-slate-900 h-3 rounded-full border border-slate-800 p-0.5 shadow-inner">
+                  <div 
+                    className="h-full rounded-full bg-gradient-to-r from-indigo-600 via-purple-500 to-pink-500 transition-all duration-1000" 
+                    style={{ width: `${Math.min(100, (aiProducts[companyId]?.appeal || 0) * 1.5)}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 5. 歴史タイムライン */}
+          <div className="space-y-5">
+            <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest pl-1">Strategic Milestones</div>
+            <div className="relative pl-4 space-y-8 before:content-[''] before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-800/50">
               {ai.history.map((h, i) => (
-                <div key={i} className="relative pl-8">
-                  <div className={`absolute left-0 top-1.5 w-3 h-3 rounded-full border-2 border-slate-900 ${ai.color} z-10`} />
-                  <div className="text-[10px] font-black text-slate-500 mb-0.5">{h.year}</div>
-                  <div className="text-xs font-bold text-white mb-1">{h.product}</div>
-                  <div className="text-[10px] text-slate-400 leading-relaxed">{h.desc}</div>
+                <div key={i} className="relative pl-10 group">
+                  <div className={`absolute left-0 top-1 w-3.5 h-3.5 rounded-full border-2 border-slate-900 ${ai.color} z-10 group-hover:scale-125 transition-transform shadow-[0_0_10px_rgba(0,0,0,0.5)]`} />
+                  <div className="text-[10px] font-black text-indigo-400/70 mb-1">{h.year}</div>
+                  <div className="text-sm font-black text-white mb-1.5">{h.product}</div>
+                  <div className="p-3 bg-slate-800/30 rounded-lg border border-slate-700/30 text-[11px] text-slate-400 leading-relaxed">
+                    {h.desc}
+                  </div>
                 </div>
               ))}
             </div>
