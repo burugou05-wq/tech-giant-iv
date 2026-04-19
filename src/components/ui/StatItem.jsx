@@ -15,7 +15,7 @@ export const StatItem = ({
   value, 
   icon, 
   subValue, 
-  trendColor = 'text-slate-500', 
+  trendColor = 'text-white', 
   className = '' 
 }) => {
   return (
@@ -25,7 +25,7 @@ export const StatItem = ({
         {label}
       </div>
       <div className="flex items-end gap-2">
-        <div className="text-2xl font-black text-white leading-none tracking-tight">
+        <div className={`text-2xl font-black leading-none tracking-tight ${trendColor}`}>
           {value}
         </div>
         {subValue && (

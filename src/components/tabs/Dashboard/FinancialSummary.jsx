@@ -42,13 +42,12 @@ export const FinancialSummary = ({
         <StatItem 
           label="手元資金" 
           value={`$${Math.floor(money).toLocaleString()}k`} 
-          trendColor={money < 0 ? 'text-red-500 animate-pulse' : 'text-slate-500'}
+          trendColor={money < 0 ? 'text-red-500 animate-pulse' : 'text-white'}
         />
         <StatItem 
           label="週間利益" 
           value={`${profit >= 0 ? '+' : ''}$${Math.floor(profit).toLocaleString()}k`}
-          trendColor={profit >= 0 ? 'text-emerald-400' : 'text-red-400'}
-          subValue={profit >= 0 ? '黒字' : '赤字'}
+          trendColor={profit >= 0 ? 'text-cyan-400' : 'text-red-500'}
         />
         <StatItem 
           label="為替レート" 
