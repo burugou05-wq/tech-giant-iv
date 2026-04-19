@@ -140,9 +140,15 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
     
     let playerEffectiveApp = 0;
     if (!m.locked && bestItem) {
-      const priceFactor = Math.pow(bestItem.bp.baseCost * 2.0 / bestItem.bp.price, 0.8);
-      const decay = Math.max(0.5, 1 - Math.max(0, calcYear - (bestItem.bp.launchYear || calcYear) - 3) * 0.08);
-      playerEffectiveApp = bestItem.app * priceFactor * decay * storeBuff;
+      const safePrice = (bestItem.bp && Number.isFinite(bestItem.bp.price)) ? Math.max(1, bestItem.bp.price) : 100;
+      const safeBaseCost = (bestItem.bp && Number.isFinite(bestItem.bp.baseCost)) ? bestItem.bp.baseCost : 50;
+      
+      const priceFactor = Math.pow(safeBaseCost * 2.0 / safePrice, 0.8);
+      const launchYear = bestItem.bp.launchYear || calcYear;
+      const decay = Math.max(0.5, 1 - Math.max(0, calcYear - launchYear - 3) * 0.08);
+      
+      const finalApp = bestItem.app * (Number.isFinite(priceFactor) ? priceFactor : 1.0) * decay * storeBuff;
+      playerEffectiveApp = Number.isFinite(finalApp) ? finalApp : 0;
     }
 
     /** @type {Record<string, number>} */
@@ -157,11 +163,14 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
       let aiEffApp = 0;
       if (active && inRegion && aiProduct) {
         const decay = Math.max(0.5, 1 - Math.max(0, calcYear - aiProduct.launchYear - 3) * 0.08);
-        const priceFactor = Math.pow(1.5 / (aiProduct.price / (aiProduct.appeal / 10 + 1)), 0.5);
-        aiEffApp = aiProduct.appeal * priceFactor * decay;
+        const safeAiPrice = Number.isFinite(aiProduct.price) ? Math.max(1, aiProduct.price) : 100;
+        const safeAiApp = Number.isFinite(aiProduct.appeal) ? aiProduct.appeal : 1;
+        
+        const priceFactor = Math.pow(1.5 / (safeAiPrice / (safeAiApp / 10 + 1)), 0.5);
+        aiEffApp = aiProduct.appeal * (Number.isFinite(priceFactor) ? priceFactor : 1.0) * decay;
         if (ai.strongMarket === mKey) aiEffApp *= 1.1;
       }
-      appeals[id] = aiEffApp;
+      appeals[id] = Number.isFinite(aiEffApp) ? aiEffApp : 0;
     });
 
     const totalAppeal = Object.values(appeals).reduce((sum, v) => sum + v, 0.01);
