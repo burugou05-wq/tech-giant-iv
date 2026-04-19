@@ -1,7 +1,8 @@
 /**
  * 組織システム: サイロ化リスク、部門の効率・士気・連携の計算
+ * (Force build hash)
  */
-export function updateOrgSystem(nextOrgStructure, budget, loopEffects, calcYear, baseEffects, nextFlags, dateStr, newLogs, nextDivisions) {
+export function updateOrgSystem(nextOrgStructure, budget, loopEffects, calcYear, baseEffects, nextFlags, dateStr, newLogs, divisions) {
   const isSiloActive = calcYear >= 2000 && !baseEffects.siloFix;
 
   if (isSiloActive) {
@@ -47,7 +48,7 @@ export function updateOrgSystem(nextOrgStructure, budget, loopEffects, calcYear,
   const avgMorale = (depts.rnd.morale + depts.production.morale + depts.marketing.morale + depts.hr.morale) / 4;
   
   // 子会社の数によるボーナス
-  const subsidiaryCount = Object.values(nextDivisions || {}).filter(d => d.isSubsidiary).length;
+  const subsidiaryCount = Object.values(divisions || {}).filter(d => d.isSubsidiary).length;
   const subsidiaryBonus = 1.0 + (subsidiaryCount * 0.05); // 1社につき5%生産性向上
 
   const riskFactor = 1.0 - Math.min(0.25, nextOrgStructure.siloRisk * 0.0025);
