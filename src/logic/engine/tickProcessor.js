@@ -1,6 +1,6 @@
-import { 
   START_DATE, 
-  HISTORICAL_EVENTS 
+  HISTORICAL_EVENTS,
+  AI_COMPANIES
 } from '../../constants/index.js';
 import { 
   getCurrentEffects, 
