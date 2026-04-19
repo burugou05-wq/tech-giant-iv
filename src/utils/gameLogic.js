@@ -32,7 +32,8 @@ export const getCurrentEffects = (completed) => {
 export const getTrendMultiplier = (chassis, year) => {
   if (!chassis) return 1.0;
   const diff = year - chassis.peakYear;
-  if (diff < 0) return Math.min(1.0, 1.0 + diff * 0.05);
+  // ピーク年（絶頂期）より前であれば、最先端技術として 1.0倍（100%）を維持する
+  if (diff < 0) return 1.0;
   // 減衰をマイルドに：0.15倍まで落ちるのを 0.4倍までに底上げし、減衰速度を半分にする
   return Math.max(0.4, 1.0 - diff * (chassis.decay || 0.05) * 0.5);
 };
