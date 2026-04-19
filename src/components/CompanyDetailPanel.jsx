@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, TrendingUp, BarChart2, Zap } from 'lucide-react';
+import { X, TrendingUp, BarChart2, Zap, Package, Landmark } from 'lucide-react';
 import { useGame } from '../context/GameContext.jsx';
 import { AI_COMPANIES } from '../constants/index.js';
 
