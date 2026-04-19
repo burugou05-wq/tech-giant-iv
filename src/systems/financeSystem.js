@@ -29,14 +29,22 @@ export function updateFinanceSystem(
     currentStoreCost     += nextMarkets[k].stores    * 400;
   });
 
-  // 株価の計算
   const newStockPrice = (prevStockPrice) => {
     const safeProfit = Number.isFinite(profit) ? profit : 0;
     const safeShare = Number.isFinite(totalPlayerDemandShare) ? totalPlayerDemandShare : 0;
     const safePrev = Number.isFinite(prevStockPrice) ? prevStockPrice : 100;
     
-    const nextPrice = safePrev + safeProfit / 5000 + (safeShare - 0.7) * 4;
-    return Math.max(10, Math.min(10000, Number.isFinite(nextPrice) ? nextPrice : safePrev));
+    // 利益による変動 (利益 800k ごとに 1ドル変動)
+    const profitImpact = safeProfit / 800;
+    // シェアによる変動 (15%を基準とし、それを超えればプラス、下回ればマイナス)
+    const shareImpact = (safeShare - 0.15) * 15;
+    
+    const nextPrice = safePrev + profitImpact + shareImpact;
+    
+    // 急激な変化を抑えるための微調整（前の値に引き寄せる）
+    const smoothedPrice = safePrev * 0.9 + nextPrice * 0.1;
+
+    return Math.max(10, Math.min(10000, Number.isFinite(smoothedPrice) ? smoothedPrice : safePrev));
   };
 
   return {
