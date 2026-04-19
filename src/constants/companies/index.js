@@ -2,7 +2,7 @@ import { toshiba } from './jp/toshiba.js';
 import { philips } from './eu/philips.js';
 import { panasonic } from './jp/panasonic.js';
 import { motorola } from './na/motorola.js';
-import { samsung } from './asia/samsung.js';
+import { samsung } from './eu/samsung.js';
 import { nokia } from './eu/nokia.js';
 import { apple } from './na/apple.js';
 import { microsoft } from './na/microsoft.js';
