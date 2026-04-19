@@ -33,7 +33,8 @@ export const getTrendMultiplier = (chassis, year) => {
   if (!chassis) return 1.0;
   const diff = year - chassis.peakYear;
   if (diff < 0) return Math.min(1.0, 1.0 + diff * 0.05);
-  return Math.max(0.15, 1.0 - diff * chassis.decay);
+  // 減衰をマイルドに：0.15倍まで落ちるのを 0.4倍までに底上げし、減衰速度を半分にする
+  return Math.max(0.4, 1.0 - diff * (chassis.decay || 0.05) * 0.5);
 };
 
 export const calculateEffectiveAppeal = (bp, year, ownedContentList, effects) => {
@@ -45,13 +46,15 @@ export const calculateEffectiveAppeal = (bp, year, ownedContentList, effects) =>
   const launchYear = bp.launchYear || chassis.era;
   const age = Math.max(0, year - launchYear);
   let agePenalty = 1.0;
-  if (age > 2) {
-    agePenalty -= Math.min(0.75, (age - 2) * 0.12);
+  // 劣化が始まるのを2年から4年に延長
+  if (age > 4) {
+    agePenalty -= Math.min(0.6, (age - 4) * 0.1);
   }
+  // 世代遅れペナルティを 7% から 4% に軽減
   if (chassis.era < Math.max(...CHASSIS_TECH.filter(c => c.era <= year).map(c => c.era))) {
-    agePenalty *= 0.93;
+    agePenalty *= 0.96;
   }
-  app *= Math.max(0.25, agePenalty);
+  app *= Math.max(0.4, agePenalty);
 
   if (effects.audioBuff > 1.0 && chassis?.category === 'audio') app *= effects.audioBuff;
   let synergyMult = 1.0;

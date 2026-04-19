@@ -1,6 +1,8 @@
 import React from 'react';
-import { X, RefreshCcw } from 'lucide-react';
+import { X, RefreshCcw, TrendingDown } from 'lucide-react';
 import { Card } from '../../ui/index.js';
+import { useGame } from '../../../context/GameContext.jsx';
+import { calculateEffectiveAppeal } from '../../../utils/gameLogic.js';
 
 export const BlueprintCatalog = ({ 
   blueprints, 
@@ -11,6 +13,7 @@ export const BlueprintCatalog = ({
   onUpdatePrice,
   productionLines 
 }) => {
+  const { contentOwned, currentEffects } = useGame();
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between px-2">
@@ -24,6 +27,9 @@ export const BlueprintCatalog = ({
           const age = currentYear - (bp.launchYear || currentYear);
           const refreshCost = Math.max(8000, bp.cost * 3);
           const isUsedInProduction = productionLines.some(l => l.blueprintId === bp.id);
+          
+          const currentApp = calculateEffectiveAppeal(bp, currentYear, contentOwned, currentEffects);
+          const appealLoss = bp.baseAppeal - Math.floor(currentApp);
 
           return (
             <Card key={bp.id} className="p-5 bg-slate-900/60 border-slate-800 hover:border-slate-700 transition-all group">
@@ -51,9 +57,17 @@ export const BlueprintCatalog = ({
               </div>
 
               <div className="grid grid-cols-3 gap-3 mb-4">
-                <div className="bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
-                  <div className="text-[8px] text-slate-600 font-black uppercase">Appeal</div>
-                  <div className="text-sm font-black text-slate-300">{bp.baseAppeal}</div>
+                <div className="bg-slate-950/40 p-2 rounded-lg border border-slate-800/50 relative overflow-hidden">
+                  <div className="text-[8px] text-slate-600 font-black uppercase">Market Appeal</div>
+                  <div className="flex items-baseline gap-1">
+                    <div className="text-sm font-black text-white">{Math.floor(currentApp)}</div>
+                    {appealLoss > 0 && (
+                      <div className="text-[9px] font-bold text-rose-500 flex items-center">
+                        <TrendingDown size={8} /> {appealLoss}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-[7px] text-slate-500 font-bold uppercase mt-0.5">Base: {bp.baseAppeal}</div>
                 </div>
                 <div className="bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
                   <div className="text-[8px] text-slate-600 font-black uppercase">Unit Cost</div>
