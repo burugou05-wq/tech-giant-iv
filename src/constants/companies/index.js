@@ -1,24 +1,24 @@
-import { toshiba } from './toshiba.js';
-import { philips } from './philips.js';
-import { panasonic } from './panasonic.js';
-import { motorola } from './motorola.js';
-import { samsung } from './samsung.js';
-import { nokia } from './nokia.js';
-import { apple } from './apple.js';
-import { microsoft } from './microsoft.js';
-import { google } from './google.js';
-import { ge } from './ge.js';
-import { hitachi } from './hitachi.js';
-import { siemens } from './siemens.js';
-import { nintendo } from './nintendo.js';
-import { blackberry } from './blackberry.js';
-import { sharp } from './sharp.js';
-import { sanyo } from './sanyo.js';
-import { canon } from './canon.js';
-import { casio } from './casio.js';
-import { ibm } from './ibm.js';
-import { intel } from './intel.js';
-import { zenith } from './zenith.js';
+import { toshiba } from './jp/toshiba.js';
+import { philips } from './eu/philips.js';
+import { panasonic } from './jp/panasonic.js';
+import { motorola } from './na/motorola.js';
+import { samsung } from './asia/samsung.js';
+import { nokia } from './eu/nokia.js';
+import { apple } from './na/apple.js';
+import { microsoft } from './na/microsoft.js';
+import { google } from './na/google.js';
+import { ge } from './na/ge.js';
+import { hitachi } from './jp/hitachi.js';
+import { siemens } from './eu/siemens.js';
+import { nintendo } from './jp/nintendo.js';
+import { blackberry } from './na/blackberry.js';
+import { sharp } from './jp/sharp.js';
+import { sanyo } from './jp/sanyo.js';
+import { canon } from './jp/canon.js';
+import { casio } from './jp/casio.js';
+import { ibm } from './na/ibm.js';
+import { intel } from './na/intel.js';
+import { zenith } from './na/zenith.js';
 
 export const AI_COMPANIES = {
   toshiba,
