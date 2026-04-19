@@ -9,6 +9,7 @@ import { getTrendMultiplier } from '../utils/gameLogic.js';
  * @param {number} calcYear - 現在の年
  * @param {string} dateStr - 日付文字列（ログ用）
  * @param {any[]} newLogs - 新しいログの配列
+ * @param {any} nextMarkets - 市場データ
  */
 export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarkets) {
   Object.entries(AI_COMPANIES).forEach(([aiId, ai]) => {
