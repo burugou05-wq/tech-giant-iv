@@ -1,6 +1,7 @@
 import { 
   START_DATE, 
-  HISTORICAL_EVENTS
+  HISTORICAL_EVENTS,
+  CORPORATE_FOCUSES
 } from '../../constants/index.js';
 import { AI_COMPANIES } from '../../constants/companies/index.js';
 import { 
@@ -55,6 +56,7 @@ export function processGameTick(s) {
 
   let nextActiveFocus  = s.activeFocus ? { ...s.activeFocus } : null;
   let nextCompletedFocuses = [...s.completedFocuses];
+  let nextUnlockedTrees = [...(s.unlockedTrees || ['main'])];
 
   // 1.5 重点方針（Focus）の進行
   if (nextActiveFocus) {
@@ -65,7 +67,18 @@ export function processGameTick(s) {
     }
     
     if (nextActiveFocus.remainingTicks <= 0) {
-      nextCompletedFocuses.push(nextActiveFocus.id);
+      const focusId = nextActiveFocus.id;
+      nextCompletedFocuses.push(focusId);
+      
+      // 方針完了時のエフェクト処理（ツリー解放など）
+      const focusDef = CORPORATE_FOCUSES.find(f => f.id === focusId);
+      if (focusDef?.effects?.unlockTree) {
+        const tree = focusDef.effects.unlockTree;
+        if (!nextUnlockedTrees.includes(tree)) {
+          nextUnlockedTrees.push(tree);
+        }
+      }
+
       newLogs.push({ time: dateStr, msg: `【方針完了】「${nextActiveFocus.name}」が完了しました。`, type: 'success', color: 'text-cyan-400' });
       nextActiveFocus = null;
     }
@@ -181,7 +194,8 @@ export function processGameTick(s) {
       orgStructure: nextOrgStructure,
       divisions: nextDivisions,
       activeFocus: nextActiveFocus,
-      completedFocuses: nextCompletedFocuses
+      completedFocuses: nextCompletedFocuses,
+      unlockedTrees: nextUnlockedTrees
     },
     lastTickProfit: {
       revenue: Number.isFinite(salesResults.currentRevenue) ? salesResults.currentRevenue : 0, 
