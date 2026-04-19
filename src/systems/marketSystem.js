@@ -47,6 +47,8 @@ export function executeSales(nextMarkets, sellableProducts, nextInv, loopEffects
   let currentRevenue = 0;
   let currentVarCostAdd = 0;
   const aiSales = {};
+
+  Object.keys(nextMarkets).forEach(mKey => {
     const m = nextMarkets[mKey];
     if (m.locked) return;
     
