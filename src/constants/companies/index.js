@@ -16,6 +16,9 @@ import { sharp } from './sharp.js';
 import { sanyo } from './sanyo.js';
 import { canon } from './canon.js';
 import { casio } from './casio.js';
+import { ibm } from './ibm.js';
+import { intel } from './intel.js';
+import { zenith } from './zenith.js';
 
 export const AI_COMPANIES = {
   toshiba,
@@ -35,5 +38,8 @@ export const AI_COMPANIES = {
   sharp,
   sanyo,
   canon,
-  casio
+  casio,
+  ibm,
+  intel,
+  zenith
 };
