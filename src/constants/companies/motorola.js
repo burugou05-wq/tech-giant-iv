@@ -4,6 +4,7 @@ export const motorola = {
   updateChance: 0.020, appealMod: 1.0, strongMarket: 'na',
   prefixes: ['Moto', 'Dyna', 'Star', 'RAZR'],
   appearsYear: 1946, disappearsYear: 2012,
+  initialMoney: 180000, minMargin: 0.30,
   regions: { na: 1946, eu: 1980, jp: 1990 },
   stockBase: 150, revenueBase: 120000,
   strengths: ['北米の通信インフラ', '初期の携帯電話技術', '軍事・業務用の信頼性'],

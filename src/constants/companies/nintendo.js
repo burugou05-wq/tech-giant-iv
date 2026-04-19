@@ -4,6 +4,7 @@ export const nintendo = {
   updateChance: 0.030, appealMod: 1.4, strongMarket: 'jp',
   prefixes: ['GameBoy', 'NES', 'SNES', 'N64', 'Switch'],
   appearsYear: 1977, disappearsYear: 9999,
+  initialMoney: 150000, minMargin: 0.40,
   regions: { jp: 1977, na: 1985, eu: 1990 },
   stockBase: 140, revenueBase: 90000,
   strengths: ['ゲーム機の圧倒的ブランド', '強力な自社ソフトIP', '独自の遊びの哲学'],

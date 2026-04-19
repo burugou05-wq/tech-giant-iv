@@ -18,7 +18,7 @@ const INITIAL_AI_PRODUCTS = Object.fromEntries(
 
 const INITIAL_AI_FINANCES = Object.fromEntries(
   Object.entries(AI_COMPANIES).map(([id, ai]) => [id, {
-    money: ai.initialMoney || 100000,
+    money: (ai && typeof ai.initialMoney === 'number') ? ai.initialMoney : 100000,
     isBankrupt: false,
     activeMarkets: Object.keys(ai.regions || { jp: 0 })
   }])
