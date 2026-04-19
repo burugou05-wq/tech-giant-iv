@@ -4,11 +4,13 @@ import { useGame } from '../../context/GameContext.jsx';
 import { Card, CardHeader, CardContent } from '../ui/index.js';
 
 const System = () => {
-  const { actions } = useGame();
+  const { getSlotInfo, saveGame, loadGame, deleteSlot } = useGame();
   const [slots, setSlots] = useState([]);
 
   const refreshSlots = () => {
-    setSlots(actions.getSlotInfo());
+    if (getSlotInfo) {
+      setSlots(getSlotInfo());
+    }
   };
 
   useEffect(() => {
@@ -16,21 +18,23 @@ const System = () => {
   }, []);
 
   const handleSave = (slot) => {
-    if (actions.saveGame(slot)) {
+    if (saveGame && saveGame(slot)) {
       refreshSlots();
     }
   };
 
   const handleLoad = (slot) => {
     if (confirm(`スロット ${slot === 'auto' ? 'オートセーブ' : slot} からデータを読み込みますか？現在の進行状況は失われます。`)) {
-      actions.loadGame(slot);
+      if (loadGame) loadGame(slot);
     }
   };
 
   const handleDelete = (slot) => {
     if (confirm(`スロット ${slot} のデータを削除しますか？`)) {
-      actions.deleteSlot(slot);
-      refreshSlots();
+      if (deleteSlot) {
+        deleteSlot(slot);
+        refreshSlots();
+      }
     }
   };
 
