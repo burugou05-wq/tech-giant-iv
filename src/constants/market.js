@@ -101,7 +101,7 @@ export const AI_COMPANIES = {
       { start: 2010, end: 2014, type: 'dark',   name: '燃えるプラットフォーム', buff: 0.4, desc: 'スマホへの転換に失敗し、王座から転落。' },
     ],
     history: [
-      { year: 1998, product: 'Nokia 3210',     desc: '世界で最も売れた携帯電話の一つ. ' },
+      { year: 1998, product: 'Nokia 3210',     desc: '世界で最も売れた携帯電話の一つ。' },
       { year: 2007, product: 'Symbian OS',     desc: '一時代を築いたモバイルOSの王。' },
     ],
   },
@@ -123,6 +123,91 @@ export const AI_COMPANIES = {
       { year: 2007, product: 'iPhone',         desc: 'スマートフォン市場を創出し、世界を変えた。' },
     ],
   },
+  microsoft: {
+    name: 'Microsoft', color: 'bg-emerald-500', textColor: 'text-emerald-400',
+    trait: 'ソフトウェア', strategy: 'follower', priceTarget: 'mainstream',
+    updateChance: 0.020, appealMod: 1.1, strongMarket: 'na',
+    prefixes: ['Surface', 'Windows', 'Xbox', 'Office', 'Azure'],
+    appearsYear: 1975, disappearsYear: 9999,
+    regions: { na: 1975, eu: 1980, jp: 1985 },
+    stockBase: 415, revenueBase: 200000,
+    strengths: ['ソフトウェアの事実上の標準', '法人市場の強力な基盤', 'プラットフォーム戦略'],
+    eras: [
+      { start: 1990, end: 2005, type: 'golden', name: 'Windowsの覇権', buff: 1.8, desc: 'PC用OS市場を独占し、IT業界の圧倒的リーダーとなった。' },
+    ],
+    history: [
+      { year: 1985, product: 'Windows',        desc: 'GUIオペレーティングシステムの普及。' },
+      { year: 2001, product: 'Xbox',           desc: '家庭用ゲーム機市場への参入。' },
+    ],
+  },
+  google: {
+    name: 'Google', color: 'bg-amber-500', textColor: 'text-amber-400',
+    trait: '検索＆AI', strategy: 'innovator', priceTarget: 'budget',
+    updateChance: 0.030, appealMod: 1.2, strongMarket: 'na',
+    prefixes: ['Pixel', 'Android', 'Chrome', 'Google', 'Nest'],
+    appearsYear: 1998, disappearsYear: 9999,
+    regions: { na: 1998, eu: 2000, jp: 2002 },
+    stockBase: 175, revenueBase: 250000,
+    strengths: ['インターネットの入り口を独占', '世界最大の広告プラットフォーム', 'Androidによるモバイル支配'],
+    eras: [
+      { start: 2008, end: 2025, type: 'golden', name: 'モバイルOSの支配', buff: 1.7, desc: 'Androidが世界シェア8割を超え、モバイル・エコシステムの中心に。' },
+    ],
+    history: [
+      { year: 1998, product: 'Google Search',   desc: '世界を変えた検索エンジン。' },
+      { year: 2008, product: 'Android OS',      desc: 'モバイルOSで世界トップシェアに。' },
+    ],
+  },
+  ge: {
+    name: 'GE', color: 'bg-slate-400', textColor: 'text-slate-300',
+    trait: '巨大複合企業', strategy: 'cost_leader', priceTarget: 'mainstream',
+    updateChance: 0.015, appealMod: 0.9, strongMarket: 'na',
+    prefixes: ['GE', 'General', 'Electric', 'Hotpoint'],
+    appearsYear: 1946, disappearsYear: 2004,
+    regions: { na: 1946, eu: 1960 },
+    stockBase: 250, revenueBase: 300000,
+    strengths: ['圧倒的な資本力', '北米家電市場の支配', 'インフラとの相乗効果'],
+    eras: [
+      { start: 1946, end: 1970, type: 'golden', name: '世界最強のコングロマリット', buff: 1.4, desc: 'あらゆる産業を支配した、アメリカ資本主義の象徴。' },
+    ],
+    history: [
+      { year: 1950, product: 'GE Fridge',      desc: '北米の家庭に普及した白物家電。' },
+      { year: 1980, product: 'CT Scanner',     desc: '医療・産業分野での高い技術力。' },
+    ],
+  },
+  hitachi: {
+    name: 'Hitachi', color: 'bg-rose-600', textColor: 'text-rose-400',
+    trait: '重電・インフラ', strategy: 'cost_leader', priceTarget: 'mainstream',
+    updateChance: 0.020, appealMod: 0.85, strongMarket: 'jp',
+    prefixes: ['Hitachi', 'Wooo', 'Motor', 'Infra'],
+    appearsYear: 1946, disappearsYear: 9999,
+    regions: { jp: 1946, na: 1970, eu: 1980 },
+    stockBase: 130, revenueBase: 170000,
+    strengths: ['強靭なモーター技術', 'B2B市場からの安定収益', '質実剛健な設計'],
+    eras: [
+      { start: 1960, end: 1985, type: 'golden', name: 'もはや戦後ではない', buff: 1.4, desc: '高度経済成長期を支え、日本最大級の製造業として君臨。' },
+    ],
+    history: [
+      { year: 1958, product: 'Automatic Washer', desc: '白物家電ブームを牽引。' },
+      { year: 1990, product: 'Wooo TV',          desc: '高品質な映像技術でシェアを獲得。' },
+    ],
+  },
+  siemens: {
+    name: 'Siemens', color: 'bg-teal-500', textColor: 'text-teal-400',
+    trait: '欧州の重鎮', strategy: 'follower', priceTarget: 'premium',
+    updateChance: 0.015, appealMod: 0.85, strongMarket: 'eu',
+    prefixes: ['Siemens', 'Nixdorf', 'Gigaset', 'Euro'],
+    appearsYear: 1946, disappearsYear: 2005,
+    regions: { eu: 1946, jp: 1980 },
+    stockBase: 200, revenueBase: 250000,
+    strengths: ['欧州の通信インフラ支配', '産業用機器との連携', 'ドイツの精密技術'],
+    eras: [
+      { start: 1950, end: 1975, type: 'golden', name: '欧州復興の担い手', buff: 1.3, desc: '戦後欧州のインフラ整備と通信網構築で巨大な利益を上げた。' },
+    ],
+    history: [
+      { year: 1955, product: 'Tele Radio',      desc: '欧州で広く普及した通信機。' },
+      { year: 1995, product: 'Siemens Mobile',  desc: '初期の携帯電話市場で一定のシェア。' },
+    ],
+  },
   nintendo: {
     name: 'Nintendo', color: 'bg-fuchsia-500', textColor: 'text-fuchsia-400',
     trait: '娯楽特化', strategy: 'innovator', priceTarget: 'budget',
@@ -139,6 +224,24 @@ export const AI_COMPANIES = {
     history: [
       { year: 1983, product: 'Famicom',        desc: '家庭用ゲーム機市場を爆発的に拡大させた。' },
       { year: 1989, product: 'GameBoy',        desc: '携帯ゲーム機という新市場を創出。' },
+    ],
+  },
+  blackberry: {
+    name: 'BlackBerry', color: 'bg-violet-600', textColor: 'text-violet-400',
+    trait: 'ビジネス特化', strategy: 'innovator', priceTarget: 'premium',
+    updateChance: 0.025, appealMod: 1.2, strongMarket: 'na',
+    prefixes: ['BlackBerry', 'Curve', 'Bold', 'Passport'],
+    appearsYear: 1999, disappearsYear: 2016,
+    regions: { na: 1999, eu: 2002 },
+    stockBase: 110, revenueBase: 80000,
+    strengths: ['物理キーボードの快適性', '圧倒的なセキュリティ', '北米ビジネスマンの必須ツール'],
+    eras: [
+      { start: 2002, end: 2010, type: 'golden', name: 'ビジネススマホの覇者', buff: 2.0, desc: '世界中のビジネスマンがBlackBerryを持つ「クラックベリー」現象を巻き起こした。' },
+      { start: 2012, end: 2016, type: 'dark',   name: 'フルタッチへの敗北', buff: 0.3, desc: 'iPhone型のタッチパネル操作への対応が遅れ、壊滅的な打撃を受けた。' },
+    ],
+    history: [
+      { year: 2002, product: 'BlackBerry 5810', desc: 'メールが打てる携帯電話として大ヒット。' },
+      { year: 2008, product: 'Bold',             desc: 'ビジネススマートフォンの頂点を極める。' },
     ],
   }
 };
