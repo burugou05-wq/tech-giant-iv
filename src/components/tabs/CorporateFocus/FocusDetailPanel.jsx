@@ -65,7 +65,7 @@ export const FocusDetailPanel = ({
             className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-black text-white flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <PlayCircle size={14} />
-            策定開始 ({focus.lpCost}T)
+            {focus.lpCost * 7}日間で策定
           </button>
         ) : (
           !isCompleted && (

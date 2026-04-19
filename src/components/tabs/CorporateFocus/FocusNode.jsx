@@ -28,9 +28,9 @@ export const FocusNode = ({
         {isCompleted ? (
           <><CheckCircle size={10} className="text-emerald-400" /> 完了</>
         ) : isActive ? (
-          <><Clock size={10} className="text-yellow-400 animate-spin-slow" /> 策定中</>
+          <><Clock size={10} className="text-yellow-400 animate-spin-slow" /> 残り {(focus.lpCost - (isActive.progress || 0)) * 7}日</>
         ) : (
-          <span className="opacity-70">{focus.era}年〜 / {focus.lpCost}T</span>
+          <span className="opacity-70">{focus.era}年〜 / {focus.lpCost * 7}日間</span>
         )}
       </div>
     </button>

@@ -36,7 +36,7 @@ export default function CorporateFocus() {
         {/* 方針ノード群 */}
         {CORPORATE_FOCUSES.filter(f => unlockedTrees.includes(f.tree)).map(focus => {
           const isCompleted = completedFocuses.includes(focus.id);
-          const isActive    = activeFocus?.id === focus.id;
+          const activeMatch = activeFocus?.id === focus.id ? activeFocus : null;
           const reqMet      = !focus.req || focus.req.length === 0 || (
             focus.reqType === 'any'
               ? focus.req.some(r => completedFocuses.includes(r))
@@ -50,7 +50,7 @@ export default function CorporateFocus() {
               key={focus.id}
               focus={focus}
               isCompleted={isCompleted}
-              isActive={isActive}
+              isActive={activeMatch}
               reqMet={reqMet}
               exclBlocked={exclBlocked}
               eraOk={eraOk}
