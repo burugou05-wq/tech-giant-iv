@@ -89,6 +89,9 @@ export default function Design() {
         money={money}
         productionLines={productionLines}
         onRemove={(id) => setBlueprints(prev => prev.filter(b => b.id !== id))}
+        onUpdatePrice={(id, newPrice) => {
+          setBlueprints(prev => prev.map(bp => bp.id === id ? { ...bp, price: newPrice } : bp));
+        }}
         onRefresh={refreshBlueprint}
       />
       

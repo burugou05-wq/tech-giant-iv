@@ -8,6 +8,7 @@ export const BlueprintCatalog = ({
   money, 
   onRemove, 
   onRefresh, 
+  onUpdatePrice,
   productionLines 
 }) => {
   return (
@@ -49,7 +50,7 @@ export const BlueprintCatalog = ({
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-3 gap-3 mb-4">
                 <div className="bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
                   <div className="text-[8px] text-slate-600 font-black uppercase">Appeal</div>
                   <div className="text-sm font-black text-slate-300">{bp.baseAppeal}</div>
@@ -57,6 +58,21 @@ export const BlueprintCatalog = ({
                 <div className="bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
                   <div className="text-[8px] text-slate-600 font-black uppercase">Unit Cost</div>
                   <div className="text-sm font-black text-slate-300">${bp.cost}k</div>
+                </div>
+                <div className="bg-slate-900 p-2 rounded-lg border border-emerald-500/20 ring-1 ring-emerald-500/10 shadow-inner">
+                  <div className="text-[8px] text-emerald-500 font-black uppercase flex justify-between items-center">
+                    <span>Price</span>
+                    <span className="animate-pulse">SET</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs font-black text-emerald-400">$</span>
+                    <input 
+                      type="number"
+                      value={bp.price}
+                      onChange={(e) => onUpdatePrice(bp.id, parseInt(e.target.value) || 0)}
+                      className="bg-transparent border-none p-0 w-full text-sm font-black text-white focus:ring-0 placeholder-slate-700"
+                    />
+                  </div>
                 </div>
               </div>
 
