@@ -14,7 +14,18 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs) {
     // 競合他社は活動期間中のみ新製品を出す
     if (calcYear < ai.appearsYear || calcYear > (ai.disappearsYear || Infinity)) return;
 
-    // 前回の製品データを取得（nameプロパティを使用）
+    // 現在の「時代 (Era)」の判定
+    const currentEra = ai.eras?.find(e => calcYear >= e.start && calcYear <= e.end);
+    const isEraStart = currentEra && currentEra.start === calcYear;
+
+    // 時代開始時のログ
+    if (isEraStart) {
+      const typeStr = currentEra.type === 'golden' ? '【黄金期】' : '【暗黒期】';
+      const msg = `${typeStr}${ai.name}が「${currentEra.name}」に突入しました。${currentEra.desc}`;
+      newLogs.push({ time: dateStr, msg, type: currentEra.type === 'golden' ? 'warning' : 'info' });
+    }
+
+    // 前回の製品データを取得
     const prevProduct = nextAiProducts[aiId] || { appeal: 10, price: 100, name: `${ai.name} Classic`, launchYear: calcYear };
     const prevName = prevProduct.name || prevProduct.productName || '';
     
@@ -23,10 +34,10 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs) {
     const isFirstLaunch = activeMasterpiece && activeMasterpiece.year === calcYear;
     const isNewMasterpiece = isFirstLaunch && !prevName.startsWith(activeMasterpiece.product);
 
-    // 更新判定（戦略によって頻度が変わる）
+    // 更新判定
     let currentUpdateChance = ai.updateChance;
     if (activeMasterpiece) currentUpdateChance *= 3;
-    if (ai.strategy === 'cost_leader') currentUpdateChance *= 1.5;
+    if (currentEra?.type === 'golden') currentUpdateChance *= 1.5;
     
     if (Math.random() > currentUpdateChance && !isNewMasterpiece) return;
 
@@ -65,18 +76,16 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs) {
     let finalPrice = compCost * margin;
     let finalAppeal = (bestChassis.baseAppeal + compApp) * ai.appealMod * getTrendMultiplier(bestChassis, calcYear);
 
+    // 時代・性格によるバフ
     if (ai.strategy === 'innovator') finalAppeal *= 1.25;
     if (ai.strategy === 'cost_leader') finalPrice *= 0.9;
+    if (currentEra) finalAppeal *= currentEra.buff;
 
+    // 歴史的製品補正
     if (isNewMasterpiece && activeMasterpiece) {
-      finalAppeal *= 3.0;
+      finalAppeal *= 2.5;
     } else if (activeMasterpiece) {
-      finalAppeal *= 2.0;
-    }
-
-    if (aiId === 'toshiba' && calcYear >= 2003 && calcYear <= 2012) finalAppeal *= 0.6;
-    if (['toshiba', 'panasonic', 'ge', 'hitachi', 'motorola'].includes(aiId) && calcYear >= 2007 && calcYear <= 2015) {
-      finalAppeal *= 0.7;
+      finalAppeal *= 1.8;
     }
 
     // 製品名生成
@@ -101,7 +110,6 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs) {
       newLogs.push({ time: dateStr, msg: `${ai.name}が最新技術を投入した新製品「${finalName}」を発売！($${Math.floor(finalPrice)})`, type: 'info' });
     }
 
-    // ステートを更新（プロパティ名を name に統一）
     nextAiProducts[aiId] = {
       id: `${aiId}_${calcYear}`,
       companyId: aiId,

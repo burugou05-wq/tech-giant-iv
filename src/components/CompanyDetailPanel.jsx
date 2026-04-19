@@ -40,6 +40,9 @@ export default function CompanyDetailPanel({ companyId, onClose }) {
   const textColor = ai.textColor || 'text-slate-400';
   const bgColor = ai.color || 'bg-slate-500';
 
+  // --- 時代の判定 ---
+  const currentEra = ai.eras?.find(e => currentYear >= e.start && currentYear <= e.end);
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-end pointer-events-none">
       <div 
@@ -51,7 +54,16 @@ export default function CompanyDetailPanel({ companyId, onClose }) {
           <div className="flex items-center gap-3">
             <span className={`w-4 h-4 rounded-full ${bgColor} shadow-sm`} />
             <h2 className="text-xl font-black text-white">{ai.name || 'Unknown'}</h2>
-            <span className={`text-xs font-bold px-2 py-0.5 rounded-full bg-slate-800 ${textColor}`}>{ai.trait || '調査中'}</span>
+            <div className="flex flex-col">
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 ${textColor} w-fit`}>{ai.trait || '調査中'}</span>
+              {currentEra && (
+                <span className={`text-[9px] font-black px-2 py-0.5 rounded-full mt-1 w-fit uppercase tracking-tighter ${
+                  currentEra.type === 'golden' ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'
+                }`}>
+                  {currentEra.type === 'golden' ? '★ Golden Era' : '⚠ Dark Age'}
+                </span>
+              )}
+            </div>
           </div>
           <button
             onClick={onClose}
@@ -62,16 +74,32 @@ export default function CompanyDetailPanel({ companyId, onClose }) {
         </div>
 
         <div className="p-6 space-y-8">
-          {/* 1. 基本データ */}
-          <div className="p-5 bg-gradient-to-br from-indigo-950/40 to-slate-900/40 border border-indigo-500/30 rounded-2xl relative overflow-hidden shadow-inner">
+          {/* 1. 基本データ & 時代解説 */}
+          <div className={`p-5 border rounded-2xl relative overflow-hidden shadow-inner ${
+            currentEra?.type === 'golden' ? 'bg-amber-950/20 border-amber-500/30' : 
+            currentEra?.type === 'dark' ? 'bg-red-950/20 border-red-500/30' :
+            'bg-gradient-to-br from-indigo-950/40 to-slate-900/40 border-indigo-500/30'
+          }`}>
             <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
               <Landmark size={80} />
             </div>
             <div className="text-[10px] text-indigo-400 font-black uppercase tracking-[0.2em] mb-2">Corporate Profile</div>
-            <p className="text-sm text-slate-200 font-medium leading-relaxed relative z-10">
-              {ai.name}は{ai.trait || '独自の戦略'}を展開し、
-              <span className="text-indigo-300 font-bold ml-1">{strengths[0] || '市場の開拓'}</span>を核心的価値に据えています。
-            </p>
+            
+            {currentEra ? (
+              <div className="space-y-2">
+                <div className={`text-sm font-black uppercase tracking-tight ${currentEra.type === 'golden' ? 'text-amber-400' : 'text-red-400'}`}>
+                  現在：{currentEra.name}
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed italic">
+                  "{currentEra.desc}"
+                </p>
+              </div>
+            ) : (
+              <p className="text-sm text-slate-200 font-medium leading-relaxed relative z-10">
+                {ai.name}は{ai.trait || '独自の戦略'}を展開し、
+                <span className="text-indigo-300 font-bold ml-1">{strengths[0] || '市場の開拓'}</span>を核心的価値に据えています。
+              </p>
+            )}
           </div>
 
           {/* 2. 主要KPI */}

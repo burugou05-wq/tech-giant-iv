@@ -27,6 +27,9 @@ export const MarketRivalry = ({ market, aiProducts, playerBest }) => {
 
   if (!rival || !rivalProduct) return null;
 
+  // 現在の時代の取得
+  const currentEra = rival.eras?.find(e => rivalProduct.launchYear >= e.start && rivalProduct.launchYear <= e.end);
+
   // 2. プレイヤー製品とライバル製品の比較データ
   const metrics = [
     { 
@@ -61,6 +64,13 @@ export const MarketRivalry = ({ market, aiProducts, playerBest }) => {
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">地域最大ライバル分析</span>
         </div>
         <div className="flex items-center gap-2">
+          {currentEra && (
+            <span className={`text-[8px] font-black px-1.5 py-0.5 rounded uppercase ${
+              currentEra.type === 'golden' ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'
+            }`}>
+              {currentEra.type === 'golden' ? '★' : '⚠'}
+            </span>
+          )}
           <span className={`text-[10px] font-bold ${rival.textColor}`}>{rival.name}</span>
           <div className={`w-1.5 h-1.5 rounded-full ${rival.color}`} />
         </div>
