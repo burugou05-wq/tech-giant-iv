@@ -1,5 +1,6 @@
 // @ts-check
-import { AI_COMPANIES, CHASSIS_TECH, COMPONENT_TECH } from '../constants/index.js';
+import { CHASSIS_TECH, COMPONENT_TECH } from '../constants/index.js';
+import { AI_COMPANIES } from '../constants/companies/index.js';
 import { getTrendMultiplier } from '../utils/gameLogic.js';
 
 /**

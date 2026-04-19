@@ -1,6 +1,6 @@
 import React from 'react';
 import { TrendingUp, DollarSign, Zap, AlertCircle } from 'lucide-react';
-import { AI_COMPANIES } from '../../../constants/index.js';
+import { AI_COMPANIES } from '../../../constants/companies/index.js';
 
 /**
  * 市場ごとの競合比較コンポーネント

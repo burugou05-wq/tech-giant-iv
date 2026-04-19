@@ -1,8 +1,8 @@
 import { 
   START_DATE, 
-  HISTORICAL_EVENTS,
-  AI_COMPANIES
+  HISTORICAL_EVENTS
 } from '../../constants/index.js';
+import { AI_COMPANIES } from '../../constants/companies/index.js';
 import { 
   getCurrentEffects, 
   calculateEffectiveAppeal 

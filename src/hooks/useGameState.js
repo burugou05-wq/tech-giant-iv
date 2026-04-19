@@ -1,6 +1,6 @@
 // @ts-check
 import { useState } from 'react';
-import { AI_COMPANIES } from '../constants/index.js';
+import { AI_COMPANIES } from '../constants/companies/index.js';
 
 const INITIAL_AI_PRODUCTS = Object.fromEntries(
   Object.entries(AI_COMPANIES).map(([id, ai]) => [id, { 

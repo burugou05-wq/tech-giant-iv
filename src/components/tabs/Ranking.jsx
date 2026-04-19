@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useGame } from '../../context/GameContext.jsx';
-import { AI_COMPANIES } from '../../constants/index.js';
+import { AI_COMPANIES } from '../../constants/companies/index.js';
 import CompanyDetailPanel from '../CompanyDetailPanel.jsx';
 
 // 分割したコンポーネントとロジックのインポート

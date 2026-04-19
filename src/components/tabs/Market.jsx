@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Radio } from 'lucide-react';
 import { useGame } from '../../context/GameContext.jsx';
-import { AI_COMPANIES } from '../../constants/index.js';
+import { AI_COMPANIES } from '../../constants/companies/index.js';
 import { Card, CardHeader, CardContent, ProgressBar } from '../ui/index.js';
 import CompanyDetailPanel from '../CompanyDetailPanel.jsx';
 import { MarketRivalry } from './Market/MarketRivalry.jsx';
