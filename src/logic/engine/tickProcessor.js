@@ -59,6 +59,11 @@ export function processGameTick(s) {
   // 1.5 重点方針（Focus）の進行
   if (nextActiveFocus) {
     nextActiveFocus.remainingTicks -= 1;
+    // 進捗率の更新
+    if (nextActiveFocus.totalTicks > 0) {
+      nextActiveFocus.progress = Math.floor(((nextActiveFocus.totalTicks - nextActiveFocus.remainingTicks) / nextActiveFocus.totalTicks) * 100);
+    }
+    
     if (nextActiveFocus.remainingTicks <= 0) {
       nextCompletedFocuses.push(nextActiveFocus.id);
       newLogs.push({ time: dateStr, msg: `【方針完了】「${nextActiveFocus.name}」が完了しました。`, type: 'success', color: 'text-cyan-400' });

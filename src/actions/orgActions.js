@@ -68,7 +68,13 @@ export const createOrgActions = (state, addLog) => {
       
       if (!reqSatisfied) return;
       
-      setActiveFocus({ id: focusId, progress: 0 });
+      setActiveFocus({ 
+        id: focusId, 
+        name: focus.name,
+        progress: 0, 
+        totalTicks: focus.lpCost,
+        remainingTicks: focus.lpCost
+      });
       setSelectedFocusDetails(null);
       
       if (focus.effects?.unlockTree) {
