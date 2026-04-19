@@ -106,7 +106,7 @@ export function useGameEngine() {
 
       simulateAI(nextAiProducts, calcYear, dateStr, newLogs);
       const totalPlayerDemandShare = simulateMarketShares(nextMarkets, nextAiProducts, sellableProducts[0] || null, calcYear, loopEffects);
-      const salesResults = executeSales(nextMarkets, sellableProducts, nextInv, loopEffects, nextYenRate, s.euExtraCost);
+      const salesResults = executeSales(nextMarkets, sellableProducts, nextInv, loopEffects, nextYenRate, s.euExtraCost ?? 0);
 
       const financeResults = updateFinanceSystem(
         s.money, salesResults.currentRevenue - (prodResults.currentVarCost + prodResults.repairCostThisTick),
