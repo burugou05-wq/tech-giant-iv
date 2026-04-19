@@ -1,10 +1,10 @@
 import React from 'react';
 
 const COLORS = {
-  player: '#22c55e', mony: '#6366f1', natio: '#f97316', philis: '#06b6d4',
-  samstar: '#2563eb', hitac: '#e11d48', motora: '#ef4444', genera: '#94a3b8',
-  pineapple: '#d4d4d8', microhard: '#10b981', googo: '#f59e0b', nokio: '#38bdf8',
-  commodo: '#78716c', ninten: '#d946ef', berry: '#7c3aed', siemen: '#14b8a6',
+  player: '#22c55e', toshiba: '#b91c1c', panasonic: '#1e3a8a', philips: '#06b6d4',
+  samsung: '#2563eb', hitachi: '#e11d48', motorola: '#ef4444', ge: '#94a3b8',
+  apple: '#71717a', microsoft: '#10b981', google: '#f59e0b', nokia: '#38bdf8',
+  nintendo: '#d946ef', blackberry: '#5b21b6', siemens: '#14b8a6',
 };
 
 export function ShareDonut({ shares, size = 120 }) {
