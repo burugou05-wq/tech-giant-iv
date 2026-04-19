@@ -12,6 +12,10 @@ import { hitachi } from './hitachi.js';
 import { siemens } from './siemens.js';
 import { nintendo } from './nintendo.js';
 import { blackberry } from './blackberry.js';
+import { sharp } from './sharp.js';
+import { sanyo } from './sanyo.js';
+import { canon } from './canon.js';
+import { casio } from './casio.js';
 
 export const AI_COMPANIES = {
   toshiba,
@@ -27,5 +31,9 @@ export const AI_COMPANIES = {
   hitachi,
   siemens,
   nintendo,
-  blackberry
+  blackberry,
+  sharp,
+  sanyo,
+  canon,
+  casio
 };
