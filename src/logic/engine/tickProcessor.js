@@ -128,7 +128,7 @@ export function processGameTick(s) {
     };
   }).filter(p => p.stock > 0 || p.isOnLine).sort((a, b) => b.app - a.app);
 
-  simulateAI(nextAiProducts, calcYear, dateStr, newLogs);
+  simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarkets);
   const totalPlayerDemandShare = simulateMarketShares(nextMarkets, nextAiProducts, sellableProducts[0] || null, calcYear, loopEffects);
   const salesResults = executeSales(nextMarkets, sellableProducts, nextInv, loopEffects, nextYenRate, s.euExtraCost ?? 0);
 

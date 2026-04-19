@@ -10,7 +10,7 @@ import { getTrendMultiplier } from '../utils/gameLogic.js';
  * @param {string} dateStr - 日付文字列（ログ用）
  * @param {any[]} newLogs - 新しいログの配列
  */
-export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs) {
+export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarkets) {
   Object.entries(AI_COMPANIES).forEach(([aiId, ai]) => {
     // 競合他社は活動期間中のみ新製品を出す
     if (calcYear < ai.appearsYear || calcYear > (ai.disappearsYear || Infinity)) return;
@@ -37,12 +37,20 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs) {
 
     // 更新判定
     let currentUpdateChance = ai.updateChance;
+    
+    // プレイヤーが強い市場を持っている場合、AIは危機感を持って製品開発を急ぐ
+    const playerShareInStrongMarket = nextMarkets[ai.strongMarket]?.shares?.player || 0;
+    if (playerShareInStrongMarket > 0.3) {
+      currentUpdateChance *= (1.0 + playerShareInStrongMarket * 2); // プレイヤーが強いほど開発頻度アップ
+    }
+
     if (activeMasterpiece) currentUpdateChance *= 3;
     if (currentEra?.type === 'golden') currentUpdateChance *= 1.5;
     
     if (Math.random() > currentUpdateChance && !isNewMasterpiece) return;
 
     // 最新技術の選定
+    // ... (既存の技術選定ロジック) ...
     const avail = CHASSIS_TECH.filter(c => c.era <= calcYear);
     if (avail.length === 0) return;
     const bestChassis = avail.reduce((b, c) => (c.era >= b.era ? c : b), avail[0]);
@@ -69,12 +77,19 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs) {
       });
     }
 
-    // 価格決定
+    // 価格決定（対抗値下げロジック）
     let margin = 1.4;
-    if (ai.priceTarget === 'premium') margin = 2.2;
+    if (ai.priceTarget === 'premium') margin = 2.0;
     if (ai.priceTarget === 'budget')  margin = 1.1;
+
+    // プレイヤーのシェアが高い市場では、利益を削って対抗値下げする
+    if (playerShareInStrongMarket > 0.5) {
+      margin *= 0.75; // 25%の利益削減で対抗
+    } else if (playerShareInStrongMarket > 0.2) {
+      margin *= 0.9;  // 10%の利益削減
+    }
     
-    let finalPrice = compCost * margin;
+    let finalPrice = compCost * Math.max(0.8, margin); // 最低でも原価の80%（出血大サービス）まで
     let finalAppeal = (bestChassis.baseAppeal + compApp) * ai.appealMod * getTrendMultiplier(bestChassis, calcYear);
 
     // 時代・性格によるバフ
@@ -164,7 +179,7 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
     }
 
     /** @type {Record<string, number>} */
-    const appeals = { player: playerEffectiveApp };
+    const rawAppeals = { player: playerEffectiveApp * (1.0 + m.marketing * 0.15) }; 
 
     Object.entries(AI_COMPANIES).forEach(([id, ai]) => {
       const active = calcYear >= ai.appearsYear && calcYear <= (ai.disappearsYear || Infinity);
@@ -181,36 +196,50 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
         const priceFactor = Math.exp(-Math.pow(relativePrice - 0.8, 2) * 0.5);
         
         aiEffApp = aiProduct.appeal * (Number.isFinite(priceFactor) ? priceFactor : 1.0) * decay;
-        if (ai.strongMarket === mKey) aiEffApp *= 1.1;
+        if (ai.strongMarket === mKey) aiEffApp *= 1.15; 
       }
-      appeals[id] = Number.isFinite(aiEffApp) ? aiEffApp : 0;
+      rawAppeals[id] = Number.isFinite(aiEffApp) ? aiEffApp : 0;
     });
 
-    const totalAppeal = Object.values(appeals).reduce((sum, v) => sum + v, 0.01);
-    
-    let shareShift = (appeals.player / totalAppeal - m.shares.player)
-      * (0.06 + m.marketing * 0.04 * loopEffects.marketingMulti) * loopEffects.orgCoordination;
-    
-    if (loopEffects.jpBonus && mKey === 'jp') shareShift *= 2.0;
-    if (loopEffects.globalPenalty && mKey !== 'jp') shareShift -= 0.02;
+    const exponent = 1.3; 
+    const weightedAppeals = {};
+    let totalWeighted = 0;
+    Object.entries(rawAppeals).forEach(([id, app]) => {
+      const weight = Math.pow(app, exponent);
+      weightedAppeals[id] = weight;
+      totalWeighted += weight;
+    });
+    totalWeighted = Math.max(0.01, totalWeighted);
 
-    m.shares.player = Math.max(0, Math.min(1.0, m.shares.player + shareShift));
-    
-    if (Number.isFinite(m.shares.player)) {
-      totalPlayerDemandShare += m.shares.player;
-    }
-
-    Object.entries(AI_COMPANIES).forEach(([c, ai]) => {
-      const aiTargetShare = appeals[c] / totalAppeal;
-      const currentShare = m.shares[c] || 0;
-      m.shares[c] = Math.max(0, currentShare + (aiTargetShare - currentShare) * 0.06);
+    const targetShares = {};
+    Object.keys(weightedAppeals).forEach(id => {
+      targetShares[id] = weightedAppeals[id] / totalWeighted;
     });
 
-    const totalShare = m.shares.player + Object.keys(AI_COMPANIES).reduce((s, c) => s + (m.shares[c] || 0), 0);
-    if (totalShare > 0) {
-      m.shares.player /= totalShare;
-      Object.keys(AI_COMPANIES).forEach(c => { m.shares[c] = (m.shares[c] || 0) / totalShare; });
+    const shiftBase = 0.08; 
+    const playerMarketingBonus = m.marketing * 0.05 * (loopEffects.marketingMulti || 1.0);
+    const playerShareShift = (targetShares.player - m.shares.player) * (shiftBase + playerMarketingBonus);
+    
+    let finalPlayerShift = playerShareShift;
+    if (loopEffects.jpBonus && mKey === 'jp') finalPlayerShift *= 1.5;
+    if (loopEffects.globalPenalty && mKey !== 'jp') finalPlayerShift -= 0.01;
+
+    m.shares.player = Math.max(0, Math.min(0.98, m.shares.player + finalPlayerShift));
+
+    Object.keys(AI_COMPANIES).forEach(cId => {
+      const target = targetShares[cId] || 0;
+      const current = m.shares[cId] || 0;
+      m.shares[cId] = Math.max(0, current + (target - current) * shiftBase);
+    });
+
+    const totalCurrentShare = m.shares.player + Object.keys(AI_COMPANIES).reduce((s, c) => s + (m.shares[c] || 0), 0);
+    if (totalCurrentShare > 0) {
+      m.shares.player /= totalCurrentShare;
+      Object.keys(AI_COMPANIES).forEach(c => { 
+        m.shares[c] = (m.shares[c] || 0) / totalCurrentShare; 
+      });
     }
+    
     totalPlayerDemandShare += m.shares.player;
   });
 
