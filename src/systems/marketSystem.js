@@ -78,7 +78,8 @@ export function executeSales(nextMarkets, sellableProducts, nextInv, loopEffects
           totalMarketDemand -= Math.floor(sold / strategyAppealMult);
 
           const baseCost = Number.isFinite(prod.bp.cost) ? prod.bp.cost : 50;
-          let revenue = sold * baseCost * 2.5 * revMulti * strategyPriceMult;
+          const sellPrice = Number.isFinite(prod.bp.price) ? prod.bp.price : baseCost * 2.5;
+          let revenue = sold * sellPrice * revMulti * strategyPriceMult;
           if (mKey !== 'jp') revenue /= nextYenRate;
           
           if (Number.isFinite(revenue)) {

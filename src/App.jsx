@@ -33,6 +33,7 @@ export default function App() {
   const [selectedChassisId, setSelectedChassisId] = useState('ch_radio');
   const [designSlots, setDesignSlots]             = useState({});
   const [designName, setDesignName]               = useState('');
+  const [designPrice, setDesignPrice]             = useState(100);
 
   const engine = useGameEngine();
 
@@ -46,6 +47,7 @@ export default function App() {
     selectedChassisId, setSelectedChassisId,
     designSlots, setDesignSlots,
     designName, setDesignName,
+    designPrice, setDesignPrice,
     
     // Engine state & handlers
     ...engine,

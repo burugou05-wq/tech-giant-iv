@@ -13,6 +13,7 @@ export default function Design() {
     designName, setDesignName,
     selectedChassisId, setSelectedChassisId,
     designSlots, setDesignSlots,
+    designPrice, setDesignPrice,
     blueprints, setBlueprints,
     productionLines, money, currentYear,
     refreshBlueprint, divisions, currentEffects
@@ -48,6 +49,7 @@ export default function Design() {
       chassisId: chassis.id,
       baseAppeal: specs.appeal,
       cost: specs.cost,
+      price: designPrice,
       modules: modules,
       launchYear: currentYear,
       generation: 1,
@@ -56,6 +58,7 @@ export default function Design() {
     // 入力リセット
     setDesignName('');
     setDesignSlots({});
+    setDesignPrice(100);
   };
 
   return (
@@ -68,6 +71,8 @@ export default function Design() {
         setSelectedChassisId={setSelectedChassisId}
         designSlots={designSlots}
         setDesignSlots={setDesignSlots}
+        designPrice={designPrice}
+        setDesignPrice={setDesignPrice}
         unlockedChassis={unlockedChassis}
         unlockedModules={unlockedModules}
         specs={specs}

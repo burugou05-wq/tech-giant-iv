@@ -7,6 +7,7 @@ export const DesignStudio = ({
   designName, setDesignName,
   selectedChassisId, setSelectedChassisId,
   designSlots, setDesignSlots,
+  designPrice, setDesignPrice,
   unlockedChassis, unlockedModules,
   specs, canSave, onSave
 }) => {
@@ -64,6 +65,47 @@ export const DesignStudio = ({
               ))}
             </select>
           ))}
+        </div>
+
+        {/* 価格設定 */}
+        <div className="space-y-4 pt-4 border-t border-slate-700/50">
+          <div className="flex justify-between items-end">
+            <label className="text-[10px] text-slate-500 font-black uppercase px-1">Target Retail Price</label>
+            <div className="text-xs font-black text-slate-400 bg-slate-900 px-2 py-0.5 rounded">
+              Cost: ${specs.cost}k
+            </div>
+          </div>
+          
+          <div className="flex gap-4 items-center">
+            <input
+              type="range"
+              min={Math.floor(specs.cost * 0.5)}
+              max={Math.floor(specs.cost * 10)}
+              step={1}
+              value={designPrice}
+              onChange={e => setDesignPrice(Number(e.target.value))}
+              className="flex-1 h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-yellow-500"
+            />
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-black text-sm">$</span>
+              <input
+                type="number"
+                value={designPrice}
+                onChange={e => setDesignPrice(Number(e.target.value))}
+                className="w-24 bg-slate-950 border border-slate-700 rounded-xl py-2 pl-7 pr-3 text-white font-black text-right focus:ring-2 focus:ring-yellow-500"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-between items-center px-1">
+            <span className="text-[9px] text-slate-500 font-bold uppercase">Estimated Margin</span>
+            <span className={`text-xs font-black ${
+              designPrice > specs.cost * 2 ? 'text-emerald-400' : 
+              designPrice > specs.cost ? 'text-yellow-400' : 'text-rose-500'
+            }`}>
+              {(((designPrice - specs.cost) / Math.max(1, designPrice)) * 100).toFixed(1)}%
+            </span>
+          </div>
         </div>
 
         {/* プレビュー数値 */}
