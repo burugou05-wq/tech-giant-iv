@@ -1,3 +1,7 @@
+import { useState } from 'react';
+import { Radio } from 'lucide-react';
+import { useGame } from '../../context/GameContext.jsx';
+import { AI_COMPANIES } from '../../constants/index.js';
 import { Card, CardHeader, CardContent, ProgressBar } from '../ui/index.js';
 import CompanyDetailPanel from '../CompanyDetailPanel.jsx';
 
