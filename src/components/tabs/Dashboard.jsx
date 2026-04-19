@@ -153,7 +153,7 @@ export default function Dashboard() {
         </h3>
         <div className="space-y-3 overflow-y-auto flex-1">
           {DECISIONS.map(dec => {
-            const isVisible = !dec.req || dec.req(stateRef.current);
+            const isVisible = !dec.req || (stateRef && dec.req(stateRef.current));
             if (!isVisible) return null;
             const canAfford = leadershipPower >= dec.lpCost && money >= dec.moneyCost;
             return (

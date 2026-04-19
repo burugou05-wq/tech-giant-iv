@@ -164,5 +164,5 @@ export function useGameEngine() {
   }, [isPaused, activeEvent, gameSpeed]);
 
   const actions = useGameActions(state, addLog, currentYear);
-  return { ...state, currentDate, currentYear, currentDateStr, currentEffects, currentSpirits, ...actions, addLog };
+  return { ...state, currentDate, currentYear, currentDateStr, currentEffects, currentSpirits, ...actions, addLog, stateRef };
 }
