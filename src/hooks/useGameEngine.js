@@ -9,11 +9,7 @@ import { useGameState } from './useGameState.js';
 import { useGameActions } from './useGameActions.js';
 import { simulateAI, simulateMarketShares } from '../utils/aiSimulation.js';
 
-// 各種計算システムのインポート
-import { updateOrgSystem } from '../systems/orgSystem.js';
-import { updateMarketSystem, executeSales } from '../systems/marketSystem.js';
-import { updateProductionSystem } from '../systems/productionSystem.js';
-import { updateFinanceSystem } from '../systems/financeSystem.js';
+import { processGameTick } from '../logic/engine/tickProcessor.js';
 
 export function useGameEngine() {
   const state = useGameState();
@@ -37,7 +33,6 @@ export function useGameEngine() {
 
   const stateRef = useRef(null);
 
-  // Keep stateRef up‑to‑date after each render
   useEffect(() => {
     stateRef.current = state;
   }, [state]);
@@ -46,7 +41,6 @@ export function useGameEngine() {
     setLogs(prev => [{ time: currentDateStr, msg, type, color }, ...prev].slice(0, 50));
   };
 
-  // UI表示用の計算値
   const currentEffects = useMemo(() => getCurrentEffects(completedFocuses), [completedFocuses]);
   
   const currentSpirits = useMemo(() => {
@@ -65,98 +59,52 @@ export function useGameEngine() {
     
     const timer = setInterval(() => {
       const s = stateRef.current;
-      if (!s) return; // guard against undefined state on first render
-      const newTick      = s.ticks + 1;
-      const preciseYear  = 1946 + newTick * 14 / 365.25;
-      const calcYear     = Math.floor(preciseYear);
-      const dateStr      = new Date(START_DATE.getTime() + newTick * 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      if (!s) return;
 
-      let nextLines       = s.productionLines.map(l => ({ ...l }));
-      let nextInv         = structuredClone(s.inventory);
-      let nextMarkets     = structuredClone(s.markets);
-      let nextAiProducts  = structuredClone(s.aiProducts);
-      let nextOrgStructure = structuredClone(s.orgStructure);
-      let nextDivisions   = structuredClone(s.divisions);
-      let nextFlags       = { ...s.flags };
-      let newLogs         = [];
+      const result = processGameTick(s);
 
-      const baseEffects = getCurrentEffects(s.completedFocuses);
-      const budget = nextOrgStructure.budgetAllocation || { rnd: 50, production: 50, marketing: 50, hr: 50 };
-
-      // 1. 歴史イベントのチェック
-      const pendingEvent = HISTORICAL_EVENTS.find(e => calcYear >= e.year && !nextFlags[e.flagKey]);
-      if (pendingEvent) {
-        nextFlags[pendingEvent.flagKey] = true; setFlags(nextFlags);
-        setActiveEvent(pendingEvent); setIsPaused(true); return;
+      if (result.type === 'EVENT') {
+        setFlags(result.flags);
+        setActiveEvent(result.event);
+        setIsPaused(true);
+        return;
       }
 
-      // 2. 各システムによる計算
-      const hasFlagship = nextLines.some(l => l.strategy === 'flagship');
-      const orgResults = updateOrgSystem(nextOrgStructure, budget, baseEffects, calcYear, baseEffects, nextFlags, dateStr, newLogs, nextDivisions);
-      const loopEffects = { ...baseEffects, ...orgResults, hasFlagship };
+      const { nextState, lastTickProfit, profit, totalTickCost, calcYear, newLogs } = result;
 
-      const nextYenRate = Math.max(0.6, Math.min(1.5, s.yenRate + (Math.random() - 0.5) * 0.01));
-      updateMarketSystem(nextMarkets, preciseYear, calcYear, nextFlags, dateStr, newLogs, nextYenRate);
+      // ステートの一括更新
+      setMoney(nextState.money);
+      setResearchPoints(nextState.researchPoints);
+      setLeadershipPower(nextState.leadershipPower);
+      setStockPrice(nextState.stockPrice);
+      setYenRate(nextState.yenRate);
+      setTicks(nextState.ticks);
+      setProductionLines(nextState.productionLines);
+      setInventory(nextState.inventory);
+      setMarkets(nextState.markets);
+      setAiProducts(nextState.aiProducts);
+      setFlags(nextState.flags);
+      setOrgStructure(nextState.orgStructure);
+      setDivisions(nextState.divisions);
+      
+      setLastTickProfit(lastTickProfit);
 
-      const prodResults = updateProductionSystem(
-        nextLines, nextInv, s.blueprints, s.qualityLevel, loopEffects, 
-        s.activeFocus, orgResults.isSiloActive, nextFlags.isStrike
-      );
+      if (newLogs.length > 0) {
+        setLogs(prev => [...newLogs, ...prev].slice(0, 50));
+      }
 
-      const sellableProducts = s.blueprints.map(bp => ({
-        bp, app: calculateEffectiveAppeal(bp, calcYear, s.contentOwned, loopEffects),
-        stock: nextInv[bp.id]?.amount || 0,
-        isOnLine: nextLines.some(l => l.blueprintId === bp.id && l.factories > 0)
-      })).filter(p => p.stock > 0 || p.isOnLine).sort((a, b) => b.app - a.app);
-
-      simulateAI(nextAiProducts, calcYear, dateStr, newLogs);
-      const totalPlayerDemandShare = simulateMarketShares(nextMarkets, nextAiProducts, sellableProducts[0] || null, calcYear, loopEffects);
-      const salesResults = executeSales(nextMarkets, sellableProducts, nextInv, loopEffects, nextYenRate, s.euExtraCost ?? 0);
-
-      const financeResults = updateFinanceSystem(
-        s.money, salesResults.currentRevenue - (prodResults.currentVarCost + prodResults.repairCostThisTick),
-        totalPlayerDemandShare, calcYear, s.totalFactories, nextMarkets, budget, loopEffects, 0, 0
-      );
-
-      const totalTickCost = prodResults.currentVarCost + salesResults.currentVarCostAdd + financeResults.currentFixedCost + financeResults.currentMarketingCost + financeResults.currentStoreCost;
-      const profit = salesResults.currentRevenue - totalTickCost;
-
-      // 3. リソースと事業部経験値の更新
-      let rpGain = (15 + Math.floor((calcYear - 1946) / 3)) * loopEffects.rpMulti * orgResults.orgInnovation;
-      if (orgResults.isSiloActive) rpGain *= 0.5;
-
-      Object.values(nextDivisions).forEach(div => {
-        if (!div.active) return;
-        const divLines = nextLines.filter(l => l.factories > 0 && s.blueprints.find(b => b.id === l.blueprintId && b.category === div.id));
-        div.xp += divLines.reduce((sum, l) => sum + l.factories, 0);
-        if (div.xp > div.level * 500) { div.xp -= div.level * 500; div.level = Math.min(10, div.level + 1); }
-      });
-
-      // 4. ステートの一括更新
-      setMoney(prev => prev + profit);
-      setResearchPoints(prev => prev + rpGain);
-      setLeadershipPower(prev => prev + 1);
-      setStockPrice(financeResults.newStockPrice(s.stockPrice));
-      setYenRate(nextYenRate);
-      setTicks(newTick);
-      setProductionLines(nextLines);
-      setInventory(nextInv);
-      setMarkets(nextMarkets);
-      setAiProducts(nextAiProducts);
-      setFlags(nextFlags);
-      setOrgStructure(nextOrgStructure);
-      setDivisions(nextDivisions);
-      setLastTickProfit({
-        revenue: salesResults.currentRevenue, varCost: prodResults.currentVarCost, fixedCost: financeResults.currentFixedCost,
-        marketingCost: financeResults.currentMarketingCost, storeCost: financeResults.currentStoreCost,
-        repairCost: prodResults.repairCostThisTick, b2b: 0
-      });
-      if (newLogs.length > 0) setLogs(prev => [...newLogs.reverse(), ...prev].slice(0, 50));
-      if (newTick % 2 === 0) {
+      if (nextState.ticks % 2 === 0) {
         setChartData(prev => [...prev, { 
-          tick: newTick, year: calcYear, revenue: salesResults.currentRevenue, cost: totalTickCost, profit, 
-          stockPrice: s.stockPrice, money: s.money + profit,
-          jpShare: nextMarkets.jp.shares.player, naShare: nextMarkets.na.shares.player, euShare: nextMarkets.eu.shares.player
+          tick: nextState.ticks, 
+          year: calcYear, 
+          revenue: lastTickProfit.revenue, 
+          cost: totalTickCost, 
+          profit, 
+          stockPrice: nextState.stockPrice, 
+          money: nextState.money,
+          jpShare: nextState.markets.jp.shares.player, 
+          naShare: nextState.markets.na.shares.player, 
+          euShare: nextState.markets.eu.shares.player
         }].slice(-200));
       }
     }, interval);
