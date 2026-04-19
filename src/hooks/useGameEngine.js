@@ -113,5 +113,20 @@ export function useGameEngine() {
   }, [isPaused, activeEvent, gameSpeed]);
 
   const actions = useGameActions(state, addLog, currentYear);
-  return { ...state, currentDate, currentYear, currentMonth, currentDateStr, currentEffects, currentSpirits, ...actions, addLog, stateRef };
+  // 統計用の算出プロパティ
+  const totalCost = (Number.isFinite(state.lastTickProfit.varCost) ? state.lastTickProfit.varCost : 0) + 
+                    (Number.isFinite(state.lastTickProfit.fixedCost) ? state.lastTickProfit.fixedCost : 0) + 
+                    (Number.isFinite(state.lastTickProfit.marketingCost) ? state.lastTickProfit.marketingCost : 0) + 
+                    (Number.isFinite(state.lastTickProfit.storeCost) ? state.lastTickProfit.storeCost : 0) + 
+                    (Number.isFinite(state.lastTickProfit.repairCost) ? state.lastTickProfit.repairCost : 0);
+  
+  const profit = (Number.isFinite(state.lastTickProfit.revenue) ? state.lastTickProfit.revenue : 0) - totalCost;
+
+  return { 
+    ...state, 
+    currentDate, currentYear, currentMonth, currentDateStr, 
+    currentEffects, currentSpirits, 
+    profit, totalCost,
+    ...actions, addLog, stateRef 
+  };
 }
