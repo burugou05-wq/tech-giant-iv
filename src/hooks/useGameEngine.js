@@ -24,7 +24,8 @@ export function useGameEngine() {
     markets, setMarkets, aiProducts, setAiProducts,
     blueprints, productionLines, setProductionLines, inventory, setInventory,
     leadershipPower, setLeadershipPower,
-    completedFocuses, setFlags,
+    completedFocuses, setCompletedFocuses, setFlags,
+    activeFocus, setActiveFocus, setUnlockedTrees,
     orgStructure, setOrgStructure, divisions, setDivisions,
   } = state;
 
@@ -88,6 +89,9 @@ export function useGameEngine() {
       setFlags(nextState.flags);
       setOrgStructure(nextState.orgStructure);
       setDivisions(nextState.divisions);
+      setActiveFocus(nextState.activeFocus);
+      setCompletedFocuses(nextState.completedFocuses);
+      setUnlockedTrees(nextState.unlockedTrees);
       
       setLastTickProfit(lastTickProfit);
 
