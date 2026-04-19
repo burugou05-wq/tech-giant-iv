@@ -10,9 +10,9 @@ export const UrgentDecisions = ({ decisions, game, leadershipPower, money, onExe
     <Card className="flex flex-col h-full">
       <CardHeader>
         <h3 className="font-black text-slate-200 flex items-center gap-2 text-lg">
-          <Scale size={20} className="text-indigo-400" /> Executive Decisions
+          <Scale size={20} className="text-indigo-400" /> 緊急決議
         </h3>
-        <span className="text-[10px] text-slate-500 font-bold uppercase">Priority Tasks</span>
+        <span className="text-[10px] text-slate-500 font-bold uppercase">優先タスク</span>
       </CardHeader>
       
       <CardContent className="space-y-3 overflow-y-auto flex-1 custom-scrollbar pr-2">
@@ -45,7 +45,7 @@ export const UrgentDecisions = ({ decisions, game, leadershipPower, money, onExe
                 {dec.desc}
               </div>
               <div className="flex items-center justify-between mt-auto pt-2 border-t border-slate-800/50">
-                <span className="text-[9px] font-bold text-slate-600 uppercase">Required Funds</span>
+                <span className="text-[9px] font-bold text-slate-600 uppercase">必要資金</span>
                 <span className={`text-[10px] font-black ${money >= dec.moneyCost ? 'text-slate-400' : 'text-red-500'}`}>
                   ${dec.moneyCost.toLocaleString()}k
                 </span>

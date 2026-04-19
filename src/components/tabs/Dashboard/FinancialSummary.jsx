@@ -17,7 +17,7 @@ export const FinancialSummary = ({
             <Landmark size={28} />
           </div>
           <div>
-            <div className="text-slate-500 text-[10px] font-black tracking-widest uppercase mb-1">Stock Value</div>
+            <div className="text-slate-500 text-[10px] font-black tracking-widest uppercase mb-1">自社株価</div>
             <div className="text-4xl font-black text-white tracking-tighter">${Math.floor(stockPrice)}</div>
           </div>
         </div>
@@ -27,36 +27,36 @@ export const FinancialSummary = ({
             onClick={onBuyBack}
             className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-black text-xs transition-all border border-slate-700 shadow-lg"
           >
-            <RefreshCcw className="inline mr-2 text-indigo-400" size={16} /> BUY BACK 10%
+            <RefreshCcw className="inline mr-2 text-indigo-400" size={16} /> 10%買戻し
           </button>
           <button
             onClick={onSellEquity}
             className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-black text-xs transition-all shadow-lg shadow-indigo-600/20"
           >
-            <Briefcase className="inline mr-2" size={16} /> SELL EQUITY 10%
+            <Briefcase className="inline mr-2" size={16} /> 10%売却
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatItem 
-          label="Available Funds" 
+          label="手元資金" 
           value={`$${Math.floor(money).toLocaleString()}k`} 
           trendColor={money < 0 ? 'text-red-500 animate-pulse' : 'text-slate-500'}
         />
         <StatItem 
-          label="Weekly Profit" 
+          label="週間利益" 
           value={`${profit >= 0 ? '+' : ''}$${Math.floor(profit).toLocaleString()}k`}
           trendColor={profit >= 0 ? 'text-emerald-400' : 'text-red-400'}
-          subValue={profit >= 0 ? 'Surplus' : 'Deficit'}
+          subValue={profit >= 0 ? '黒字' : '赤字'}
         />
         <StatItem 
-          label="Exchange Rate" 
+          label="為替レート" 
           value={`1$ = ${Math.floor(250 * yenRate)}円`}
           trendColor="text-blue-400"
         />
         <StatItem 
-          label="Equity Stake" 
+          label="株式保有率" 
           value={`${playerEquity}%`}
           trendColor="text-yellow-500"
         />

@@ -9,7 +9,7 @@ export const ContentInvestment = ({ investments, ownedIds, money, onInvest }) =>
   return (
     <Card className="p-6">
       <h3 className="text-[10px] font-black text-slate-400 mb-6 flex items-center gap-2 uppercase tracking-widest">
-        <Film size={16} className="text-purple-400" /> Entertainment IP
+        <Film size={16} className="text-purple-400" /> エンタメ投資 (IP)
       </h3>
       
       <div className="grid grid-cols-2 gap-3">
@@ -33,12 +33,12 @@ export const ContentInvestment = ({ investments, ownedIds, money, onInvest }) =>
               </div>
               {!isOwned && (
                 <div className="text-[9px] font-bold text-slate-500 mt-1.5 flex justify-between items-center">
-                  <span>COST</span>
+                  <span>投資額</span>
                   <span className={canAfford ? 'text-slate-400' : 'text-red-500'}>${inv.cost.toLocaleString()}k</span>
                 </div>
               )}
               {isOwned && (
-                <div className="text-[8px] font-black text-purple-500/70 mt-1 tracking-widest uppercase">Acquired</div>
+                <div className="text-[8px] font-black text-purple-500/70 mt-1 tracking-widest uppercase">取得済み</div>
               )}
             </button>
           );

@@ -17,7 +17,7 @@ export default function Market() {
                 <h4 className="text-xl font-black text-white">{m.name}</h4>
                 <div className="text-right">
                   {m.locked && <div className="text-[10px] text-amber-300 font-bold">進出未完了</div>}
-                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Market Share</div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">市場シェア</div>
                   <div className="text-3xl font-black text-green-400">{(m.shares.player * 100).toFixed(1)}%</div>
                 </div>
               </CardHeader>
@@ -26,8 +26,8 @@ export default function Market() {
                 {/* 広告レベル */}
                 <div className="flex justify-between items-center bg-slate-900/60 p-3 rounded-xl border border-slate-700/50">
                   <div className="flex flex-col">
-                    <span className="text-[9px] text-slate-500 font-black uppercase">Marketing</span>
-                    <span className="text-xs font-bold text-white uppercase">Level {m.marketing}</span>
+                    <span className="text-[9px] text-slate-500 font-black uppercase">マーケティング</span>
+                    <span className="text-xs font-bold text-white uppercase">レベル {m.marketing}</span>
                   </div>
                   <button
                     onClick={() => upgradeMarketing(mKey)}
@@ -36,14 +36,14 @@ export default function Market() {
                       m.locked ? 'bg-slate-700 text-slate-500 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20'
                     }`}
                   >
-                    {m.locked ? 'LOCKED' : `UPGRADE ($${((m.marketing + 1) * 1000).toLocaleString()}k)`}
+                    {m.locked ? 'ロック中' : `広告強化 ($${((m.marketing + 1) * 1000).toLocaleString()}k)`}
                   </button>
                 </div>
 
-                {/* シェアバー（プレイヤーのみ ProgressBar を使用、競合は統合表示） */}
+                {/* シェアバー */}
                 <div className="space-y-2">
                   <div className="flex justify-between items-end px-1">
-                    <span className="text-[10px] text-slate-400 font-black uppercase tracking-wider">Market Dominance</span>
+                    <span className="text-[10px] text-slate-400 font-black uppercase tracking-wider">勢力図</span>
                   </div>
                   <div className="w-full bg-slate-950 rounded-full h-4 overflow-hidden flex border border-slate-700/50 shadow-inner p-0.5">
                     <div className="bg-green-500 h-full rounded-l-full transition-all duration-1000" style={{ width: `${m.shares.player * 100}%` }} />
@@ -86,8 +86,8 @@ export default function Market() {
                 {/* 店舗管理 */}
                 <div className="pt-2 space-y-3">
                   <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-slate-500 px-1">
-                    <span>Distribution Hubs</span>
-                    <span className="text-slate-300">{m.stores} STORES</span>
+                    <span>直営店舗ネットワーク</span>
+                    <span className="text-slate-300">{m.stores} 店舗</span>
                   </div>
                   
                   {canUseDirectStore ? (
@@ -101,7 +101,7 @@ export default function Market() {
                             : 'bg-emerald-600/10 border-emerald-500/50 text-emerald-400 hover:bg-emerald-600/20'
                         }`}
                       >
-                        BUILD STORE (-$5000k)
+                        店舗設立 (-$5000k)
                       </button>
                       <button
                         onClick={() => closeDirectStore(mKey)}
@@ -112,19 +112,19 @@ export default function Market() {
                             : 'bg-rose-600/10 border-rose-500/50 text-rose-400 hover:bg-rose-600/20'
                         }`}
                       >
-                        CLOSE
+                        撤去
                       </button>
                     </div>
                   ) : (
                     <div className="p-3 bg-slate-900/50 rounded-xl text-[10px] text-slate-500 italic text-center border border-slate-800">
-                      直営店ネットワーク未開放
+                      直営店は未開放です
                     </div>
                   )}
                 </div>
 
                 {!m.locked && (
                   <div className="text-[10px] text-center text-slate-600 font-bold uppercase tracking-tighter">
-                    Estimated Demand: {m.demand.toLocaleString()} units / tick
+                    推定需要: {m.demand.toLocaleString()} 個 / 週
                   </div>
                 )}
               </CardContent>
@@ -143,9 +143,9 @@ export default function Market() {
       <Card className="flex flex-col h-80">
         <CardHeader>
           <h3 className="font-black text-slate-200 flex items-center gap-2 text-lg">
-            <Radio size={20} className="text-blue-400" /> Market Intelligence
+            <Radio size={20} className="text-blue-400" /> マーケットニュース
           </h3>
-          <span className="text-[10px] text-slate-500 font-bold uppercase">Real-time Feed</span>
+          <span className="text-[10px] text-slate-500 font-bold uppercase">リアルタイムフィード</span>
         </CardHeader>
         <CardContent className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
           {logs.map((log, i) => (

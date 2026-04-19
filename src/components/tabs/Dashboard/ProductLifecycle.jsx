@@ -16,15 +16,15 @@ export const ProductLifecycle = ({ blueprints, currentYear }) => {
   return (
     <Card className="p-6">
       <h3 className="text-[10px] font-black text-slate-400 mb-6 flex items-center gap-2 uppercase tracking-widest">
-        <Clock size={16} className="text-amber-400" /> Lifecycle Management
+        <Clock size={16} className="text-amber-400" /> 製品寿命管理
       </h3>
       
       {blueprints.length > 0 ? (
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Oldest Model Age</div>
+            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">最古モデルの経過年数</div>
             <div className={`text-3xl font-black tracking-tighter ${isTooOld ? 'text-amber-500' : 'text-slate-200'}`}>
-              {Math.max(0, age)} <span className="text-xs uppercase ml-1">Years</span>
+              {Math.max(0, age)} <span className="text-xs uppercase ml-1">年</span>
             </div>
           </div>
           
@@ -33,12 +33,12 @@ export const ProductLifecycle = ({ blueprints, currentYear }) => {
               ? 'bg-amber-500/10 border-amber-500/50 text-amber-500 animate-pulse' 
               : 'bg-slate-900 border-slate-700 text-slate-400'
           }`}>
-            {isTooOld ? 'Renewal Required' : 'Status Healthy'}
+            {isTooOld ? '更新を推奨' : '健全'}
           </div>
         </div>
       ) : (
         <div className="p-4 bg-slate-900/40 rounded-xl border border-dashed border-slate-700 text-center">
-          <div className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">No Active Blueprints</div>
+          <div className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">有効な設計図がありません</div>
         </div>
       )}
       

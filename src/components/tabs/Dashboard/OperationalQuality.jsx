@@ -12,7 +12,7 @@ export const OperationalQuality = ({ qualityLevel, qualityCap, onQualityChange }
     <Card className="p-6">
       <h3 className="text-[10px] font-black text-slate-400 mb-6 flex items-center gap-2 uppercase tracking-widest">
         <ShieldCheck size={16} className={isDangerous ? 'text-red-500' : 'text-emerald-500'} /> 
-        Quality Assurance
+        品質管理
       </h3>
       
       <div className="flex items-center gap-8">
@@ -30,9 +30,9 @@ export const OperationalQuality = ({ qualityLevel, qualityCap, onQualityChange }
             className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-indigo-500"
           />
           <div className="flex justify-between text-[9px] text-slate-500 mt-3 font-black uppercase tracking-wider px-1">
-            <span className="text-red-400">Low Cost</span>
-            <span>Standard</span>
-            <span className="text-blue-400">Reliable</span>
+            <span className="text-red-400">低コスト</span>
+            <span>標準</span>
+            <span className="text-blue-400">安全重視</span>
           </div>
         </div>
       </div>
