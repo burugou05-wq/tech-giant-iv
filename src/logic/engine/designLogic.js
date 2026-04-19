@@ -60,17 +60,24 @@ function calculateRecommendedPrice(appeal, cost, category, aiProducts) {
     ? competitorPrices.reduce((a, b) => a + b, 0) / competitorPrices.length
     : cost * 2.5;
 
-  // 2. 魅力度によるプレミアム/ディスカウント
-  // 魅力度 50 を基準として、1ポイントにつき 1% の価格変動を許容
-  const appealFactor = 1 + (appeal - 50) * 0.01;
+  // 2. 魅力度によるプレミアム（対数減衰）
+  // 魅力度が上がるほど、1ポイントあたりの価格上乗せ効果を薄くする
+  // 魅力度 50 を基準とし、log を使ってなだらかに上昇させる
+  const appealBonus = appeal > 50 ? Math.log10(appeal / 50) * 0.8 : (appeal - 50) * 0.01;
+  const appealFactor = 1 + appealBonus;
   
-  // 3. おすすめ価格の決定（原価率 30%〜40% を目安にしつつ競合に合わせる）
-  const recommended = Math.round(Math.max(cost * 1.5, avgCompPrice * appealFactor));
+  // 3. おすすめ価格の決定
+  // 基準価格を競合平均とし、魅力度係数を掛ける
+  let recommended = Math.round(avgCompPrice * appealFactor);
+  
+  // ガード：あまりに暴利（利益率が極端）にならないように原価ベースでもチェック
+  // 最大でも原価の3倍（利益率66%）、最低でも原価の1.2倍は確保する
+  recommended = Math.max(cost * 1.2, Math.min(cost * 3.0, recommended));
   
   return {
     price: recommended,
-    min: Math.round(avgCompPrice * 0.7),
-    max: Math.round(avgCompPrice * 1.5),
+    min: Math.round(avgCompPrice * 0.6),
+    max: Math.round(avgCompPrice * 2.0),
     avg: Math.round(avgCompPrice)
   };
 }

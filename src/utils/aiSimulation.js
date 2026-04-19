@@ -138,12 +138,23 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
     const m = nextMarkets[mKey];
     const storeBuff = 1.0 + m.stores * 0.2;
     
+    // 1. カテゴリー内の競合価格平均を算出（市場基準価格）
+    const competitorPrices = Object.values(nextAiProducts)
+      .filter(p => p.category === m.category || (bestItem && p.category === bestItem.bp.category))
+      .map(p => p.price);
+    const avgMarketPrice = competitorPrices.length > 0 
+      ? competitorPrices.reduce((a, b) => a + b, 0) / competitorPrices.length 
+      : 100;
+
     let playerEffectiveApp = 0;
     if (!m.locked && bestItem) {
       const safePrice = (bestItem.bp && Number.isFinite(bestItem.bp.price)) ? Math.max(1, bestItem.bp.price) : 100;
-      const safeBaseCost = (bestItem.bp && Number.isFinite(bestItem.bp.baseCost)) ? bestItem.bp.baseCost : 50;
       
-      const priceFactor = Math.pow(safeBaseCost * 2.0 / safePrice, 0.8);
+      // 価格係数：市場平均と比較してペナルティを課す
+      // 平均の2倍で魅力は半分以下、3倍でほぼゼロになるように指数関数的に減衰
+      const relativePrice = safePrice / avgMarketPrice;
+      const priceFactor = Math.exp(-Math.pow(relativePrice - 0.8, 2) * 0.5); // 0.8倍付近が最も効率が良い
+      
       const launchYear = bestItem.bp.launchYear || calcYear;
       const decay = Math.max(0.5, 1 - Math.max(0, calcYear - launchYear - 3) * 0.08);
       
@@ -164,9 +175,10 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
       if (active && inRegion && aiProduct) {
         const decay = Math.max(0.5, 1 - Math.max(0, calcYear - aiProduct.launchYear - 3) * 0.08);
         const safeAiPrice = Number.isFinite(aiProduct.price) ? Math.max(1, aiProduct.price) : 100;
-        const safeAiApp = Number.isFinite(aiProduct.appeal) ? aiProduct.appeal : 1;
         
-        const priceFactor = Math.pow(1.5 / (safeAiPrice / (safeAiApp / 10 + 1)), 0.5);
+        const relativePrice = safeAiPrice / avgMarketPrice;
+        const priceFactor = Math.exp(-Math.pow(relativePrice - 0.8, 2) * 0.5);
+        
         aiEffApp = aiProduct.appeal * (Number.isFinite(priceFactor) ? priceFactor : 1.0) * decay;
         if (ai.strongMarket === mKey) aiEffApp *= 1.1;
       }
