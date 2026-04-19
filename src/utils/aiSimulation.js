@@ -203,6 +203,7 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
     });
 
     const exponent = 1.3; 
+    /** @type {Record<string, number>} */
     const weightedAppeals = {};
     let totalWeighted = 0;
     Object.entries(rawAppeals).forEach(([id, app]) => {
@@ -212,6 +213,7 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
     });
     totalWeighted = Math.max(0.01, totalWeighted);
 
+    /** @type {Record<string, number>} */
     const targetShares = {};
     Object.keys(weightedAppeals).forEach(id => {
       targetShares[id] = weightedAppeals[id] / totalWeighted;
