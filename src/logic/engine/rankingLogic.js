@@ -1,4 +1,4 @@
-import { AI_COMPANIES } from '../../constants/index.js';
+import { AI_COMPANIES } from '../../constants/companies/index.js';
 
 /**
  * 企業の時価総額を計算
