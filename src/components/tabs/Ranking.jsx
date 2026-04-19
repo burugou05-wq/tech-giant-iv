@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import { Trophy, TrendingUp, TrendingDown, Minus, Crown, Medal, Award } from 'lucide-react';
 import { useGame } from '../../context/GameContext.jsx';
 import { AI_COMPANIES } from '../../constants/index.js';
+import CompanyDetailPanel from '../CompanyDetailPanel.jsx';
 
 // ==========================================
 // ランキングタブ
 // ==========================================
 export default function Ranking() {
   const { stockPrice, markets, aiProducts, currentYear, money } = useGame();
+  const [selectedCompany, setSelectedCompany] = useState(null);
 
   // --- 時価総額の計算 ---
   const getMarketCap = (id) => {
@@ -116,7 +119,8 @@ export default function Ranking() {
           const rank = index + 1;
           return (
             <div key={company.id}
-              className={`p-4 rounded-xl border transition-all hover:scale-[1.01] ${getRankBg(rank, company.isPlayer)}`}
+              onClick={() => !company.isPlayer && setSelectedCompany(company.id)}
+              className={`p-4 rounded-xl border transition-all ${!company.isPlayer ? 'cursor-pointer hover:scale-[1.01] hover:border-indigo-500/50' : ''} ${getRankBg(rank, company.isPlayer)}`}
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <div className="flex items-center gap-4">
@@ -190,6 +194,11 @@ export default function Ranking() {
           </div>
         );
       })()}
+      {/* 競合他社詳細パネル */}
+      <CompanyDetailPanel 
+        companyId={selectedCompany} 
+        onClose={() => setSelectedCompany(null)} 
+      />
     </div>
   );
 }

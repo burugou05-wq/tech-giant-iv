@@ -5,32 +5,12 @@ import { AI_COMPANIES, CHASSIS_TECH } from '../../constants/index.js';
 
 
 
+import CompanyDetailPanel from '../CompanyDetailPanel.jsx';
+
 export default function Market() {
   const { markets, money, completedFocuses, upgradeMarketing, buildDirectStore, closeDirectStore, blueprints, aiProducts, currentYear, stockPrice, logs } = useGame();
   const [selectedCompany, setSelectedCompany] = useState(null);
   const canUseDirectStore = completedFocuses.includes('fc_direct_store');
-
-  const getCompanyStock = (aiId) => {
-    const base = AI_COMPANIES[aiId]?.stockBase || 100;
-    const appeal = aiProducts[aiId]?.appeal || 1;
-    return Math.floor(base * (0.8 + appeal / 60));
-  };
-
-  const getCompanyRevenue = (aiId) => {
-    const base = AI_COMPANIES[aiId]?.revenueBase || 50000;
-    const totalShare = Object.values(markets).reduce((sum, m) => sum + (m.shares[aiId] || 0), 0);
-    const years = Math.max(0, currentYear - 1946);
-    return Math.floor(base * (0.5 + totalShare) * (1 + years * 0.008));
-  };
-
-  const getTotalShare = (aiId) => {
-    const marketList = Object.values(markets).filter(m => !m.locked);
-    if (marketList.length === 0) return 0;
-    return marketList.reduce((sum, m) => sum + (m.shares[aiId] || 0), 0) / marketList.length;
-  };
-
-  const selectedAi = selectedCompany ? AI_COMPANIES[selectedCompany] : null;
-  const selectedProfile = selectedCompany ? AI_COMPANIES[selectedCompany] : null;
 
   return (
     <div className="space-y-6 relative">
@@ -124,129 +104,10 @@ export default function Market() {
       </div>
 
       {/* 競合他社詳細パネル */}
-      {selectedCompany && selectedAi && selectedProfile && (
-        <div className="fixed inset-0 z-50 flex items-center justify-end pointer-events-none">
-          <div
-            className="pointer-events-auto w-full max-w-md h-full bg-slate-900 border-l border-slate-700 shadow-2xl overflow-y-auto animate-slide-in-right"
-            style={{ animation: 'slideInRight 0.25s ease-out' }}
-          >
-            {/* ヘッダー */}
-            <div className="sticky top-0 z-10 bg-slate-900 border-b border-slate-700 px-6 py-4 flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <span className={`w-4 h-4 rounded-full ${selectedAi.color}`} />
-                <h2 className="text-xl font-black text-white">{selectedAi.name}</h2>
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-full bg-slate-800 ${selectedAi.textColor}`}>{selectedAi.trait}</span>
-              </div>
-              <button
-                onClick={() => setSelectedCompany(null)}
-                className="p-2 rounded-full hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <div className="p-6 space-y-6">
-              {/* 株価・売上 */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                  <div className="flex items-center gap-2 text-slate-400 text-xs mb-1">
-                    <TrendingUp size={12} /> 推定株価
-                  </div>
-                  <div className="text-2xl font-black text-white">${getCompanyStock(selectedCompany).toLocaleString()}</div>
-                  <div className="text-[10px] text-slate-500 mt-1">自社: ${Math.floor(stockPrice)}</div>
-                </div>
-                <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                  <div className="flex items-center gap-2 text-slate-400 text-xs mb-1">
-                    <BarChart2 size={12} /> 推定売上
-                  </div>
-                  <div className="text-2xl font-black text-emerald-400">${(getCompanyRevenue(selectedCompany) / 1000).toFixed(0)}M</div>
-                  <div className="text-[10px] text-slate-500 mt-1">年間換算</div>
-                </div>
-              </div>
-
-              {/* 市場シェア */}
-              <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                <div className="flex items-center gap-2 text-slate-300 text-sm font-bold mb-3">
-                  <BarChart2 size={14} /> 市場シェア
-                </div>
-                <div className="space-y-3">
-                  {Object.entries(markets).filter(([, m]) => !m.locked).map(([mKey, m]) => {
-                    const share = (m.shares[selectedCompany] || 0) * 100;
-                    const playerShare = m.shares.player * 100;
-                    return (
-                      <div key={mKey}>
-                        <div className="flex justify-between text-[10px] text-slate-400 mb-1">
-                          <span>{m.name}</span>
-                          <span className={selectedAi.textColor + ' font-black'}>{share.toFixed(1)}%</span>
-                        </div>
-                        <div className="w-full bg-slate-900 rounded-full h-3 overflow-hidden flex border border-slate-700">
-                          <div className={`${selectedAi.color} h-full`} style={{ width: `${share}%` }} />
-                          <div className="bg-green-500/40 h-full" style={{ width: `${playerShare}%` }} />
-                        </div>
-                        <div className="flex justify-between text-[9px] text-slate-600 mt-0.5">
-                          <span>{selectedAi.name}: {share.toFixed(1)}%</span>
-                          <span className="text-green-400">自社: {playerShare.toFixed(1)}%</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                  <div className="text-[10px] text-slate-400 pt-2 border-t border-slate-700">
-                    平均シェア: <span className={selectedAi.textColor + ' font-black'}>{(getTotalShare(selectedCompany) * 100).toFixed(1)}%</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* 現在の主力製品 */}
-              <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                <div className="flex items-center gap-2 text-slate-300 text-sm font-bold mb-3">
-                  <Package size={14} /> 現在の主力製品
-                </div>
-                <div className="bg-slate-900 rounded-lg p-3 border border-slate-600">
-                  <div className={`font-black text-sm ${selectedAi.textColor}`}>{aiProducts[selectedCompany]?.productName || '—'}</div>
-                  <div className="text-[10px] text-slate-400 mt-1">
-                    魅力度スコア: <span className="text-white font-bold">{(aiProducts[selectedCompany]?.appeal || 0).toFixed(1)}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* 過去の製品履歴 */}
-              <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                <div className="flex items-center gap-2 text-slate-300 text-sm font-bold mb-3">
-                  <Package size={14} /> 製品の歴史
-                </div>
-                <div className="space-y-3">
-                  {selectedProfile.history.map((item, i) => (
-                    <div key={i} className="flex gap-3">
-                      <div className="text-[10px] text-slate-500 w-10 shrink-0 pt-0.5">{item.year}</div>
-                      <div>
-                        <div className="text-xs font-bold text-white">{item.product}</div>
-                        <div className="text-[10px] text-slate-400 mt-0.5 leading-relaxed">{item.desc}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* 強み */}
-              <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                <div className="flex items-center gap-2 text-slate-300 text-sm font-bold mb-3">
-                  <Zap size={14} /> 強み
-                </div>
-                <ul className="space-y-2">
-                  {selectedProfile.strengths.map((s, i) => (
-                    <li key={i} className="flex items-start gap-2 text-[11px] text-slate-300">
-                      <span className={`${selectedAi.textColor} mt-0.5 shrink-0`}>▸</span>
-                      {s}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-          {/* 背景クリックで閉じる */}
-          <div className="absolute inset-0 -z-10" onClick={() => setSelectedCompany(null)} />
-        </div>
-      )}
+      <CompanyDetailPanel 
+        companyId={selectedCompany} 
+        onClose={() => setSelectedCompany(null)} 
+      />
       {/* マーケットニュースログ */}
       <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl flex flex-col h-80 mt-6">
         <h3 className="font-black text-slate-200 flex items-center gap-2 text-lg mb-4">
