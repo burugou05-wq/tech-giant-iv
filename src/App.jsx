@@ -21,6 +21,7 @@ import Design        from './components/tabs/Design.jsx';
 import Research      from './components/tabs/Research.jsx';
 import Statistics    from './components/tabs/Statistics.jsx';
 import Ranking       from './components/tabs/Ranking.jsx';
+import System        from './components/tabs/System.jsx';
 
 export const IconMap = { Globe, TrendingUp, Wrench, Target, AlertTriangle, AlertCircle };
 
@@ -72,6 +73,7 @@ export default function App() {
               {activeTab === 'production' && <Production />}
               {activeTab === 'design'     && <Design />}
               {activeTab === 'research'   && <Research />}
+              {activeTab === 'system'     && <System />}
             </main>
           </div>
           </div>

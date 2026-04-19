@@ -1,4 +1,4 @@
-import { FlaskConical, Wrench, Factory, Globe, Landmark, Network, Briefcase, BarChart2, Trophy } from 'lucide-react';
+import { FlaskConical, Wrench, Factory, Globe, Landmark, Network, Briefcase, BarChart2, Trophy, Settings } from 'lucide-react';
 import { useGame } from '../context/GameContext.jsx';
 
 const NAV_ITEMS = [
@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { id: 'production', icon: Factory,      label: '生産工場' },
   { id: 'design',     icon: Wrench,       label: '製品設計' },
   { id: 'research',   icon: FlaskConical, label: '技術開発' },
+  { id: 'system',     icon: Settings,     label: 'システム' },
 ];
 
 export default function NavBar() {

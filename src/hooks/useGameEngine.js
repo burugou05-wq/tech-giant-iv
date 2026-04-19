@@ -8,6 +8,7 @@ import { getCurrentEffects, calculateEffectiveAppeal } from '../utils/gameLogic.
 import { useGameState } from './useGameState.js';
 import { useGameActions } from './useGameActions.js';
 import { simulateAI, simulateMarketShares } from '../utils/aiSimulation.js';
+import { saveSystem } from '../utils/saveSystem.js';
 
 import { processGameTick } from '../logic/engine/tickProcessor.js';
 
@@ -107,6 +108,44 @@ export function useGameEngine() {
           naShare: nextState.markets.na.shares.player, 
           euShare: nextState.markets.eu.shares.player
         }].slice(-200));
+      }
+
+      // 毎年1月1日にオートセーブ
+      const oldYear = Math.floor(1946 + s.ticks * 14 / 365.25);
+      if (calcYear > oldYear) {
+        const dataToSave = {
+          ...nextState,
+          ticks: nextState.ticks,
+          money: nextState.money,
+          playerEquity: nextState.playerEquity,
+          stockPrice: nextState.stockPrice,
+          researchPoints: nextState.researchPoints,
+          totalFactories: nextState.totalFactories,
+          qualityLevel: nextState.qualityLevel,
+          contentOwned: nextState.contentOwned,
+          yenRate: nextState.yenRate,
+          productionDebuff: nextState.productionDebuff,
+          euExtraCost: nextState.euExtraCost,
+          divisions: nextState.divisions,
+          logs: nextState.logs,
+          chartData: nextState.chartData,
+          markets: nextState.markets,
+          aiProducts: nextState.aiProducts,
+          aiFinances: nextState.aiFinances,
+          unlockedChassis: nextState.unlockedChassis,
+          unlockedModules: nextState.unlockedModules,
+          blueprints: nextState.blueprints,
+          productionLines: nextState.productionLines,
+          inventory: nextState.inventory,
+          leadershipPower: nextState.leadershipPower,
+          activeFocus: nextState.activeFocus,
+          completedFocuses: nextState.completedFocuses,
+          unlockedTrees: nextState.unlockedTrees,
+          flags: nextState.flags,
+          orgStructure: nextState.orgStructure,
+          activeEvent: nextState.activeEvent
+        };
+        saveSystem.saveToSlot('auto', dataToSave);
       }
     }, interval);
     return () => clearInterval(timer);

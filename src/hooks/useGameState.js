@@ -101,6 +101,39 @@ export function useGameState() {
     siloRisk: 0,
   });
 
+  const loadFullState = (s) => {
+    if (!s) return;
+    if (s.money !== undefined) setMoney(s.money);
+    if (s.ticks !== undefined) setTicks(s.ticks);
+    if (s.playerEquity !== undefined) setPlayerEquity(s.playerEquity);
+    if (s.stockPrice !== undefined) setStockPrice(s.stockPrice);
+    if (s.researchPoints !== undefined) setResearchPoints(s.researchPoints);
+    if (s.totalFactories !== undefined) setTotalFactories(s.totalFactories);
+    if (s.qualityLevel !== undefined) setQualityLevel(s.qualityLevel);
+    if (s.contentOwned !== undefined) setContentOwned(s.contentOwned);
+    if (s.yenRate !== undefined) setYenRate(s.yenRate);
+    if (s.productionDebuff !== undefined) setProductionDebuff(s.productionDebuff);
+    if (s.euExtraCost !== undefined) setEuExtraCost(s.euExtraCost);
+    if (s.divisions !== undefined) setDivisions(s.divisions);
+    if (s.logs !== undefined) setLogs(s.logs);
+    if (s.chartData !== undefined) setChartData(s.chartData);
+    if (s.markets !== undefined) setMarkets(s.markets);
+    if (s.aiProducts !== undefined) setAiProducts(s.aiProducts);
+    if (s.aiFinances !== undefined) setAiFinances(s.aiFinances);
+    if (s.unlockedChassis !== undefined) setUnlockedChassis(s.unlockedChassis);
+    if (s.unlockedModules !== undefined) setUnlockedModules(s.unlockedModules);
+    if (s.blueprints !== undefined) setBlueprints(s.blueprints);
+    if (s.productionLines !== undefined) setProductionLines(s.productionLines);
+    if (s.inventory !== undefined) setInventory(s.inventory);
+    if (s.leadershipPower !== undefined) setLeadershipPower(s.leadershipPower);
+    if (s.activeFocus !== undefined) setActiveFocus(s.activeFocus);
+    if (s.completedFocuses !== undefined) setCompletedFocuses(s.completedFocuses);
+    if (s.unlockedTrees !== undefined) setUnlockedTrees(s.unlockedTrees);
+    if (s.flags !== undefined) setFlags(s.flags);
+    if (s.orgStructure !== undefined) setOrgStructure(s.orgStructure);
+    if (s.activeEvent !== undefined) setActiveEvent(s.activeEvent);
+  };
+
   return {
     isPaused, setIsPaused, ticks, setTicks, gameSpeed, setGameSpeed,
     activeEvent, setActiveEvent,
@@ -118,5 +151,6 @@ export function useGameState() {
     unlockedTrees, setUnlockedTrees, flags, setFlags,
     orgStructure, setOrgStructure,
     theme, setTheme,
+    loadFullState
   };
 }
