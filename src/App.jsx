@@ -53,13 +53,14 @@ export default function App() {
 
   return (
     <GameContext.Provider value={contextValue}>
-      <div className="min-h-screen bg-slate-950 text-slate-200 font-sans p-2 md:p-6">
+      <div className={`${engine.theme} min-h-screen transition-colors duration-500`}>
+        <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200 font-sans p-2 md:p-6">
         <EventModal />
         <div className="max-w-[1400px] mx-auto flex flex-col h-screen max-h-[1000px]">
           <Header />
           <div className="flex flex-col md:flex-row gap-6 flex-1 overflow-hidden">
             <NavBar />
-            <main className="flex-1 bg-slate-900/40 p-6 rounded-3xl border-2 border-slate-800 overflow-y-auto shadow-inner relative">
+            <main className="flex-1 bg-slate-100 dark:bg-slate-900/40 p-6 rounded-3xl border-2 border-slate-200 dark:border-slate-800 overflow-y-auto shadow-inner relative">
               {activeTab === 'dashboard'  && <Dashboard />}
               {activeTab === 'organization' && <Organization />}
               {activeTab === 'corporate'  && <CorporateFocus />}
@@ -70,6 +71,7 @@ export default function App() {
               {activeTab === 'design'     && <Design />}
               {activeTab === 'research'   && <Research />}
             </main>
+          </div>
           </div>
         </div>
       </div>

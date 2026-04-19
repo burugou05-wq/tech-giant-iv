@@ -15,12 +15,12 @@ export const StatItem = ({
   value, 
   icon, 
   subValue, 
-  trendColor = 'text-white', 
+  trendColor = 'text-slate-900 dark:text-white', 
   className = '' 
 }) => {
   return (
     <div className={`p-4 ${className}`}>
-      <div className="flex items-center gap-2 text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">
+      <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">
         {icon && <span className="opacity-80">{icon}</span>}
         {label}
       </div>

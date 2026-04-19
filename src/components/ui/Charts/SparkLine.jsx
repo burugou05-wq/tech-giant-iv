@@ -3,7 +3,7 @@ import React from 'react';
 export function SparkLine({ data, dataKey, color = '#6366f1', height = 120, format, showArea = true }) {
   if (!data || data.length < 2) {
     return (
-      <div className="flex items-center justify-center text-slate-600 text-[10px] font-black uppercase tracking-widest" style={{ height }}>
+      <div className="flex items-center justify-center text-slate-400 dark:text-slate-600 text-[10px] font-black uppercase tracking-widest" style={{ height }}>
         データ収集中...
       </div>
     );

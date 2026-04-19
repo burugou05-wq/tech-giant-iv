@@ -1,13 +1,17 @@
-import { Globe, Play, Pause, TrendingUp, Wrench, Target, AlertTriangle, AlertCircle } from 'lucide-react';
+import { Globe, Play, Pause, TrendingUp, Wrench, Target, AlertTriangle, AlertCircle, Sun, Moon } from 'lucide-react';
 import { useGame } from '../context/GameContext.jsx';
 
 const IconMap = { TrendingUp, Wrench, Globe, Target, AlertTriangle, AlertCircle };
 
 export default function Header() {
-  const { money, leadershipPower, currentYear, currentMonth, isPaused, setIsPaused, currentSpirits, gameSpeed, setGameSpeed } = useGame();
+  const { 
+    money, leadershipPower, currentYear, currentMonth, 
+    isPaused, setIsPaused, currentSpirits, gameSpeed, setGameSpeed,
+    theme, setTheme 
+  } = useGame();
 
   return (
-    <header className="flex shrink-0 items-center justify-between bg-slate-900 p-4 md:px-8 rounded-3xl border-2 border-slate-800 mb-6 shadow-2xl">
+    <header className="flex shrink-0 items-center justify-between bg-white dark:bg-slate-900 p-4 md:px-8 rounded-3xl border-2 border-slate-200 dark:border-slate-800 mb-6 shadow-2xl transition-colors">
       <div className="flex flex-col">
         <h1 className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-green-400 tracking-tighter">
           TECH GIANT IV
@@ -42,16 +46,24 @@ export default function Header() {
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-4 font-mono text-2xl font-black text-yellow-400 bg-slate-950 p-2 px-6 rounded-xl border border-slate-800 shadow-inner">
+        <div className="flex items-center gap-4 font-mono text-2xl font-black text-yellow-600 dark:text-yellow-400 bg-slate-50 dark:bg-slate-950 p-2 px-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-inner">
           <div className="flex items-baseline gap-1">
             <span>{currentYear}</span>
-            <span className="text-xs text-slate-500 font-sans">年</span>
+            <span className="text-xs text-slate-400 dark:text-slate-500 font-sans">年</span>
             <span className="ml-2">{currentMonth}</span>
-            <span className="text-xs text-slate-500 font-sans">月</span>
+            <span className="text-xs text-slate-400 dark:text-slate-500 font-sans">月</span>
           </div>
-          <button onClick={() => setIsPaused(p => !p)} className="w-8 h-8 flex items-center justify-center">
-            {isPaused ? <Play size={20} /> : <Pause size={20} />}
-          </button>
+          <div className="flex items-center gap-2 border-l border-slate-200 dark:border-slate-800 ml-2 pl-4">
+            <button 
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-indigo-500 transition-all active:scale-90"
+            >
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+            <button onClick={() => setIsPaused(p => !p)} className="w-8 h-8 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-colors">
+              {isPaused ? <Play size={20} /> : <Pause size={20} />}
+            </button>
+          </div>
         </div>
       </div>
     </header>

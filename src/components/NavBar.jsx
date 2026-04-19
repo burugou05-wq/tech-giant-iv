@@ -21,8 +21,10 @@ export default function NavBar() {
         <button
           key={item.id}
           onClick={() => setActiveTab(item.id)}
-          className={`flex items-center gap-4 p-4 rounded-2xl text-xs font-black transition-all ${
-            activeTab === item.id ? 'bg-indigo-600 text-white' : 'bg-slate-900 text-slate-500 hover:bg-slate-800'
+          className={`flex items-center gap-4 p-4 rounded-2xl text-xs font-black transition-all border-2 ${
+            activeTab === item.id 
+              ? 'bg-indigo-600 text-white border-indigo-500 shadow-lg shadow-indigo-500/20' 
+              : 'bg-white dark:bg-slate-900 text-slate-500 hover:text-indigo-500 border-transparent dark:hover:bg-slate-800'
           }`}
         >
           <item.icon size={18} />

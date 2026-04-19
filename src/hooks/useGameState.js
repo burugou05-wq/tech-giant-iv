@@ -11,6 +11,7 @@ export function useGameState() {
   const [ticks, setTicks]         = useState(0);
   const [gameSpeed, setGameSpeed] = useState(3);
   const [activeEvent, setActiveEvent] = useState(/** @type {any} */ (null));
+  const [theme, setTheme]             = useState("dark");
 
   const [money, setMoney]                   = useState(15000);
   const [playerEquity, setPlayerEquity]     = useState(100);
@@ -96,5 +97,6 @@ export function useGameState() {
     completedFocuses, setCompletedFocuses, selectedFocusDetails, setSelectedFocusDetails,
     unlockedTrees, setUnlockedTrees, flags, setFlags,
     orgStructure, setOrgStructure,
+    theme, setTheme,
   };
 }
