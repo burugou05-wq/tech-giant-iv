@@ -18,7 +18,11 @@ export const MarketRivalry = ({ market, aiProducts, playerBest }) => {
     .reduce((prev, [id, share]) => (share > (prev?.share || 0) ? { id, share } : prev), { id: null, share: 0 })
     .id;
 
-  const rival = AI_COMPANIES[rivalId];
+  if (!rivalId) return null;
+
+  /** @type {any} */
+  const ai_companies_typed = AI_COMPANIES;
+  const rival = ai_companies_typed[rivalId];
   const rivalProduct = aiProducts[rivalId];
 
   if (!rival || !rivalProduct) return null;
@@ -29,14 +33,14 @@ export const MarketRivalry = ({ market, aiProducts, playerBest }) => {
       label: '魅力度 (Appeal)', 
       icon: <Zap size={12} className="text-yellow-400" />,
       player: playerBest?.app || 0,
-      rival: rivalProduct.appeal,
+      rival: rivalProduct?.appeal || 0,
       unit: ''
     },
     { 
       label: '実売価格 (Price)', 
       icon: <DollarSign size={12} className="text-emerald-400" />,
       player: playerBest?.bp?.price || 0,
-      rival: rivalProduct.price,
+      rival: rivalProduct?.price || 100,
       unit: '$',
       lowerIsBetter: true
     },
@@ -44,7 +48,7 @@ export const MarketRivalry = ({ market, aiProducts, playerBest }) => {
       label: 'コスパ (Efficiency)', 
       icon: <TrendingUp size={12} className="text-indigo-400" />,
       player: (playerBest?.app || 0) / ((playerBest?.bp?.price || 1) / 100),
-      rival: rivalProduct.appeal / (rivalProduct.price / 100),
+      rival: (rivalProduct?.appeal || 0) / ((rivalProduct?.price || 1) / 100),
       unit: 'pt'
     }
   ];
@@ -79,7 +83,7 @@ export const MarketRivalry = ({ market, aiProducts, playerBest }) => {
         {metrics.map((m, i) => {
           const isBetter = m.lowerIsBetter ? m.player < m.rival : m.player > m.rival;
           const isDraw = Math.abs(m.player - m.rival) < 0.1;
-          
+
           return (
             <div key={i} className="space-y-1">
               <div className="flex justify-between items-center text-[9px] font-black text-slate-500 uppercase">
@@ -95,14 +99,14 @@ export const MarketRivalry = ({ market, aiProducts, playerBest }) => {
                 </div>
               </div>
               <div className="w-full h-1 bg-slate-900 rounded-full flex overflow-hidden">
-                <div 
-                  className={`h-full transition-all duration-1000 ${isBetter ? 'bg-emerald-500' : 'bg-rose-500'}`} 
-                  style={{ width: `${(m.player / (m.player + m.rival || 1)) * 100}%` }} 
+                <div
+                  className={`h-full transition-all duration-1000 ${isBetter ? 'bg-emerald-500' : 'bg-rose-500'}`}
+                  style={{ width: `${(m.player / (m.player + m.rival || 1)) * 100}%` }}
                 />
                 <div className="w-0.5 bg-slate-800 h-full" />
-                <div 
-                  className={`h-full transition-all duration-1000 ${!isBetter && !isDraw ? 'bg-emerald-500' : 'bg-slate-700'}`} 
-                  style={{ width: `${(m.rival / (m.player + m.rival || 1)) * 100}%` }} 
+                <div
+                  className={`h-full transition-all duration-1000 ${!isBetter && !isDraw ? 'bg-emerald-500' : 'bg-slate-700'}`}
+                  style={{ width: `${(m.rival / (m.player + m.rival || 1)) * 100}%` }}
                 />
               </div>
             </div>
