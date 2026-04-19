@@ -4,7 +4,8 @@ import { useGame } from '../../context/GameContext.jsx';
 import { Card, CardHeader, CardContent } from '../ui/index.js';
 
 const System = () => {
-  const { getSlotInfo, saveGame, loadGame, deleteSlot } = useGame();
+  const game = useGame() || {};
+  const { getSlotInfo, saveGame, loadGame, deleteSlot } = game;
   const [slots, setSlots] = useState([]);
 
   const refreshSlots = () => {
