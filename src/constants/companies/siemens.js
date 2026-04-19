@@ -1,0 +1,17 @@
+export const siemens = {
+  name: 'Siemens', color: 'bg-teal-500', textColor: 'text-teal-400',
+  trait: '欧州の重鎮', strategy: 'follower', priceTarget: 'premium',
+  updateChance: 0.015, appealMod: 0.85, strongMarket: 'eu',
+  prefixes: ['Siemens', 'Nixdorf', 'Gigaset', 'Euro'],
+  appearsYear: 1946, disappearsYear: 2005,
+  regions: { eu: 1946, jp: 1980 },
+  stockBase: 200, revenueBase: 250000,
+  strengths: ['欧州の通信インフラ支配', '産業用機器との連携', 'ドイツの精密技術'],
+  eras: [
+    { start: 1950, end: 1975, type: 'golden', name: '欧州復興の担い手', buff: 1.3, desc: '戦後欧州のインフラ整備と通信網構築で巨大な利益を上げた。' },
+  ],
+  history: [
+    { year: 1955, product: 'Tele Radio',      desc: '欧州で広く普及した通信機。' },
+    { year: 1995, product: 'Siemens Mobile',  desc: '初期の携帯電話市場で一定のシェア。' },
+  ],
+};
