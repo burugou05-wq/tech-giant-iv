@@ -182,6 +182,10 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
     if (loopEffects.globalPenalty && mKey !== 'jp') shareShift -= 0.02;
 
     m.shares.player = Math.max(0, Math.min(1.0, m.shares.player + shareShift));
+    
+    if (Number.isFinite(m.shares.player)) {
+      totalPlayerDemandShare += m.shares.player;
+    }
 
     Object.entries(AI_COMPANIES).forEach(([c, ai]) => {
       const aiTargetShare = appeals[c] / totalAppeal;
