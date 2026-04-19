@@ -1,7 +1,7 @@
 export const ge = {
   name: 'GE', color: 'bg-slate-400', textColor: 'text-slate-300',
-  trait: '巨大複合企業', strategy: 'cost_leader', priceTarget: 'mainstream',
-  updateChance: 0.015, appealMod: 0.9, strongMarket: 'na',
+  trait: '巨大複合企業', strategy: 'cost_leader', priceTarget: 'mainstream', brand: 0.65,
+  updateChance: 0.02, appealMod: 0.95, strongMarket: 'na',
   prefixes: ['GE', 'General', 'Electric', 'Hotpoint'],
   appearsYear: 1946, disappearsYear: 2004,
   initialMoney: 500000, minMargin: 0.22,

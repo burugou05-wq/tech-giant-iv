@@ -1,7 +1,7 @@
 export const samsung = {
   name: 'Samsung', color: 'bg-blue-600', textColor: 'text-blue-400',
-  trait: '量産・高頻度', strategy: 'cost_leader', priceTarget: 'budget',
-  updateChance: 0.040, appealMod: 0.8, strongMarket: 'eu',
+  trait: '巨大コングロマリット', strategy: 'cost_leader', priceTarget: 'budget', brand: 0.4,
+  updateChance: 0.06, appealMod: 1.0, strongMarket: 'eu',
   prefixes: ['Galaxy', 'Wave', 'Samsung', 'OLED', 'Z-Fold'],
   appearsYear: 1969, disappearsYear: 9999,
   initialMoney: 250000, minMargin: 0.18,

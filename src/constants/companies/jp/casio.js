@@ -1,7 +1,7 @@
 export const casio = {
   name: 'Casio', color: 'bg-blue-400', textColor: 'text-blue-200',
-  trait: 'デジタルガジェット', strategy: 'innovator', priceTarget: 'budget',
-  updateChance: 0.035, appealMod: 1.1, strongMarket: 'jp',
+  trait: 'デジタルガジェット', strategy: 'innovator', priceTarget: 'budget', brand: 0.4,
+  updateChance: 0.05, appealMod: 1.1, strongMarket: 'jp',
   prefixes: ['G-Shock', 'Exilim', 'Privia', 'Casio'],
   appearsYear: 1957, disappearsYear: 9999,
   initialMoney: 80000, minMargin: 0.30,

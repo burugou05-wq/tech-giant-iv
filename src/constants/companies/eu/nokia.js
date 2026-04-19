@@ -1,7 +1,7 @@
 export const nokia = {
   name: 'Nokia', color: 'bg-sky-400', textColor: 'text-sky-300',
-  trait: 'モバイル全振り', strategy: 'innovator', priceTarget: 'mainstream',
-  updateChance: 0.035, appealMod: 1.1, strongMarket: 'eu',
+  trait: '北欧の携帯王者', strategy: 'innovator', priceTarget: 'mainstream', brand: 0.65,
+  updateChance: 0.04, appealMod: 1.2, strongMarket: 'eu',
   prefixes: ['Nokia', 'Lumia', 'Communicator', 'N-Gage'],
   appearsYear: 1980, disappearsYear: 2014,
   initialMoney: 160000, minMargin: 0.28,

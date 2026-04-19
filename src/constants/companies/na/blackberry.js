@@ -1,7 +1,7 @@
 export const blackberry = {
   name: 'BlackBerry', color: 'bg-violet-600', textColor: 'text-violet-400',
-  trait: 'ビジネス特化', strategy: 'innovator', priceTarget: 'premium',
-  updateChance: 0.025, appealMod: 1.2, strongMarket: 'na',
+  trait: 'ビジネス・セキュリティ', strategy: 'innovator', priceTarget: 'premium', brand: 0.5,
+  updateChance: 0.03, appealMod: 1.25, strongMarket: 'na',
   prefixes: ['BlackBerry', 'Curve', 'Bold', 'Passport'],
   appearsYear: 1999, disappearsYear: 2016,
   initialMoney: 80000, minMargin: 0.45,

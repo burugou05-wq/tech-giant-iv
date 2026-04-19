@@ -1,7 +1,7 @@
 export const siemens = {
   name: 'Siemens', color: 'bg-teal-500', textColor: 'text-teal-400',
-  trait: '欧州の重鎮', strategy: 'follower', priceTarget: 'premium',
-  updateChance: 0.015, appealMod: 0.85, strongMarket: 'eu',
+  trait: '質実剛健・ドイツの雄', strategy: 'follower', priceTarget: 'premium', brand: 0.6,
+  updateChance: 0.02, appealMod: 0.95, strongMarket: 'eu',
   prefixes: ['Siemens', 'Nixdorf', 'Gigaset', 'Euro'],
   appearsYear: 1946, disappearsYear: 9999,
   initialMoney: 220000, minMargin: 0.24,

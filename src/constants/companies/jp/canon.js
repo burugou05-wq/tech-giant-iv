@@ -1,7 +1,7 @@
 export const canon = {
   name: 'Canon', color: 'bg-red-700', textColor: 'text-red-500',
-  trait: '精密・光学特化', strategy: 'innovator', priceTarget: 'premium',
-  updateChance: 0.020, appealMod: 1.2, strongMarket: 'na',
+  trait: '精密・光学特化', strategy: 'innovator', priceTarget: 'premium', brand: 0.5,
+  updateChance: 0.03, appealMod: 1.15, strongMarket: 'jp',
   prefixes: ['EOS', 'IXY', 'PowerShot', 'Pixus'],
   appearsYear: 1946, disappearsYear: 9999,
   initialMoney: 150000, minMargin: 0.35,

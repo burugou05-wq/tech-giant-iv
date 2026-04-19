@@ -1,7 +1,7 @@
 export const microsoft = {
   name: 'Microsoft', color: 'bg-emerald-500', textColor: 'text-emerald-400',
-  trait: 'ソフトウェア', strategy: 'follower', priceTarget: 'mainstream',
-  updateChance: 0.020, appealMod: 1.1, strongMarket: 'na',
+  trait: 'ソフトウェア帝国', strategy: 'innovator', priceTarget: 'premium', brand: 0.85,
+  updateChance: 0.03, appealMod: 1.3, strongMarket: 'na',
   prefixes: ['Surface', 'Windows', 'Xbox', 'Office', 'Azure'],
   appearsYear: 1975, disappearsYear: 9999,
   initialMoney: 150000, minMargin: 0.32,

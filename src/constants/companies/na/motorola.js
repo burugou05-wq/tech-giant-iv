@@ -1,7 +1,7 @@
 export const motorola = {
   name: 'Motorola', color: 'bg-red-500', textColor: 'text-red-400',
-  trait: '通信特化', strategy: 'innovator', priceTarget: 'premium',
-  updateChance: 0.020, appealMod: 1.0, strongMarket: 'na',
+  trait: '通信の先駆者', strategy: 'innovator', priceTarget: 'mainstream', brand: 0.6,
+  updateChance: 0.03, appealMod: 1.1, strongMarket: 'na',
   prefixes: ['Moto', 'Dyna', 'Star', 'RAZR'],
   appearsYear: 1946, disappearsYear: 2012,
   initialMoney: 180000, minMargin: 0.30,

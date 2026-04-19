@@ -1,7 +1,7 @@
 export const google = {
   name: 'Google', color: 'bg-amber-500', textColor: 'text-amber-400',
-  trait: '検索＆AI', strategy: 'innovator', priceTarget: 'budget',
-  updateChance: 0.030, appealMod: 1.2, strongMarket: 'na',
+  trait: 'デジタル覇者', strategy: 'innovator', priceTarget: 'premium', brand: 0.8,
+  updateChance: 0.05, appealMod: 1.25, strongMarket: 'na',
   prefixes: ['Pixel', 'Android', 'Chrome', 'Google', 'Nest'],
   appearsYear: 1998, disappearsYear: 9999,
   initialMoney: 100000, minMargin: 0.25,
