@@ -33,7 +33,14 @@ export default function Market() {
           return (
             <Card key={mKey} hover glass={!m.locked} className={m.locked ? 'opacity-70' : ''}>
               <CardHeader>
-                <h4 className="text-xl font-black text-white">{m.name}</h4>
+                <div className="flex flex-col">
+                  <h4 className="text-xl font-black text-white">{m.name}</h4>
+                  {!m.locked && (
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">
+                      週次推定需要: <span className="text-blue-400">{m.demand.toLocaleString()}</span> 個
+                    </span>
+                  )}
+                </div>
                 <div className="text-right">
                   {m.locked && <div className="text-[10px] text-amber-300 font-bold">進出未完了</div>}
                   <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">市場シェア</div>
@@ -144,11 +151,6 @@ export default function Market() {
                   )}
                 </div>
 
-                {!m.locked && (
-                  <div className="text-[10px] text-center text-slate-600 font-bold uppercase tracking-tighter">
-                    推定需要: {m.demand.toLocaleString()} 個 / 週
-                  </div>
-                )}
               </CardContent>
             </Card>
           );
