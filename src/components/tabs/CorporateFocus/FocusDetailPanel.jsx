@@ -59,7 +59,20 @@ export const FocusDetailPanel = ({
           )}
         </div>
 
-        {canStart ? (
+        {isActive ? (
+          <div className="space-y-2">
+            <div className="flex justify-between text-[10px] font-bold text-yellow-400 uppercase tracking-widest">
+              <span>策定中...</span>
+              <span>残り {Math.ceil((activeFocus.remainingTicks || 0) * 0.5)}ヶ月</span>
+            </div>
+            <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+              <div 
+                className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 transition-all duration-500 ease-out"
+                style={{ width: `${activeFocus.progress || 0}%` }}
+              />
+            </div>
+          </div>
+        ) : canStart ? (
           <button
             onClick={() => onStart(focus.id)}
             className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-black text-white flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 transition-all hover:scale-[1.02] active:scale-95"
