@@ -9,6 +9,8 @@ const INITIAL_AI_PRODUCTS = Object.fromEntries(
     name: `${ai.name} Classic`,
     appeal: 10, 
     price: 100,
+    techLevel: 1946,
+    category: 'home_appliance',
     launchYear: 1946 
   }])
 );
