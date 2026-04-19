@@ -3,8 +3,9 @@ export const siemens = {
   trait: '欧州の重鎮', strategy: 'follower', priceTarget: 'premium',
   updateChance: 0.015, appealMod: 0.85, strongMarket: 'eu',
   prefixes: ['Siemens', 'Nixdorf', 'Gigaset', 'Euro'],
-  appearsYear: 1946, disappearsYear: 2005,
-  regions: { eu: 1946, jp: 1980 },
+  appearsYear: 1946, disappearsYear: 9999,
+  initialMoney: 220000, minMargin: 0.24,
+  regions: { eu: 1946, na: 1960, jp: 1970 },
   stockBase: 200, revenueBase: 250000,
   strengths: ['欧州の通信インフラ支配', '産業用機器との連携', 'ドイツの精密技術'],
   eras: [

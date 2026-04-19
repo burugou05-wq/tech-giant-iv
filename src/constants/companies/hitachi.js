@@ -4,7 +4,8 @@ export const hitachi = {
   updateChance: 0.020, appealMod: 0.85, strongMarket: 'jp',
   prefixes: ['Hitachi', 'Wooo', 'Motor', 'Infra'],
   appearsYear: 1946, disappearsYear: 9999,
-  regions: { jp: 1946, na: 1970, eu: 1980 },
+  initialMoney: 160000, minMargin: 0.25,
+  regions: { jp: 1946, na: 1965, eu: 1970 },
   stockBase: 130, revenueBase: 170000,
   strengths: ['強靭なモーター技術', 'B2B市場からの安定収益', '質実剛健な設計'],
   eras: [
