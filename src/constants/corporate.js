@@ -24,7 +24,7 @@ export const CORPORATE_FOCUSES = [
   { id: 'fc_open_std',       tree: 'main',       name: 'オープン戦略',          era: 1970, lpCost: 120, req: ['fc_exp_first'],            reqType: 'all', excl: ['fc_prop_std'],  x: 980,  y: 500, desc: '製造コスト-20%、B2B収益確保。',                                effects: { costMulti: 0.8, openB2B: true } },
 
   // --- Overseas Expansion (1960s-1980s) ---
-  { id: 'fc_global_entry',   tree: 'overseas',   name: '海外展開戦略',          era: 1960, lpCost: 90,  req: ['fc_exp_first','fc_tech_first'], reqType: 'any', excl: [],               x: 1540, y: 260, desc: '日本市場での技術力を武器に、北米・欧州市場へ展開する。',        effects: { openOverseas: true } },
+  { id: 'fc_global_entry',   tree: 'overseas',   name: '海外展開戦略',          era: 1960, lpCost: 4,   req: ['fc_exp_first','fc_tech_first'], reqType: 'any', excl: [],               x: 1540, y: 260, desc: '日本市場での技術力を武器に、北米・欧州市場へ展開する。',        effects: { openOverseas: true } },
   { id: 'fc_direct_store',   tree: 'overseas',   name: '直営店創設',            era: 1970, lpCost: 100, req: ['fc_global_entry'],        reqType: 'all', excl: [],               x: 1540, y: 420, desc: '海外で直営店ネットワークを構築し、売り上げとブランド力を強化。', effects: { allowDirectStore: true } },
   { id: 'fc_global_brand',   tree: 'overseas',   name: 'グローバルブランド化',  era: 1980, lpCost: 150, req: ['fc_direct_store'],        reqType: 'all', excl: [],               x: 1540, y: 580, desc: '海外市場でのマーケティング効率が永続的に+50%。',               effects: { marketingMulti: 1.5 } },
 
