@@ -21,13 +21,13 @@ export const DesignStudio = ({
         <h3 className="text-2xl font-black text-yellow-400 flex items-center gap-3">
           <Wrench size={28} /> 設計スタジオ
         </h3>
-        <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">New Product Prototype</span>
+        <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">新規製品プロトタイプ</span>
       </CardHeader>
       
       <CardContent className="space-y-6">
         {/* モデル名入力 */}
         <div className="space-y-2">
-          <label className="text-[10px] text-slate-500 font-black uppercase px-1">Model Name</label>
+          <label className="text-[10px] text-slate-500 font-black uppercase px-1">モデル名</label>
           <input
             type="text" value={designName}
             onChange={e => setDesignName(e.target.value)}
@@ -38,7 +38,7 @@ export const DesignStudio = ({
 
         {/* シャーシ選択 */}
         <div className="space-y-2">
-          <label className="text-[10px] text-slate-500 font-black uppercase px-1">Platform / Chassis</label>
+          <label className="text-[10px] text-slate-500 font-black uppercase px-1">プラットフォーム / シャーシ</label>
           <select
             value={selectedChassisId}
             onChange={e => { setSelectedChassisId(e.target.value); setDesignSlots({}); }}
@@ -52,7 +52,7 @@ export const DesignStudio = ({
 
         {/* 部品スロット */}
         <div className="space-y-3 pt-2">
-          <label className="text-[10px] text-slate-500 font-black uppercase px-1">Component Slots</label>
+          <label className="text-[10px] text-slate-500 font-black uppercase px-1">コンポーネントスロット</label>
           {chassis.slots.map(slotType => (
             <select
               key={slotType} value={designSlots[slotType] || ''}
@@ -70,9 +70,9 @@ export const DesignStudio = ({
         {/* 価格設定 */}
         <div className="space-y-4 pt-4 border-t border-slate-700/50">
           <div className="flex justify-between items-end">
-            <label className="text-[10px] text-slate-500 font-black uppercase px-1">Target Retail Price</label>
+            <label className="text-[10px] text-slate-500 font-black uppercase px-1">希望販売価格</label>
             <div className="text-xs font-black text-slate-400 bg-slate-900 px-2 py-0.5 rounded">
-              Cost: ${specs.cost}k
+              原価: ${specs.cost}k
             </div>
           </div>
           
@@ -98,7 +98,7 @@ export const DesignStudio = ({
           </div>
 
           <div className="flex justify-between items-center px-1">
-            <span className="text-[9px] text-slate-500 font-bold uppercase">Estimated Margin</span>
+            <span className="text-[9px] text-slate-500 font-bold uppercase">想定利益率</span>
             <span className={`text-xs font-black ${
               designPrice > specs.cost * 2 ? 'text-emerald-400' : 
               designPrice > specs.cost ? 'text-yellow-400' : 'text-rose-500'
@@ -111,11 +111,11 @@ export const DesignStudio = ({
           {specs.recommendation && (
             <div className="mt-2 p-3 bg-slate-900/40 rounded-xl border border-slate-800/50 flex items-center justify-between">
               <div className="space-y-1">
-                <div className="text-[8px] text-slate-500 font-black uppercase tracking-widest">Market Average</div>
+                <div className="text-[8px] text-slate-500 font-black uppercase tracking-widest">市場相場</div>
                 <div className="text-xs font-black text-slate-300">${specs.recommendation.avg}k</div>
               </div>
               <div className="text-center">
-                <div className="text-[8px] text-indigo-400 font-black uppercase tracking-widest mb-1">Recommended</div>
+                <div className="text-[8px] text-indigo-400 font-black uppercase tracking-widest mb-1">おすすめ</div>
                 <button 
                   onClick={() => setDesignPrice(specs.recommendation.price)}
                   className="px-3 py-1 bg-indigo-500/20 hover:bg-indigo-500/40 border border-indigo-500/30 rounded-lg text-indigo-300 text-[10px] font-black transition-all"
@@ -131,11 +131,11 @@ export const DesignStudio = ({
         {canSave && (
           <div className="p-4 bg-slate-950/60 rounded-2xl border border-slate-800 space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-[10px] text-slate-500 font-black uppercase">Estimated Appeal</span>
+              <span className="text-[10px] text-slate-500 font-black uppercase">想定魅力度</span>
               <span className="text-lg font-black text-yellow-400">{specs.appeal}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-[10px] text-slate-500 font-black uppercase">Unit Production Cost</span>
+              <span className="text-[10px] text-slate-500 font-black uppercase">製造原価</span>
               <span className="text-lg font-black text-red-400">${specs.cost.toLocaleString()}k</span>
             </div>
             
