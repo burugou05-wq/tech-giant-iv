@@ -122,27 +122,45 @@ export default function CompanyDetailPanel({ companyId, onClose }) {
                 <Package size={18} className="text-indigo-400" />
                 <span className="text-xs font-black text-slate-300 uppercase tracking-tighter">Active Flagship</span>
               </div>
-              <div className="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 text-[9px] font-black rounded uppercase">In Market</div>
+              <div className="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 text-[9px] font-black rounded uppercase">
+                {ai.strategy === 'innovator' ? 'High-End' : ai.strategy === 'cost_leader' ? 'Budget' : 'Mainstream'}
+              </div>
             </div>
             
             <div className="space-y-4">
-              <div>
-                <div className={`text-2xl font-black ${textColor} tracking-tight leading-tight`}>
-                  {currentProduct.productName}
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className={`text-2xl font-black ${textColor} tracking-tight leading-tight`}>
+                    {currentProduct.name || currentProduct.productName}
+                  </div>
+                  <div className="text-[9px] text-slate-500 font-bold uppercase mt-1">Product Designation</div>
                 </div>
-                <div className="text-[9px] text-slate-500 font-bold uppercase mt-1">Product Designation</div>
+                {currentProduct.price && (
+                  <div className="text-right">
+                    <div className="text-xl font-black text-white">${Math.floor(currentProduct.price)}</div>
+                    <div className="text-[9px] text-slate-500 font-bold uppercase mt-1">Market Price</div>
+                  </div>
+                )}
               </div>
               
-              <div className="pt-2">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Market Appeal Score</span>
-                  <span className="text-lg font-black text-white">{Math.floor(currentProduct.appeal)}</span>
+              <div className="pt-2 grid grid-cols-2 gap-4">
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-[9px] text-slate-400 font-black uppercase tracking-widest">Appeal</span>
+                    <span className="text-xs font-black text-white">{Math.floor(currentProduct.appeal)}</span>
+                  </div>
+                  <div className="w-full bg-slate-900 h-2 rounded-full border border-slate-800 p-0.5">
+                    <div className="h-full rounded-full bg-indigo-500" style={{ width: `${Math.min(100, (currentProduct.appeal || 0) * 1.5)}%` }} />
+                  </div>
                 </div>
-                <div className="w-full bg-slate-900 h-3 rounded-full border border-slate-800 p-0.5 shadow-inner">
-                  <div 
-                    className="h-full rounded-full bg-gradient-to-r from-indigo-600 via-purple-500 to-pink-500 transition-all duration-1000" 
-                    style={{ width: `${Math.min(100, (currentProduct.appeal || 0) * 1.5)}%` }}
-                  />
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-[9px] text-slate-400 font-black uppercase tracking-widest">Tech Era</span>
+                    <span className="text-xs font-black text-white">{currentProduct.techLevel || '---'}</span>
+                  </div>
+                  <div className="w-full bg-slate-900 h-2 rounded-full border border-slate-800 p-0.5">
+                    <div className="h-full rounded-full bg-emerald-500" style={{ width: `${Math.min(100, (currentProduct.techLevel - 1946) * 2)}%` }} />
+                  </div>
                 </div>
               </div>
             </div>

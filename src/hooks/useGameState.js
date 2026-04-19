@@ -3,7 +3,14 @@ import { useState } from 'react';
 import { AI_COMPANIES } from '../constants/index.js';
 
 const INITIAL_AI_PRODUCTS = Object.fromEntries(
-  Object.entries(AI_COMPANIES).map(([id, ai]) => [id, { appeal: 10, productName: `${ai.name} Classic` }])
+  Object.entries(AI_COMPANIES).map(([id, ai]) => [id, { 
+    id: `${id}_init`,
+    companyId: id,
+    name: `${ai.name} Classic`,
+    appeal: 10, 
+    price: 100,
+    launchYear: 1946 
+  }])
 );
 
 export function useGameState() {

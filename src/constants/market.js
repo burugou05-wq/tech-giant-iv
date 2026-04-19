@@ -1,7 +1,8 @@
 export const AI_COMPANIES = {
   toshiba: {
     name: 'Toshiba', color: 'bg-red-700', textColor: 'text-red-500',
-    trait: 'バランス型', updateChance: 0.025, appealMod: 1.0, strongMarket: 'jp',
+    trait: 'バランス型', strategy: 'follower', priceTarget: 'mainstream',
+    updateChance: 0.025, appealMod: 1.0, strongMarket: 'jp',
     prefixes: ['Dynabook', 'Regza', 'Toshiba', 'Satellite'],
     appearsYear: 1946, disappearsYear: 9999,
     regions: { jp: 1946, na: 1960, eu: 1965 },
@@ -14,7 +15,8 @@ export const AI_COMPANIES = {
   },
   philips: {
     name: 'Philips', color: 'bg-blue-500', textColor: 'text-blue-400',
-    trait: '手堅い欧州企業', updateChance: 0.020, appealMod: 0.9, strongMarket: 'eu',
+    trait: '手堅い欧州企業', strategy: 'follower', priceTarget: 'mainstream',
+    updateChance: 0.020, appealMod: 0.9, strongMarket: 'eu',
     prefixes: ['Philips', 'Senseo', 'Sonic', 'Euro'],
     appearsYear: 1946, disappearsYear: 2015,
     regions: { eu: 1946, na: 1950, jp: 1970 },
@@ -27,7 +29,8 @@ export const AI_COMPANIES = {
   },
   panasonic: {
     name: 'Panasonic', color: 'bg-blue-900', textColor: 'text-blue-400',
-    trait: '量産・手堅い', updateChance: 0.030, appealMod: 0.85, strongMarket: 'jp',
+    trait: '量産・手堅い', strategy: 'cost_leader', priceTarget: 'mainstream',
+    updateChance: 0.030, appealMod: 0.85, strongMarket: 'jp',
     prefixes: ['Panasonic', 'National', 'Lumix', 'Technics'],
     appearsYear: 1946, disappearsYear: 9999,
     regions: { jp: 1946, na: 1970, eu: 1980 },
@@ -40,7 +43,8 @@ export const AI_COMPANIES = {
   },
   motorola: {
     name: 'Motorola', color: 'bg-red-500', textColor: 'text-red-400',
-    trait: '通信特化', updateChance: 0.020, appealMod: 1.0, strongMarket: 'na',
+    trait: '通信特化', strategy: 'innovator', priceTarget: 'premium',
+    updateChance: 0.020, appealMod: 1.0, strongMarket: 'na',
     prefixes: ['Moto', 'Dyna', 'Star', 'RAZR'],
     appearsYear: 1946, disappearsYear: 2012,
     regions: { na: 1946, eu: 1980, jp: 1990 },
@@ -53,7 +57,8 @@ export const AI_COMPANIES = {
   },
   samsung: {
     name: 'Samsung', color: 'bg-blue-600', textColor: 'text-blue-400',
-    trait: '量産・高頻度', updateChance: 0.040, appealMod: 0.8, strongMarket: 'eu',
+    trait: '量産・高頻度', strategy: 'cost_leader', priceTarget: 'budget',
+    updateChance: 0.040, appealMod: 0.8, strongMarket: 'eu',
     prefixes: ['Galaxy', 'Wave', 'Samsung', 'OLED', 'Z-Fold'],
     appearsYear: 1969, disappearsYear: 9999,
     regions: { eu: 1969, na: 1980, jp: 2000 },
@@ -66,7 +71,8 @@ export const AI_COMPANIES = {
   },
   nokia: {
     name: 'Nokia', color: 'bg-sky-400', textColor: 'text-sky-300',
-    trait: 'モバイル全振り', updateChance: 0.035, appealMod: 1.1, strongMarket: 'eu',
+    trait: 'モバイル全振り', strategy: 'innovator', priceTarget: 'mainstream',
+    updateChance: 0.035, appealMod: 1.1, strongMarket: 'eu',
     prefixes: ['Nokia', 'Lumia', 'Communicator', 'N-Gage'],
     appearsYear: 1980, disappearsYear: 2014,
     regions: { eu: 1980, na: 1995, jp: 2000 },
@@ -79,7 +85,8 @@ export const AI_COMPANIES = {
   },
   apple: {
     name: 'Apple', color: 'bg-zinc-300', textColor: 'text-zinc-400',
-    trait: '革新重視', updateChance: 0.015, appealMod: 1.3, strongMarket: 'na',
+    trait: '革新重視', strategy: 'innovator', priceTarget: 'premium',
+    updateChance: 0.015, appealMod: 1.3, strongMarket: 'na',
     prefixes: ['Apple', 'iPod', 'Mac', 'iPhone', 'iPad'],
     appearsYear: 1976, disappearsYear: 9999,
     regions: { na: 1976, eu: 1985, jp: 1990 },
@@ -92,7 +99,8 @@ export const AI_COMPANIES = {
   },
   microsoft: {
     name: 'Microsoft', color: 'bg-emerald-500', textColor: 'text-emerald-400',
-    trait: 'ソフトウェア', updateChance: 0.020, appealMod: 1.1, strongMarket: 'na',
+    trait: 'ソフトウェア', strategy: 'follower', priceTarget: 'mainstream',
+    updateChance: 0.020, appealMod: 1.1, strongMarket: 'na',
     prefixes: ['Surface', 'Windows', 'Xbox', 'Office', 'Azure'],
     appearsYear: 1975, disappearsYear: 9999,
     regions: { na: 1975, eu: 1980, jp: 1985 },
@@ -105,7 +113,8 @@ export const AI_COMPANIES = {
   },
   google: {
     name: 'Google', color: 'bg-amber-500', textColor: 'text-amber-400',
-    trait: '検索＆AI', updateChance: 0.030, appealMod: 1.2, strongMarket: 'na',
+    trait: '検索＆AI', strategy: 'innovator', priceTarget: 'budget',
+    updateChance: 0.030, appealMod: 1.2, strongMarket: 'na',
     prefixes: ['Pixel', 'Android', 'Chrome', 'Google', 'Nest'],
     appearsYear: 1998, disappearsYear: 9999,
     regions: { na: 1998, eu: 2000, jp: 2002 },
@@ -118,7 +127,8 @@ export const AI_COMPANIES = {
   },
   ge: {
     name: 'GE', color: 'bg-slate-400', textColor: 'text-slate-300',
-    trait: '巨大複合企業', updateChance: 0.015, appealMod: 0.9, strongMarket: 'na',
+    trait: '巨大複合企業', strategy: 'cost_leader', priceTarget: 'mainstream',
+    updateChance: 0.015, appealMod: 0.9, strongMarket: 'na',
     prefixes: ['GE', 'General', 'Electric', 'Hotpoint'],
     appearsYear: 1946, disappearsYear: 2004,
     regions: { na: 1946, eu: 1960 },
@@ -131,7 +141,8 @@ export const AI_COMPANIES = {
   },
   hitachi: {
     name: 'Hitachi', color: 'bg-rose-600', textColor: 'text-rose-400',
-    trait: '重電・インフラ', updateChance: 0.020, appealMod: 0.85, strongMarket: 'jp',
+    trait: '重電・インフラ', strategy: 'cost_leader', priceTarget: 'mainstream',
+    updateChance: 0.020, appealMod: 0.85, strongMarket: 'jp',
     prefixes: ['Hitachi', 'Wooo', 'Motor', 'Infra'],
     appearsYear: 1946, disappearsYear: 9999,
     regions: { jp: 1946, na: 1970, eu: 1980 },
@@ -144,7 +155,8 @@ export const AI_COMPANIES = {
   },
   siemens: {
     name: 'Siemens', color: 'bg-teal-500', textColor: 'text-teal-400',
-    trait: '欧州の重鎮', updateChance: 0.015, appealMod: 0.85, strongMarket: 'eu',
+    trait: '欧州の重鎮', strategy: 'follower', priceTarget: 'premium',
+    updateChance: 0.015, appealMod: 0.85, strongMarket: 'eu',
     prefixes: ['Siemens', 'Nixdorf', 'Gigaset', 'Euro'],
     appearsYear: 1946, disappearsYear: 2005,
     regions: { eu: 1946, jp: 1980 },
@@ -157,7 +169,8 @@ export const AI_COMPANIES = {
   },
   nintendo: {
     name: 'Nintendo', color: 'bg-fuchsia-500', textColor: 'text-fuchsia-400',
-    trait: '娯楽特化', updateChance: 0.030, appealMod: 1.4, strongMarket: 'jp',
+    trait: '娯楽特化', strategy: 'innovator', priceTarget: 'budget',
+    updateChance: 0.030, appealMod: 1.4, strongMarket: 'jp',
     prefixes: ['GameBoy', 'NES', 'SNES', 'N64', 'Switch'],
     appearsYear: 1977, disappearsYear: 9999,
     regions: { jp: 1977, na: 1985, eu: 1990 },
@@ -170,7 +183,8 @@ export const AI_COMPANIES = {
   },
   blackberry: {
     name: 'BlackBerry', color: 'bg-violet-600', textColor: 'text-violet-400',
-    trait: 'ビジネス特化', updateChance: 0.025, appealMod: 1.2, strongMarket: 'na',
+    trait: 'ビジネス特化', strategy: 'innovator', priceTarget: 'premium',
+    updateChance: 0.025, appealMod: 1.2, strongMarket: 'na',
     prefixes: ['BlackBerry', 'Curve', 'Bold', 'Passport'],
     appearsYear: 1999, disappearsYear: 2016,
     regions: { na: 1999, eu: 2002 },
