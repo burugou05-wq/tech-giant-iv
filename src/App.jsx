@@ -35,7 +35,6 @@ export default function App() {
   const [designName, setDesignName]               = useState('');
 
   const engine = useGameEngine();
-  const { stateRef, ...engineRest } = engine;
 
   // ==========================================
   // Context に渡す値
@@ -49,8 +48,7 @@ export default function App() {
     designName, setDesignName,
     
     // Engine state & handlers
-    ...engineRest,
-    stateRef,
+    ...engine,
   };
 
   return (

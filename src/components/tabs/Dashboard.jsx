@@ -3,12 +3,13 @@ import { useGame } from '../../context/GameContext.jsx';
 import { CONTENT_INVESTMENTS, DECISIONS } from '../../constants/index.js';
 
 export default function Dashboard() {
+  const game = useGame();
   const {
     stockPrice, playerEquity, money, setMoney, setPlayerEquity, setStockPrice,
     lastTickProfit, currentEffects, yenRate, qualityLevel, setQualityLevel,
-    contentOwned, setContentOwned, logs, leadershipPower, stateRef, executeDecision,
+    contentOwned, setContentOwned, logs, leadershipPower, executeDecision,
     orgStructure, updateBudgetAllocation, blueprints, currentYear,
-  } = useGame();
+  } = game;
 
   const totalCost = lastTickProfit.varCost + lastTickProfit.fixedCost
     + lastTickProfit.marketingCost + lastTickProfit.storeCost;
@@ -153,7 +154,7 @@ export default function Dashboard() {
         </h3>
         <div className="space-y-3 overflow-y-auto flex-1">
           {DECISIONS.map(dec => {
-            const isVisible = !dec.req || (stateRef && dec.req(stateRef.current));
+            const isVisible = !dec.req || dec.req(game);
             if (!isVisible) return null;
             const canAfford = leadershipPower >= dec.lpCost && money >= dec.moneyCost;
             return (
