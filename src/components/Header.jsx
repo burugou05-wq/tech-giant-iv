@@ -42,8 +42,13 @@ export default function Header() {
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-4 font-mono text-2xl font-black text-yellow-400 bg-slate-950 p-2 px-4 rounded-xl border border-slate-800">
-          {currentYear}年
+        <div className="flex items-center gap-4 font-mono text-2xl font-black text-yellow-400 bg-slate-950 p-2 px-6 rounded-xl border border-slate-800 shadow-inner">
+          <div className="flex items-baseline gap-1">
+            <span>{currentYear}</span>
+            <span className="text-xs text-slate-500 font-sans">年</span>
+            <span className="ml-2">{currentMonth}</span>
+            <span className="text-xs text-slate-500 font-sans">月</span>
+          </div>
           <button onClick={() => setIsPaused(p => !p)} className="w-8 h-8 flex items-center justify-center">
             {isPaused ? <Play size={20} /> : <Pause size={20} />}
           </button>

@@ -29,6 +29,7 @@ export function useGameEngine() {
 
   const currentDate    = new Date(START_DATE.getTime() + ticks * 14 * 24 * 60 * 60 * 1000);
   const currentYear    = currentDate.getFullYear();
+  const currentMonth   = currentDate.getMonth() + 1;
   const currentDateStr = currentDate.toISOString().split('T')[0];
 
   const stateRef = useRef(null);
@@ -112,5 +113,5 @@ export function useGameEngine() {
   }, [isPaused, activeEvent, gameSpeed]);
 
   const actions = useGameActions(state, addLog, currentYear);
-  return { ...state, currentDate, currentYear, currentDateStr, currentEffects, currentSpirits, ...actions, addLog, stateRef };
+  return { ...state, currentDate, currentYear, currentMonth, currentDateStr, currentEffects, currentSpirits, ...actions, addLog, stateRef };
 }
