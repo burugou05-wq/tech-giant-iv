@@ -16,7 +16,8 @@ export default function Design() {
     designPrice, setDesignPrice,
     blueprints, setBlueprints,
     productionLines, money, currentYear,
-    refreshBlueprint, divisions, currentEffects
+    refreshBlueprint, divisions, currentEffects,
+    aiProducts
   } = useGame();
 
   const chassis = useMemo(() => 
@@ -31,8 +32,9 @@ export default function Design() {
     allTech: COMPONENT_TECH,
     chassisDiv: divisions[chassis.category],
     currentYear,
-    currentEffects
-  }), [chassis, designSlots, divisions, currentYear, currentEffects]);
+    currentEffects,
+    aiProducts
+  }), [chassis, designSlots, divisions, currentYear, currentEffects, aiProducts]);
 
   const canSave = designName && chassis.slots.every(s => designSlots[s]);
 

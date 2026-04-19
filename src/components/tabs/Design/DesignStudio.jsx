@@ -106,6 +106,25 @@ export const DesignStudio = ({
               {(((designPrice - specs.cost) / Math.max(1, designPrice)) * 100).toFixed(1)}%
             </span>
           </div>
+
+          {/* 相場ガイド */}
+          {specs.recommendation && (
+            <div className="mt-2 p-3 bg-slate-900/40 rounded-xl border border-slate-800/50 flex items-center justify-between">
+              <div className="space-y-1">
+                <div className="text-[8px] text-slate-500 font-black uppercase tracking-widest">Market Average</div>
+                <div className="text-xs font-black text-slate-300">${specs.recommendation.avg}k</div>
+              </div>
+              <div className="text-center">
+                <div className="text-[8px] text-indigo-400 font-black uppercase tracking-widest mb-1">Recommended</div>
+                <button 
+                  onClick={() => setDesignPrice(specs.recommendation.price)}
+                  className="px-3 py-1 bg-indigo-500/20 hover:bg-indigo-500/40 border border-indigo-500/30 rounded-lg text-indigo-300 text-[10px] font-black transition-all"
+                >
+                  ${specs.recommendation.price}k を適用
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* プレビュー数値 */}
