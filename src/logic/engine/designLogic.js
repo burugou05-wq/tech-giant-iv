@@ -35,6 +35,11 @@ export const calculateDesignSpecs = (params) => {
   });
   const finalCost = Math.round(cost * totalCostMulti);
 
+  return {
+    appeal: finalAppeal,
+    cost: finalCost,
+    totalCostMulti,
+    isSiloActive,
     moralePenalty: chassisDiv?.morale < 60,
     recommendation: calculateRecommendedPrice(finalAppeal, finalCost, chassis.category, params.aiProducts)
   };
