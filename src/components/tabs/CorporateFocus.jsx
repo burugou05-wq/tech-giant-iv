@@ -10,11 +10,22 @@ import { FocusConnections } from './CorporateFocus/FocusConnections.jsx';
 
 export default function CorporateFocus() {
   const {
-    completedFocuses, activeFocus, selectedFocusDetails, setSelectedFocusDetails,
-    unlockedTrees, currentYear, startCorporateFocus,
+    completedFocuses = [], 
+    activeFocus, 
+    selectedFocusDetails, 
+    setSelectedFocusDetails,
+    unlockedTrees = ['main'], 
+    currentYear, 
+    startCorporateFocus,
   } = useGame();
   
   const [zoom, setZoom] = useState(1);
+
+  // 安全なフィルタリング
+  const visibleFocuses = CORPORATE_FOCUSES.filter(f => {
+    const trees = unlockedTrees || ['main'];
+    return trees.includes(f.tree);
+  });
 
   return (
     <div className="flex-1 bg-slate-900 rounded-3xl border border-slate-800 overflow-auto relative shadow-2xl"
@@ -29,18 +40,19 @@ export default function CorporateFocus() {
         
         {/* 接続線 (SVG) */}
         <FocusConnections 
-          unlockedTrees={unlockedTrees} 
-          completedFocuses={completedFocuses} 
+          unlockedTrees={unlockedTrees || ['main']} 
+          completedFocuses={completedFocuses || []} 
         />
 
         {/* 方針ノード群 */}
-        {CORPORATE_FOCUSES.filter(f => unlockedTrees.includes(f.tree)).map(focus => {
-          const isCompleted = completedFocuses.includes(focus.id);
+        {visibleFocuses.map(focus => {
+          const completed = completedFocuses || [];
+          const isCompleted = completed.includes(focus.id);
           const activeMatch = activeFocus?.id === focus.id ? activeFocus : null;
           const reqMet      = !focus.req || focus.req.length === 0 || (
             focus.reqType === 'any'
-              ? focus.req.some(r => completedFocuses.includes(r))
-              : focus.req.every(r => completedFocuses.includes(r))
+              ? focus.req.some(r => completed.includes(r))
+              : focus.req.every(r => completed.includes(r))
           );
           const exclBlocked = focus.excl?.some(e => completedFocuses.includes(e));
           const eraOk       = currentYear >= focus.era;
