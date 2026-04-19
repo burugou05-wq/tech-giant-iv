@@ -101,6 +101,7 @@ export function useGameState() {
     siloRisk: 0,
   });
 
+  /** @param {any} s */
   const loadFullState = (s) => {
     if (!s) return;
     if (s.money !== undefined) setMoney(s.money);
