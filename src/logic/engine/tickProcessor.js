@@ -39,6 +39,7 @@ export function processGameTick(s) {
   let newLogs          = [];
   let nextActiveEvent  = null;
   let nextIsPaused     = false;
+  let instantEffectMoney = 0;
 
   const baseEffects = getCurrentEffects(s.completedFocuses);
   const budget = nextOrgStructure.budgetAllocation || { rnd: 50, production: 50, marketing: 50, hr: 50 };
@@ -72,10 +73,23 @@ export function processGameTick(s) {
       
       // 方針完了時のエフェクト処理（ツリー解放など）
       const focusDef = CORPORATE_FOCUSES.find(f => f.id === focusId);
-      if (focusDef?.effects?.unlockTree) {
-        const tree = focusDef.effects.unlockTree;
-        if (!nextUnlockedTrees.includes(tree)) {
-          nextUnlockedTrees.push(tree);
+      if (focusDef?.effects) {
+        // 1. ツリー解放
+        if (focusDef.effects.unlockTree) {
+          const tree = focusDef.effects.unlockTree;
+          if (!nextUnlockedTrees.includes(tree)) {
+            nextUnlockedTrees.push(tree);
+          }
+        }
+        // 2. 海外市場の解放
+        if (focusDef.effects.openOverseas) {
+          if (nextMarkets.na) nextMarkets.na.locked = false;
+          if (nextMarkets.eu) nextMarkets.eu.locked = false;
+          newLogs.push({ time: dateStr, msg: `【海外展開】北米市場と欧州市場が解放されました！`, type: 'info', color: 'text-indigo-400' });
+        }
+        // 3. 即時資金変動
+        if (focusDef.effects.instantMoney) {
+          instantEffectMoney += focusDef.effects.instantMoney;
         }
       }
 
@@ -179,7 +193,7 @@ export function processGameTick(s) {
   return {
     type: 'TICK',
     nextState: {
-      money: s.money + profit,
+      money: s.money + profit + instantEffectMoney,
       researchPoints: s.researchPoints + rpGain,
       leadershipPower: s.leadershipPower + 1,
       stockPrice: financeResults.newStockPrice(s.stockPrice),
