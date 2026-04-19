@@ -6,7 +6,7 @@ export function updateMarketSystem(nextMarkets, preciseYear, calcYear, nextFlags
     if (nextMarkets[k].locked) return;
     
     let baseDemand = 1000;
-    const yearsPassed = Math.max(0, preciseYear - 1946);
+    const yearsPassed = Number.isFinite(preciseYear) ? Math.max(0, preciseYear - 1946) : 0;
     
     // 市場ごとの基本需要曲線
     if (k === 'na')      baseDemand = 1500 + yearsPassed * 200 + Math.pow(yearsPassed, 1.65) * 4;
@@ -24,14 +24,19 @@ export function updateMarketSystem(nextMarkets, preciseYear, calcYear, nextFlags
         baseDemand = 2000 + (preciseYear - 1992) * 25;
       }
     }
+
+    if (!Number.isFinite(baseDemand)) baseDemand = 1000;
     
     // 世界的な不況イベント
     if (calcYear >= 2000 && calcYear <= 2002 && k !== 'jp') baseDemand *= 0.7; // ITバブル崩壊
     if (calcYear >= 2008 && calcYear <= 2010) baseDemand *= 0.6;              // リーマンショック
     
-    nextMarkets[k].demand = Math.floor(
-      nextMarkets[k].demand * 0.85 + (baseDemand * (0.92 + Math.random() * 0.16)) * 0.15
+    const currentDemand = Number.isFinite(nextMarkets[k].demand) ? nextMarkets[k].demand : 0;
+    const calculatedDemand = Math.floor(
+      currentDemand * 0.85 + (baseDemand * (0.92 + Math.random() * 0.16)) * 0.15
     );
+
+    nextMarkets[k].demand = Number.isFinite(calculatedDemand) ? calculatedDemand : Math.floor(baseDemand);
   });
 }
 
