@@ -93,6 +93,41 @@ export function processGameTick(s) {
   const totalPlayerDemandShare = simulateMarketShares(nextMarkets, nextAiProducts, sellableProducts[0] || null, calcYear, loopEffects);
   const salesResults = executeSales(nextMarkets, sellableProducts, nextInv, loopEffects, nextYenRate, s.euExtraCost ?? 0);
 
+  // --- AI 企業の収支・価格戦略の更新 ---
+  const nextAiFinances = JSON.parse(JSON.stringify(s.aiFinances));
+  Object.entries(salesResults.aiSales).forEach(([id, sales]) => {
+    const aiProduct = nextAiProducts[id];
+    const aiFin = nextAiFinances[id];
+    const aiDef = AI_COMPANIES[id];
+    if (aiProduct && aiFin && !aiFin.isBankrupt) {
+      const revenue = sales.units * aiProduct.price;
+      const cost = sales.units * (aiProduct.baseCost || 70);
+      const tickProfit = revenue - cost;
+      
+      aiFin.money += tickProfit;
+      
+      // 利益率ベースの動的価格設定
+      const currentMargin = tickProfit / (Math.abs(revenue) || 1);
+      const targetMargin = aiDef?.minMargin || 0.25;
+      
+      if (currentMargin < targetMargin) {
+        aiProduct.price = Math.round(aiProduct.price * 1.02); // 利益不足なら値上げ
+      } else if (currentMargin > targetMargin + 0.2) {
+        aiProduct.price = Math.round(aiProduct.price * 0.99); // 余裕があれば値下げしてシェア取り
+      }
+      
+      // 倒産判定（債務超過）
+      if (aiFin.money < -100000) {
+        aiFin.isBankrupt = true;
+        newLogs.push({ time: dateStr, msg: `【倒産】${aiDef.name}が経営破綻し、市場から撤退しました。`, type: 'error', color: 'text-red-500' });
+        // 全市場からシェアを抹消
+        Object.keys(nextMarkets).forEach(mKey => {
+          if (nextMarkets[mKey].shares[id]) nextMarkets[mKey].shares[id] = 0;
+        });
+      }
+    }
+  });
+
   const financeResults = updateFinanceSystem(
     s.money, salesResults.currentRevenue - (prodResults.currentVarCost + prodResults.repairCostThisTick),
     totalPlayerDemandShare, calcYear, s.totalFactories, nextMarkets, budget, loopEffects, 0, 0
@@ -135,6 +170,7 @@ export function processGameTick(s) {
       inventory: nextInv,
       markets: nextMarkets,
       aiProducts: nextAiProducts,
+      aiFinances: nextAiFinances,
       flags: nextFlags,
       orgStructure: nextOrgStructure,
       divisions: nextDivisions,

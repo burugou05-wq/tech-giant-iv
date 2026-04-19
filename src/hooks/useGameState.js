@@ -9,9 +9,18 @@ const INITIAL_AI_PRODUCTS = Object.fromEntries(
     name: `${ai.name} Classic`,
     appeal: 10, 
     price: 100,
+    baseCost: 70,
     techLevel: 1946,
     category: 'home_appliance',
     launchYear: 1946 
+  }])
+);
+
+const INITIAL_AI_FINANCES = Object.fromEntries(
+  Object.entries(AI_COMPANIES).map(([id, ai]) => [id, {
+    money: ai.initialMoney || 100000,
+    isBankrupt: false,
+    activeMarkets: Object.keys(ai.regions || { jp: 0 })
   }])
 );
 
@@ -57,6 +66,7 @@ export function useGameState() {
     eu: { name: '欧州市場', demand: 0,   shares: { player: 0, philips: 0.6, siemens: 0.4 }, marketing: 0, stores: 0, locked: true },
   });
   const [aiProducts, setAiProducts] = useState(INITIAL_AI_PRODUCTS);
+  const [aiFinances, setAiFinances] = useState(INITIAL_AI_FINANCES);
 
   // --- Research & Production ---
   const [unlockedChassis, setUnlockedChassis]   = useState(['ch_rice_cooker']);
@@ -99,7 +109,7 @@ export function useGameState() {
     yenRate, setYenRate, productionDebuff, setProductionDebuff, euExtraCost, setEuExtraCost,
     divisions, setDivisions,
     logs, setLogs, chartData, setChartData, lastTickProfit, setLastTickProfit,
-    markets, setMarkets, aiProducts, setAiProducts,
+    markets, setMarkets, aiProducts, setAiProducts, aiFinances, setAiFinances,
     unlockedChassis, setUnlockedChassis, unlockedModules, setUnlockedModules,
     blueprints, setBlueprints, productionLines, setProductionLines, inventory, setInventory,
     leadershipPower, setLeadershipPower, activeFocus, setActiveFocus,
