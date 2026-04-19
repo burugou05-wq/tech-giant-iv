@@ -142,9 +142,52 @@ export default function CompanyDetailPanel({ companyId, onClose }) {
               <div className="flex items-center gap-2 text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">
                 <BarChart2 size={12} className="text-emerald-400" /> Revenue
               </div>
-              <div className="text-2xl font-black text-emerald-400 leading-none">${(getCompanyRevenue(companyId) / 1000).toFixed(0)}M</div>
+              <div className="text-2xl font-black text-white leading-none">${(getCompanyRevenue(companyId) / 1000).toFixed(0)}M</div>
               <div className="text-[9px] text-slate-500 mt-2 font-bold uppercase">Estimated Annual</div>
             </div>
+          </div>
+
+          {/* 3. ブランド力 & バフ表示 */}
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-5 border border-slate-700 shadow-2xl relative overflow-hidden group">
+            <div className="absolute -right-4 -top-4 opacity-10 group-hover:opacity-20 transition-opacity">
+              <Zap size={80} className="text-yellow-500" />
+            </div>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Zap size={16} className="text-yellow-500" />
+                <span className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">Brand Prestige</span>
+              </div>
+              <div className="text-xs font-black text-yellow-500 bg-yellow-500/10 px-2 py-0.5 rounded-full border border-yellow-500/20">
+                RANK {Math.round((ai.brand || 0.3) * 10)}
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-1">
+                <div className="text-[9px] text-slate-500 font-bold uppercase">魅力度ボーナス</div>
+                <div className="text-xl font-black text-white flex items-center gap-1">
+                  +{(Math.round(((ai.appealMod || 1.0) * (currentEra?.buff || 1.0) - 1.0) * 100))}%
+                  <span className="text-[10px] text-emerald-400 font-bold">BUFF</span>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-[9px] text-slate-500 font-bold uppercase">価格耐性（ブランド料）</div>
+                <div className="text-xl font-black text-white flex items-center gap-1">
+                  {Math.round((ai.brand || 0.3) * 100)}
+                  <span className="text-[10px] text-indigo-400 font-bold">RES</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 w-full bg-slate-950 h-1.5 rounded-full overflow-hidden p-0.5 border border-slate-800">
+              <div 
+                className="bg-gradient-to-r from-yellow-600 to-yellow-400 h-full rounded-full transition-all duration-1000" 
+                style={{ width: `${(ai.brand || 0.3) * 100}%` }} 
+              />
+            </div>
+            <p className="mt-2 text-[9px] text-slate-500 font-bold leading-tight">
+              ブランド力が高いほど、高価格でも製品の魅力が維持されやすくなります。
+            </p>
           </div>
 
           {/* 3. 企業の強み */}
