@@ -1,7 +1,7 @@
 export const nintendo = {
   name: 'Nintendo', color: 'bg-fuchsia-500', textColor: 'text-fuchsia-400',
-  trait: '娯楽特化', strategy: 'innovator', priceTarget: 'budget',
-  updateChance: 0.030, appealMod: 1.4, strongMarket: 'jp',
+  trait: '独創的エンタメ', strategy: 'innovator', priceTarget: 'premium', brand: 0.9,
+  updateChance: 0.02, appealMod: 1.4, strongMarket: 'jp',
   prefixes: ['GameBoy', 'NES', 'SNES', 'N64', 'Switch'],
   appearsYear: 1977, disappearsYear: 9999,
   initialMoney: 150000, minMargin: 0.40,

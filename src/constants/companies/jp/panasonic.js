@@ -1,7 +1,7 @@
 export const panasonic = {
   name: 'Panasonic', color: 'bg-blue-900', textColor: 'text-blue-400',
-  trait: '量産・手堅い', strategy: 'cost_leader', priceTarget: 'mainstream',
-  updateChance: 0.030, appealMod: 0.85, strongMarket: 'jp',
+  trait: '品質・信頼型', strategy: 'innovator', priceTarget: 'mainstream', brand: 0.75,
+  updateChance: 0.030, appealMod: 1.1, strongMarket: 'jp',
   prefixes: ['Panasonic', 'National', 'Lumix', 'Technics'],
   appearsYear: 1946, disappearsYear: 9999,
   initialMoney: 200000, minMargin: 0.20,

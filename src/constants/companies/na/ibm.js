@@ -1,10 +1,10 @@
 export const ibm = {
   name: 'IBM', color: 'bg-blue-800', textColor: 'text-blue-300',
-  trait: 'コンピュータの巨人', strategy: 'innovator', priceTarget: 'premium',
-  updateChance: 0.015, appealMod: 1.1, strongMarket: 'na',
+  trait: 'ビジネス界の巨人', strategy: 'innovator', priceTarget: 'premium', brand: 0.7,
+  updateChance: 0.02, appealMod: 1.1, strongMarket: 'na',
   prefixes: ['ThinkPad', 'System/360', 'IBM PC', 'Power', 'DeepBlue'],
   appearsYear: 1946, disappearsYear: 9999,
-  initialMoney: 400000, minMargin: 0.35,
+  initialMoney: 400000, minMargin: 0.4,
   regions: { na: 1946, eu: 1955, jp: 1960 },
   stockBase: 280, revenueBase: 250000,
   strengths: ['コンピュータ業界の絶対的な標準', '強固な法人向けチャネル', '世界最高の研究開発力'],

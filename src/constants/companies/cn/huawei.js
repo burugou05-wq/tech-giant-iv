@@ -1,10 +1,10 @@
 export const huawei = {
   name: 'Huawei', color: 'bg-red-700', textColor: 'text-red-100',
-  trait: '技術の壁', strategy: 'innovator', priceTarget: 'premium',
+  trait: '技術の壁', strategy: 'innovator', priceTarget: 'budget', brand: 0.4,
   updateChance: 0.040, appealMod: 1.2, strongMarket: 'cn',
   prefixes: ['Mate', 'P series', 'Honor', 'Nova'],
   appearsYear: 1987, disappearsYear: 9999,
-  initialMoney: 300000, minMargin: 0.30,
+  initialMoney: 300000, minMargin: 0.08,
   regions: { cn: 1987, eu: 2005, na: 2010 },
   stockBase: 220, revenueBase: 200000,
   strengths: ['世界トップクラスのR&D投資', '垂直統合による最適化', '5Gインフラとの強い連動'],

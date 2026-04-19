@@ -1,10 +1,10 @@
 export const sanyo = {
   name: 'Sanyo', color: 'bg-red-500', textColor: 'text-red-300',
-  trait: '電池・実力派', strategy: 'cost_leader', priceTarget: 'budget',
-  updateChance: 0.030, appealMod: 0.9, strongMarket: 'jp',
+  trait: 'コストパフォーマンス型', strategy: 'follower', priceTarget: 'budget', brand: 0.45,
+  updateChance: 0.04, appealMod: 1.0, strongMarket: 'jp',
   prefixes: ['Sanyo', 'Eneloop', 'Gorilla', 'Xacti'],
   appearsYear: 1947, disappearsYear: 2011,
-  initialMoney: 90000, minMargin: 0.20,
+  initialMoney: 90000, minMargin: 0.08,
   regions: { jp: 1947, na: 1965, eu: 1970 },
   stockBase: 85, revenueBase: 60000,
   strengths: ['世界シェアトップの電池技術', '圧倒的なコストパフォーマンス', 'OEM供給での広範な存在感'],

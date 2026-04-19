@@ -1,10 +1,10 @@
 export const hitachi = {
   name: 'Hitachi', color: 'bg-rose-600', textColor: 'text-rose-400',
-  trait: '重電・インフラ', strategy: 'cost_leader', priceTarget: 'mainstream',
-  updateChance: 0.020, appealMod: 0.85, strongMarket: 'jp',
+  trait: '重厚長大・信頼型', strategy: 'follower', priceTarget: 'mainstream', brand: 0.5,
+  updateChance: 0.02, appealMod: 0.95, strongMarket: 'jp',
   prefixes: ['Hitachi', 'Wooo', 'Motor', 'Infra'],
   appearsYear: 1946, disappearsYear: 9999,
-  initialMoney: 160000, minMargin: 0.25,
+  initialMoney: 160000, minMargin: 0.18,
   regions: { jp: 1946, na: 1965, eu: 1970 },
   stockBase: 130, revenueBase: 170000,
   strengths: ['強靭なモーター技術', 'B2B市場からの安定収益', '質実剛健な設計'],

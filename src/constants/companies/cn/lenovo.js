@@ -1,10 +1,10 @@
 export const lenovo = {
   name: 'Lenovo', color: 'bg-red-600', textColor: 'text-red-200',
-  trait: 'PCの世界的覇者', strategy: 'cost_leader', priceTarget: 'budget',
-  updateChance: 0.035, appealMod: 1.0, strongMarket: 'cn',
+  trait: '規模の支配者', strategy: 'cost_leader', priceTarget: 'budget', brand: 0.3,
+  updateChance: 0.05, appealMod: 0.95, strongMarket: 'cn',
   prefixes: ['IdeaPad', 'ThinkPad', 'Yoga', 'Legion', 'Lenovo'],
   appearsYear: 1984, disappearsYear: 9999,
-  initialMoney: 180000, minMargin: 0.18,
+  initialMoney: 180000, minMargin: 0.05,
   regions: { cn: 1984, na: 2005, eu: 2005, jp: 2005 },
   stockBase: 140, revenueBase: 150000,
   strengths: ['世界最大のPCシェア', 'IBMから継承したブランド力', '圧倒的なサプライチェーン'],
