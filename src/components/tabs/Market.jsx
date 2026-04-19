@@ -1,14 +1,29 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Radio } from 'lucide-react';
 import { useGame } from '../../context/GameContext.jsx';
 import { AI_COMPANIES } from '../../constants/index.js';
 import { Card, CardHeader, CardContent, ProgressBar } from '../ui/index.js';
 import CompanyDetailPanel from '../CompanyDetailPanel.jsx';
+import { MarketRivalry } from './Market/MarketRivalry.jsx';
+import { calculateEffectiveAppeal, getCurrentEffects } from '../../utils/gameLogic.js';
 
 export default function Market() {
-  const { markets, money, completedFocuses, upgradeMarketing, buildDirectStore, closeDirectStore, blueprints, aiProducts, currentYear, stockPrice, logs } = useGame();
+  const { markets, money, completedFocuses, upgradeMarketing, buildDirectStore, closeDirectStore, blueprints, aiProducts, currentYear, stockPrice, logs, contentOwned } = useGame();
   const [selectedCompany, setSelectedCompany] = useState(null);
   const canUseDirectStore = completedFocuses.includes('fc_direct_store');
+
+  const effects = useMemo(() => getCurrentEffects(completedFocuses), [completedFocuses]);
+
+  // 各市場でのプレイヤーの最良製品を特定
+  const getPlayerBest = (mKey) => {
+    const sellable = blueprints
+      .map(bp => ({ 
+        bp, 
+        app: calculateEffectiveAppeal(bp, currentYear, contentOwned, effects) 
+      }))
+      .sort((a, b) => b.app - a.app);
+    return sellable[0] || null;
+  };
 
   return (
     <div className="space-y-6 relative">
@@ -59,6 +74,9 @@ export default function Market() {
                       />
                     ))}
                   </div>
+                  
+                  {/* 直接対決：ライバル分析 */}
+                  <MarketRivalry market={m} aiProducts={aiProducts} playerBest={getPlayerBest(mKey)} />
                 </div>
 
                 {/* 凡例 */}
