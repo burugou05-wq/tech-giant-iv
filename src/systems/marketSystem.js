@@ -66,20 +66,25 @@ export function executeSales(nextMarkets, sellableProducts, nextInv, loopEffects
         strategyPriceMult  = 0.7; // 利益減
       }
 
-      const sold = Math.min(invItem.amount, Math.floor(totalMarketDemand * strategyAppealMult));
-      if (sold > 0) {
-        invItem.amount -= sold;
-        invItem.sold   += sold;
-        totalMarketDemand -= Math.floor(sold / strategyAppealMult);
+        const sold = Math.max(0, Math.min(invItem.amount, Math.floor(totalMarketDemand * strategyAppealMult)));
+        if (sold > 0 && Number.isFinite(sold)) {
+          invItem.amount -= sold;
+          invItem.sold   += sold;
+          totalMarketDemand -= Math.floor(sold / strategyAppealMult);
 
-        let revenue = sold * prod.bp.cost * 2.5 * revMulti * strategyPriceMult;
-        if (mKey !== 'jp') revenue /= nextYenRate;
-        currentRevenue += revenue;
+          const baseCost = Number.isFinite(prod.bp.cost) ? prod.bp.cost : 50;
+          let revenue = sold * baseCost * 2.5 * revMulti * strategyPriceMult;
+          if (mKey !== 'jp') revenue /= nextYenRate;
+          
+          if (Number.isFinite(revenue)) {
+            currentRevenue += revenue;
+          }
 
-        if (mKey === 'eu' && euExtraCost > 0) {
-          currentVarCostAdd += sold * euExtraCost;
+          if (mKey === 'eu' && euExtraCost > 0) {
+            const extra = sold * euExtraCost;
+            if (Number.isFinite(extra)) currentVarCostAdd += extra;
+          }
         }
-      }
     }
   });
 

@@ -57,7 +57,7 @@ export function processGameTick(s) {
   const orgResults = updateOrgSystem(nextOrgStructure, budget, baseEffects, calcYear, baseEffects, nextFlags, dateStr, newLogs, nextDivisions);
   const loopEffects = { ...baseEffects, ...orgResults, hasFlagship };
 
-  const nextYenRate = Math.max(0.6, Math.min(1.5, s.yenRate + (Math.random() - 0.5) * 0.01));
+  const nextYenRate = Number.isFinite(s.yenRate) ? Math.max(0.6, Math.min(1.5, s.yenRate + (Math.random() - 0.5) * 0.01)) : 1.0;
   updateMarketSystem(nextMarkets, preciseYear, calcYear, nextFlags, dateStr, newLogs, nextYenRate);
 
   const prodResults = updateProductionSystem(
@@ -65,12 +65,16 @@ export function processGameTick(s) {
     s.activeFocus, orgResults.isSiloActive, nextFlags.isStrike
   );
 
-  const sellableProducts = s.blueprints.map(bp => ({
-    bp, app: calculateEffectiveAppeal(bp, calcYear, s.contentOwned, loopEffects),
-    stock: nextInv[bp.id]?.amount || 0,
-    isOnLine: nextLines.some(l => l.blueprintId === bp.id && l.factories > 0),
-    strategy: nextLines.find(l => l.blueprintId === bp.id)?.strategy
-  })).filter(p => p.stock > 0 || p.isOnLine).sort((a, b) => b.app - a.app);
+  const sellableProducts = s.blueprints.map(bp => {
+    const app = calculateEffectiveAppeal(bp, calcYear, s.contentOwned, loopEffects);
+    return {
+      bp, 
+      app: Number.isFinite(app) ? app : 0,
+      stock: (nextInv[bp.id]?.amount || 0),
+      isOnLine: nextLines.some(l => l.blueprintId === bp.id && l.factories > 0),
+      strategy: nextLines.find(l => l.blueprintId === bp.id)?.strategy
+    };
+  }).filter(p => p.stock > 0 || p.isOnLine).sort((a, b) => b.app - a.app);
 
   simulateAI(nextAiProducts, calcYear, dateStr, newLogs);
   const totalPlayerDemandShare = simulateMarketShares(nextMarkets, nextAiProducts, sellableProducts[0] || null, calcYear, loopEffects);
@@ -81,12 +85,18 @@ export function processGameTick(s) {
     totalPlayerDemandShare, calcYear, s.totalFactories, nextMarkets, budget, loopEffects, 0, 0
   );
 
-  const totalTickCost = prodResults.currentVarCost + salesResults.currentVarCostAdd + financeResults.currentFixedCost + financeResults.currentMarketingCost + financeResults.currentStoreCost;
-  const profit = salesResults.currentRevenue - totalTickCost;
+  const safeRevenue = Number.isFinite(salesResults.currentRevenue) ? salesResults.currentRevenue : 0;
+  const totalTickCost = (Number.isFinite(prodResults.currentVarCost) ? prodResults.currentVarCost : 0) + 
+                        (Number.isFinite(salesResults.currentVarCostAdd) ? salesResults.currentVarCostAdd : 0) + 
+                        (Number.isFinite(financeResults.currentFixedCost) ? financeResults.currentFixedCost : 0) + 
+                        (Number.isFinite(financeResults.currentMarketingCost) ? financeResults.currentMarketingCost : 0) + 
+                        (Number.isFinite(financeResults.currentStoreCost) ? financeResults.currentStoreCost : 0);
+  const profit = safeRevenue - totalTickCost;
 
   // 3. リソースと事業部経験値の更新
   let rpGain = (15 + Math.floor((calcYear - 1946) / 3)) * loopEffects.rpMulti * orgResults.orgInnovation;
   if (orgResults.isSiloActive) rpGain *= 0.5;
+  if (!Number.isFinite(rpGain)) rpGain = 0;
 
   Object.values(nextDivisions).forEach(div => {
     if (!div.active) return;

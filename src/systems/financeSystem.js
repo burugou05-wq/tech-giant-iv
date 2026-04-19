@@ -31,9 +31,12 @@ export function updateFinanceSystem(
 
   // 株価の計算
   const newStockPrice = (prevStockPrice) => {
-    return Math.max(10, Math.min(10000,
-      prevStockPrice + profit / 5000 + (totalPlayerDemandShare - 0.7) * 4
-    ));
+    const safeProfit = Number.isFinite(profit) ? profit : 0;
+    const safeShare = Number.isFinite(totalPlayerDemandShare) ? totalPlayerDemandShare : 0;
+    const safePrev = Number.isFinite(prevStockPrice) ? prevStockPrice : 100;
+    
+    const nextPrice = safePrev + safeProfit / 5000 + (safeShare - 0.7) * 4;
+    return Math.max(10, Math.min(10000, Number.isFinite(nextPrice) ? nextPrice : safePrev));
   };
 
   return {
