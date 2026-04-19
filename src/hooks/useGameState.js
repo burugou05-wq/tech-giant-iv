@@ -64,6 +64,7 @@ export function useGameState() {
     jp: { name: '日本市場', demand: 800, shares: { player: 0, toshiba: 0.3, panasonic: 0.4, hitachi: 0.3 }, marketing: 0, stores: 0, locked: false },
     na: { name: '北米市場', demand: 0,   shares: { player: 0, motorola: 0.4, ge: 0.6 }, marketing: 0, stores: 0, locked: true },
     eu: { name: '欧州市場', demand: 0,   shares: { player: 0, philips: 0.6, siemens: 0.4 }, marketing: 0, stores: 0, locked: true },
+    cn: { name: '中国市場', demand: 0,   shares: { player: 0 }, marketing: 0, stores: 0, locked: true },
   });
   const [aiProducts, setAiProducts] = useState(INITIAL_AI_PRODUCTS);
   const [aiFinances, setAiFinances] = useState(INITIAL_AI_FINANCES);

@@ -3,7 +3,20 @@
  */
 export function updateMarketSystem(nextMarkets, preciseYear, calcYear, nextFlags, dateStr, newLogs, nextYenRate) {
   Object.keys(nextMarkets).forEach(k => {
-    if (nextMarkets[k].locked) return;
+    if (nextMarkets[k].locked) {
+      // 中国市場の自動アンロック（1995年）
+      if (k === 'cn' && preciseYear >= 1995) {
+        nextMarkets[k].locked = false;
+        newLogs.push({ 
+          time: dateStr, 
+          msg: '【市場開放】中国市場がアンロックされました！巨大な人口と急速な経済成長が期待されます。', 
+          type: 'info', 
+          color: 'text-emerald-400' 
+        });
+      } else {
+        return;
+      }
+    }
     
     let baseDemand = 1000;
     const yearsPassed = Number.isFinite(preciseYear) ? Math.max(0, preciseYear - 1946) : 0;
@@ -11,6 +24,11 @@ export function updateMarketSystem(nextMarkets, preciseYear, calcYear, nextFlags
     // 市場ごとの基本需要曲線
     if (k === 'na')      baseDemand = 1500 + yearsPassed * 200 + Math.pow(yearsPassed, 1.65) * 4;
     else if (k === 'eu') baseDemand = 1200 + yearsPassed * 140 + Math.pow(yearsPassed, 1.55) * 2.5;
+    else if (k === 'cn') {
+      // 中国市場: 1995年から始まり、2000年代に爆発的に伸びる
+      const cnYears = Math.max(0, preciseYear - 1995);
+      baseDemand = 2000 + cnYears * 500 + Math.pow(cnYears, 2.8) * 0.5;
+    }
     else if (k === 'jp') {
       baseDemand = 800 + yearsPassed * 70;
       // バブル景気
