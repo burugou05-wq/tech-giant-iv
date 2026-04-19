@@ -1,7 +1,7 @@
 /**
  * 組織システム: サイロ化リスク、部門の効率・士気・連携の計算
  */
-export function updateOrgSystem(nextOrgStructure, budget, loopEffects, calcYear, baseEffects, nextFlags, dateStr, newLogs) {
+export function updateOrgSystem(nextOrgStructure, budget, loopEffects, calcYear, baseEffects, nextFlags, dateStr, newLogs, nextDivisions) {
   const isSiloActive = calcYear >= 2000 && !baseEffects.siloFix;
 
   if (isSiloActive) {
