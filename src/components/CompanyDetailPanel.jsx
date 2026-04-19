@@ -55,12 +55,35 @@ export default function CompanyDetailPanel({ companyId, onClose }) {
             <span className={`w-4 h-4 rounded-full ${bgColor} shadow-sm`} />
             <h2 className="text-xl font-black text-white">{ai.name || 'Unknown'}</h2>
             <div className="flex flex-col">
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 ${textColor} w-fit`}>{ai.trait || '調査中'}</span>
+              <div className="flex items-center gap-2">
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 ${textColor} w-fit`}>{ai.trait || '調査中'}</span>
+                {/* 5段階ステータス表示 */}
+                {(() => {
+                  let status = { label: '通常期', color: 'text-slate-400', bg: 'bg-slate-800' };
+                  const share = getTotalShare(companyId);
+                  
+                  if (currentEra?.type === 'golden') {
+                    status = { label: '黄金期', color: 'text-amber-400', bg: 'bg-amber-500/20' };
+                  } else if (currentEra?.type === 'dark') {
+                    status = { label: '暗黒期', color: 'text-red-500', bg: 'bg-red-500/20' };
+                  } else if (share > 0.15) {
+                    status = { label: '成長期', color: 'text-emerald-400', bg: 'bg-emerald-500/20' };
+                  } else if (share < 0.05) {
+                    status = { label: '停滞期', color: 'text-orange-400', bg: 'bg-orange-500/10' };
+                  }
+                  
+                  return (
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${status.bg} ${status.color} border border-current/20 shadow-sm`}>
+                      {status.label}
+                    </span>
+                  );
+                })()}
+              </div>
               {currentEra && (
                 <span className={`text-[9px] font-black px-2 py-0.5 rounded-full mt-1 w-fit uppercase tracking-tighter ${
-                  currentEra.type === 'golden' ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'
+                  currentEra.type === 'golden' ? 'bg-amber-500/10 text-amber-500/70' : 'bg-red-500/10 text-red-500/70'
                 }`}>
-                  {currentEra.type === 'golden' ? '★ Golden Era' : '⚠ Dark Age'}
+                  {currentEra.name}
                 </span>
               )}
             </div>
