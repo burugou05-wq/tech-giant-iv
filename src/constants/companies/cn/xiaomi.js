@@ -1,10 +1,10 @@
 export const xiaomi = {
   name: 'Xiaomi', color: 'bg-orange-500', textColor: 'text-orange-100',
-  trait: 'エコシステムの破壊者', strategy: 'cost_leader', priceTarget: 'budget',
-  updateChance: 0.050, appealMod: 1.1, strongMarket: 'cn',
-  prefixes: ['Mi', 'Redmi', 'POCO', 'SmartLife'],
+  trait: '格安・スピード型', strategy: 'innovator', priceTarget: 'budget', brand: 0.2,
+  updateChance: 0.08, appealMod: 1.1, strongMarket: 'cn',
+  prefixes: ['Mi', 'Redmi', 'Poco', 'Xiaomi'],
   appearsYear: 2010, disappearsYear: 9999,
-  initialMoney: 150000, minMargin: 0.15, // 低マージン戦略
+  initialMoney: 50000, minMargin: 0.05, // 低マージン戦略
   regions: { cn: 2010, eu: 2017, jp: 2019, na: 2020 },
   stockBase: 130, revenueBase: 120000,
   strengths: ['究極のコストパフォーマンス', 'ファンとの密接なコミュニティ', 'あらゆる家電を繋ぐエコシステム'],

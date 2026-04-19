@@ -1,6 +1,6 @@
 export const toshiba = {
   name: 'Toshiba', color: 'bg-red-700', textColor: 'text-red-500',
-  trait: 'バランス型', strategy: 'follower', priceTarget: 'mainstream',
+  trait: 'バランス型', strategy: 'follower', priceTarget: 'mainstream', brand: 0.6,
   updateChance: 0.025, appealMod: 1.0, strongMarket: 'jp',
   prefixes: ['Dynabook', 'Regza', 'Toshiba', 'Satellite'],
   appearsYear: 1946, disappearsYear: 9999,

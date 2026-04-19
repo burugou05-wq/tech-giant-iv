@@ -72,25 +72,39 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarke
           }
           if (bestMod) {
             compApp += bestMod.appeal;
-            compCost += bestMod.cost;
+            compCost += (bestMod.costVal || 0); // 研究費(cost)ではなく、製造原価(costVal)を使う
           }
         }
       });
     }
 
-    // 価格決定（対抗値下げロジック）
-    let margin = 1.4;
-    if (ai.priceTarget === 'premium') margin = 2.0;
-    if (ai.priceTarget === 'budget')  margin = 1.1;
-
-    // プレイヤーのシェアが高い市場では、利益を削って対抗値下げする
-    if (playerShareInStrongMarket > 0.5) {
-      margin *= 0.75; // 25%の利益削減で対抗
-    } else if (playerShareInStrongMarket > 0.2) {
-      margin *= 0.9;  // 10%の利益削減
+    // ターゲット利益率の決定
+    let targetMargin = 1.4;
+    if (ai.priceTarget === 'premium') targetMargin = 2.2;
+    if (ai.priceTarget === 'budget')  targetMargin = 1.15;
+    
+    // ブランド補正（ブランド力が高いほど利益率を維持しようとする）
+    const brandVal = ai.brand || 0.4;
+    
+    // 競合（プレイヤー）への対抗ロジック
+    const playerShare = playerShareInStrongMarket;
+    if (playerShare > 0.1) {
+      if (ai.priceTarget === 'budget' || brandVal < 0.4) {
+        // 非ブランド/格安メーカーは過激に下げる
+        const reduction = Math.min(0.4, playerShare * 0.6); 
+        targetMargin *= (1.0 - reduction);
+      } else {
+        // ブランドメーカーはブランドイメージを重視し、あまり下げない
+        const reduction = Math.min(0.15, playerShare * 0.2);
+        targetMargin *= (1.0 - reduction);
+      }
     }
     
-    let finalPrice = compCost * Math.max(0.8, margin); // 最低でも原価の80%（出血大サービス）まで
+    // 各企業固有の下限（minMargin）を守る。ただし格安メーカーは原価を割る直前まで行く
+    const marginFloor = 1.0 + (ai.minMargin || 0.1);
+    const finalMargin = Math.max(marginFloor, targetMargin);
+    
+    let finalPrice = compCost * finalMargin;
     let finalAppeal = (bestChassis.baseAppeal + compApp) * ai.appealMod * getTrendMultiplier(bestChassis, calcYear);
 
     // 時代・性格によるバフ
@@ -194,7 +208,10 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
         const safeAiPrice = Number.isFinite(aiProduct.price) ? Math.max(1, aiProduct.price) : 100;
         
         const relativePrice = safeAiPrice / avgMarketPrice;
-        const priceFactor = Math.exp(-Math.pow(relativePrice - 0.8, 2) * 0.5);
+        // ブランド力(brand)が高いほど、高価格による魅力度減少(priceFactor)を抑える
+        const brandPower = ai.brand || 0.3;
+        const priceSensitivity = Math.max(0.1, 0.5 - brandPower * 0.4);
+        const priceFactor = Math.exp(-Math.pow(relativePrice - 0.8, 2) * priceSensitivity);
         
         aiEffApp = aiProduct.appeal * (Number.isFinite(priceFactor) ? priceFactor : 1.0) * decay;
         if (ai.strongMarket === mKey) aiEffApp *= 1.15; 
