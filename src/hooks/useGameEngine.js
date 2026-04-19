@@ -35,8 +35,12 @@ export function useGameEngine() {
   const currentYear    = currentDate.getFullYear();
   const currentDateStr = currentDate.toISOString().split('T')[0];
 
-  const stateRef = useRef();
-  stateRef.current = state;
+  const stateRef = useRef(null);
+
+  // Keep stateRef up‑to‑date after each render
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
 
   const addLog = (msg, type = 'info', color = null) => {
     setLogs(prev => [{ time: currentDateStr, msg, type, color }, ...prev].slice(0, 50));
@@ -61,6 +65,7 @@ export function useGameEngine() {
     
     const timer = setInterval(() => {
       const s = stateRef.current;
+      if (!s) return; // guard against undefined state on first render
       const newTick      = s.ticks + 1;
       const preciseYear  = 1946 + newTick * 14 / 365.25;
       const calcYear     = Math.floor(preciseYear);
