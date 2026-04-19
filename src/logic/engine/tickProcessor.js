@@ -52,6 +52,19 @@ export function processGameTick(s) {
     };
   }
 
+  let nextActiveFocus  = s.activeFocus ? { ...s.activeFocus } : null;
+  let nextCompletedFocuses = [...s.completedFocuses];
+
+  // 1.5 重点方針（Focus）の進行
+  if (nextActiveFocus) {
+    nextActiveFocus.remainingTicks -= 1;
+    if (nextActiveFocus.remainingTicks <= 0) {
+      nextCompletedFocuses.push(nextActiveFocus.id);
+      newLogs.push({ time: dateStr, msg: `【方針完了】「${nextActiveFocus.name}」が完了しました。`, type: 'success', color: 'text-cyan-400' });
+      nextActiveFocus = null;
+    }
+  }
+
   // 2. 各システムによる計算
   const hasFlagship = nextLines.some(l => l.strategy === 'flagship');
   const orgResults = updateOrgSystem(nextOrgStructure, budget, baseEffects, calcYear, baseEffects, nextFlags, dateStr, newLogs, nextDivisions);
@@ -124,7 +137,9 @@ export function processGameTick(s) {
       aiProducts: nextAiProducts,
       flags: nextFlags,
       orgStructure: nextOrgStructure,
-      divisions: nextDivisions
+      divisions: nextDivisions,
+      activeFocus: nextActiveFocus,
+      completedFocuses: nextCompletedFocuses
     },
     lastTickProfit: {
       revenue: Number.isFinite(salesResults.currentRevenue) ? salesResults.currentRevenue : 0, 
