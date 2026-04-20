@@ -188,6 +188,11 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
       const decay = Math.max(0.4, 1 - Math.max(0, calcYear - launchYear - 4) * 0.1);
       
       let finalApp = bestItem.app * (Number.isFinite(priceFactor) ? priceFactor : 1.0) * decay * storeBuff;
+      
+      // 目玉商品（Flagship）なら魅力度 1.5倍
+      if (bestItem.strategy === 'flagship') {
+        finalApp *= 1.5;
+      }
 
       if (bestItem.bp.strategy === 'mainstream') {
         const prevShare = m.shares.player || 0;
