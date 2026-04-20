@@ -4,7 +4,7 @@ export const xiaomi = {
   updateChance: 0.08, appealMod: 1.1, strongMarket: 'cn',
   prefixes: ['Mi', 'Redmi', 'Poco', 'Xiaomi'],
   appearsYear: 2010, disappearsYear: 9999,
-  initialMoney: 50000, minMargin: 0.05, // 低マージン戦略
+  initialMoney: 50000, initialFactories: 9, minMargin: 0.05, // 低マージン戦略
   regions: { cn: 2010, eu: 2017, jp: 2019, na: 2020 },
   stockBase: 130, revenueBase: 120000,
   strengths: ['究極のコストパフォーマンス', 'ファンとの密接なコミュニティ', 'あらゆる家電を繋ぐエコシステム'],

@@ -4,7 +4,7 @@ export const blackberry = {
   updateChance: 0.03, appealMod: 1.25, strongMarket: 'na',
   prefixes: ['BlackBerry', 'Curve', 'Bold', 'Passport'],
   appearsYear: 1999, disappearsYear: 2016,
-  initialMoney: 80000, minMargin: 0.45,
+  initialMoney: 80000, initialFactories: 7, minMargin: 0.45,
   regions: { na: 1999, eu: 2002 },
   stockBase: 110, revenueBase: 80000,
   strengths: ['物理キーボードの快適性', '圧倒的なセキュリティ', '北米ビジネスマンの必須ツール'],

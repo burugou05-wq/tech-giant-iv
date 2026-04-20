@@ -4,7 +4,7 @@ export const zenith = {
   updateChance: 0.03, appealMod: 1.0, strongMarket: 'na',
   prefixes: ['Zenith', 'Space Command', 'Trans-Oceanic', 'ChromaColor'],
   appearsYear: 1946, disappearsYear: 1999,
-  initialMoney: 120000, minMargin: 0.05,
+  initialMoney: 120000, initialFactories: 10, minMargin: 0.05,
   regions: { na: 1946, eu: 1960 },
   stockBase: 80, revenueBase: 90000,
   strengths: ['北米市場での高い信頼性', 'テレビのリモコンを世界で初めて実用化', '「品質」を売りにしたマーケティング'],

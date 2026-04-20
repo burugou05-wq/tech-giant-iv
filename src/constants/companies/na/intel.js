@@ -4,7 +4,7 @@ export const intel = {
   updateChance: 0.04, appealMod: 1.1, strongMarket: 'na',
   prefixes: ['Pentium', 'Core', 'Centrino', 'Celeron', 'Xeon'],
   appearsYear: 1968, disappearsYear: 9999,
-  initialMoney: 250000, minMargin: 0.50, // 高い利益率
+  initialMoney: 250000, initialFactories: 8, minMargin: 0.50, // 高い利益率
   regions: { na: 1968, eu: 1975, jp: 1980 },
   stockBase: 190, revenueBase: 180000,
   strengths: ['マイクロプロセッサの世界標準', '圧倒的な製造プロセス技術', 'Intel Insideによるブランド戦略'],

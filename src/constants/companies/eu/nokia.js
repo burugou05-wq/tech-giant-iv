@@ -4,7 +4,7 @@ export const nokia = {
   updateChance: 0.04, appealMod: 1.2, strongMarket: 'eu',
   prefixes: ['Nokia', 'Lumia', 'Communicator', 'N-Gage'],
   appearsYear: 1980, disappearsYear: 2014,
-  initialMoney: 160000, minMargin: 0.28,
+  initialMoney: 160000, initialFactories: 11, minMargin: 0.28,
   regions: { eu: 1980, na: 1995, jp: 2000 },
   stockBase: 130, revenueBase: 160000,
   strengths: ['圧倒的な携帯電話シェア', '頑丈なハードウェア', '欧州市場の絶対的支配'],

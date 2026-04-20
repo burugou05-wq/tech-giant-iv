@@ -4,7 +4,7 @@ export const lenovo = {
   updateChance: 0.05, appealMod: 0.95, strongMarket: 'cn',
   prefixes: ['IdeaPad', 'ThinkPad', 'Yoga', 'Legion', 'Lenovo'],
   appearsYear: 1984, disappearsYear: 9999,
-  initialMoney: 180000, minMargin: 0.05,
+  initialMoney: 180000, initialFactories: 12, minMargin: 0.05,
   regions: { cn: 1984, na: 2005, eu: 2005, jp: 2005 },
   stockBase: 140, revenueBase: 150000,
   strengths: ['世界最大のPCシェア', 'IBMから継承したブランド力', '圧倒的なサプライチェーン'],

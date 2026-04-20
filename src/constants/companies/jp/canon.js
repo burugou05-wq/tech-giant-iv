@@ -4,7 +4,7 @@ export const canon = {
   updateChance: 0.03, appealMod: 1.15, strongMarket: 'jp',
   prefixes: ['EOS', 'IXY', 'PowerShot', 'Pixus'],
   appearsYear: 1946, disappearsYear: 9999,
-  initialMoney: 150000, minMargin: 0.35,
+  initialMoney: 150000, initialFactories: 5, minMargin: 0.35,
   regions: { jp: 1946, na: 1955, eu: 1960 },
   stockBase: 160, revenueBase: 110000,
   strengths: ['世界屈指の光学・レンズ技術', 'レーザープリンタの圧倒的シェア', '高い自己資本比率と健全経営'],

@@ -4,7 +4,7 @@ export const sanyo = {
   updateChance: 0.04, appealMod: 1.0, strongMarket: 'jp',
   prefixes: ['Sanyo', 'Eneloop', 'Gorilla', 'Xacti'],
   appearsYear: 1947, disappearsYear: 2011,
-  initialMoney: 90000, minMargin: 0.08,
+  initialMoney: 90000, initialFactories: 9, minMargin: 0.08,
   regions: { jp: 1947, na: 1965, eu: 1970 },
   stockBase: 85, revenueBase: 60000,
   strengths: ['世界シェアトップの電池技術', '圧倒的なコストパフォーマンス', 'OEM供給での広範な存在感'],

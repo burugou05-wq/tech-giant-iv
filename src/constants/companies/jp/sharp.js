@@ -4,7 +4,7 @@ export const sharp = {
   updateChance: 0.025, appealMod: 1.1, strongMarket: 'jp',
   prefixes: ['Aquos', 'Zaurus', 'Plasmacluster', 'Sharp'],
   appearsYear: 1946, disappearsYear: 9999,
-  initialMoney: 110000, minMargin: 0.15,
+  initialMoney: 110000, initialFactories: 8, minMargin: 0.15,
   regions: { jp: 1946, na: 1970, eu: 1975 },
   stockBase: 105, revenueBase: 75000,
   strengths: ['世界をリードする液晶技術', '唯一無二のユニークな製品開発', '白物家電の安定したブランド'],

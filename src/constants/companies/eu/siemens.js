@@ -4,7 +4,7 @@ export const siemens = {
   updateChance: 0.02, appealMod: 0.95, strongMarket: 'eu',
   prefixes: ['Siemens', 'Nixdorf', 'Gigaset', 'Euro'],
   appearsYear: 1946, disappearsYear: 9999,
-  initialMoney: 220000, minMargin: 0.24,
+  initialMoney: 220000, initialFactories: 15, minMargin: 0.24,
   regions: { eu: 1946, na: 1960, jp: 1970 },
   stockBase: 200, revenueBase: 250000,
   strengths: ['欧州の通信インフラ支配', '産業用機器との連携', 'ドイツの精密技術'],

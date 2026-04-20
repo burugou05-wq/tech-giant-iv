@@ -4,7 +4,7 @@ export const google = {
   updateChance: 0.05, appealMod: 1.25, strongMarket: 'na',
   prefixes: ['Pixel', 'Android', 'Chrome', 'Google', 'Nest'],
   appearsYear: 1998, disappearsYear: 9999,
-  initialMoney: 100000, minMargin: 0.25,
+  initialMoney: 100000, initialFactories: 5, minMargin: 0.25,
   regions: { na: 1998, eu: 2000, jp: 2002 },
   stockBase: 175, revenueBase: 250000,
   strengths: ['インターネットの入り口を独占', '世界最大の広告プラットフォーム', 'Androidによるモバイル支配'],

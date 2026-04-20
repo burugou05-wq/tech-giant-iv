@@ -4,7 +4,7 @@ export const microsoft = {
   updateChance: 0.03, appealMod: 1.3, strongMarket: 'na',
   prefixes: ['Surface', 'Windows', 'Xbox', 'Office', 'Azure'],
   appearsYear: 1975, disappearsYear: 9999,
-  initialMoney: 150000, minMargin: 0.32,
+  initialMoney: 150000, initialFactories: 5, minMargin: 0.32,
   regions: { na: 1975, eu: 1980, jp: 1985 },
   stockBase: 415, revenueBase: 200000,
   strengths: ['ソフトウェアの事実上の標準', '法人市場の強力な基盤', 'プラットフォーム戦略'],
