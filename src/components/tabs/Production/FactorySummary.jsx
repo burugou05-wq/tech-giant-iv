@@ -9,10 +9,12 @@ export const FactorySummary = ({
   estimatedDemand, 
   money, 
   onExpand, 
+  onClose,
   onAddLine 
 }) => {
   const supplyRatio = estimatedDemand > 0 ? totalProduction / estimatedDemand : 0;
   const expansionCost = 20000;
+  const canClose = totalFactories > totalUsedFactories;
 
   return (
     <Card className="p-6 bg-slate-800 border-slate-700 shadow-lg flex flex-wrap justify-between items-center gap-6">
@@ -57,6 +59,17 @@ export const FactorySummary = ({
           }`}
         >
           工場増設 (${(expansionCost / 1000).toFixed(1)}M)
+        </button>
+        <button
+          onClick={onClose}
+          className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all border ${
+            canClose 
+              ? 'bg-rose-950/20 border-rose-500/30 text-rose-500 hover:bg-rose-500/10 hover:scale-105' 
+              : 'bg-slate-800 border-slate-700 text-slate-600 cursor-not-allowed'
+          }`}
+          title={canClose ? "余剰工場を閉鎖して資金を回収します" : "稼働中の工場は閉鎖できません"}
+        >
+          工場閉鎖
         </button>
         <button
           onClick={onAddLine}

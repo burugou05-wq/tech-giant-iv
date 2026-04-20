@@ -11,7 +11,8 @@ export default function Production() {
     totalFactories, setTotalFactories,
     money, setMoney,
     blueprints, markets, inventory,
-    setLineStrategy
+    setLineStrategy,
+    addLog
   } = useGame();
 
   const totalUsedFactories = productionLines.reduce((s, l) => s + l.factories, 0);
@@ -34,6 +35,22 @@ export default function Production() {
     if (money < cost) return;
     setMoney(prev => prev - cost);
     setTotalFactories(prev => prev + 1);
+    addLog(`工場を1棟増設しました。（コスト: $20.0M）`, 'info', 'text-blue-400');
+  };
+
+  // 工場閉鎖ハンドラ
+  const handleCloseFactories = () => {
+    if (totalFactories <= 0) return;
+    if (totalFactories <= totalUsedFactories) {
+      alert("稼働中の工場を閉鎖することはできません。まず生産ラインの工場割り当てを減らしてください。");
+      return;
+    }
+    const refund = 5000; // 売却益 $5M
+    if (!confirm(`工場を1棟閉鎖（売却）しますか？\n売却益: $${(refund/1000).toFixed(1)}M が返還されます。`)) return;
+    
+    setMoney(prev => prev + refund);
+    setTotalFactories(prev => prev - 1);
+    addLog(`工場を1棟閉鎖（売却）しました。（利益: $5.0M）`, 'info', 'text-rose-400');
   };
 
   // 新規ライン追加ハンドラ
@@ -58,6 +75,7 @@ export default function Production() {
         estimatedDemand={estimatedDemand}
         money={money}
         onExpand={handleExpandFactories}
+        onClose={handleCloseFactories}
         onAddLine={handleAddLine}
       />
 
