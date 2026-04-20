@@ -3,7 +3,7 @@ import { AI_COMPANIES } from '../../constants/companies/index.js';
 /**
  * 企業の時価総額を計算
  */
-export const calculateMarketCap = (id, stockPrice, currentYear, aiProducts, markets) => {
+export const calculateMarketCap = (id, stockPrice, currentYear, aiProducts, markets, aiFinances) => {
   // 安全装置: 全体の入力チェック
   const safeStockPrice = Number.isFinite(stockPrice) ? stockPrice : 100;
   const safeYear = Number.isFinite(currentYear) ? currentYear : 1946;
@@ -15,6 +15,9 @@ export const calculateMarketCap = (id, stockPrice, currentYear, aiProducts, mark
   const ai = AI_COMPANIES[id];
   if (!ai) return 0;
   if (safeYear < ai.appearsYear || safeYear > (ai.disappearsYear || Infinity)) return 0;
+  
+  // 倒産チェック
+  if (aiFinances?.[id]?.isBankrupt) return 0;
 
   const base = ai.stockBase || 100;
   const aiProduct = aiProducts ? aiProducts[id] : null;
@@ -69,19 +72,23 @@ export const calculateRevenue = (id, money, currentYear, markets) => {
  * 全企業のランキングデータを構築
  */
 export const getRankedCompanies = (params) => {
-  const { currentYear, stockPrice, aiProducts, markets, money } = params;
+  const { currentYear, stockPrice, aiProducts, markets, money, aiFinances } = params;
   
   const all = [
     { id: 'player', name: '自社 (TECH GIANT)', color: 'bg-green-500', textColor: 'text-green-400', isPlayer: true },
     ...Object.entries(AI_COMPANIES)
-      .filter(([, ai]) => currentYear >= ai.appearsYear && currentYear <= (ai.disappearsYear || Infinity))
+      .filter(([id, ai]) => {
+        const active = currentYear >= ai.appearsYear && currentYear <= (ai.disappearsYear || Infinity);
+        const bankrupt = aiFinances?.[id]?.isBankrupt;
+        return active && !bankrupt;
+      })
       .map(([id, ai]) => ({ id, name: ai.name, color: ai.color, textColor: ai.textColor, isPlayer: false })),
   ];
 
   return all
     .map(c => ({
       ...c,
-      marketCap: calculateMarketCap(c.id, stockPrice, currentYear, aiProducts, markets),
+      marketCap: calculateMarketCap(c.id, stockPrice, currentYear, aiProducts, markets, aiFinances),
       revenue: calculateRevenue(c.id, money, currentYear, markets),
     }))
     .sort((a, b) => b.marketCap - a.marketCap);

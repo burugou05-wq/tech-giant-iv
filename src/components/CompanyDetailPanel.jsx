@@ -68,7 +68,9 @@ export default function CompanyDetailPanel({ companyId, onClose }) {
                   let status = { label: '通常期', color: 'text-slate-400', bg: 'bg-slate-800' };
                   const share = getTotalShare(companyId);
                   
-                  if (currentEra?.type === 'golden') {
+                  if (rawFinance.isBankrupt) {
+                    status = { label: '経営破綻', color: 'text-red-500', bg: 'bg-red-500/20' };
+                  } else if (currentEra?.type === 'golden') {
                     status = { label: '黄金期', color: 'text-amber-400', bg: 'bg-amber-500/20' };
                   } else if (currentEra?.type === 'dark') {
                     status = { label: '暗黒期', color: 'text-red-500', bg: 'bg-red-500/20' };

@@ -11,7 +11,7 @@ import { getRankedCompanies } from '../../logic/engine/rankingLogic.js';
 
 export default function Ranking() {
   const state = useGame();
-  const { currentYear } = state;
+  const { currentYear, aiFinances } = state;
   const [selectedCompany, setSelectedCompany] = useState(null);
 
   // ランキングデータの構築（メモ化してパフォーマンス最適化）
@@ -20,12 +20,13 @@ export default function Ranking() {
     state.stockPrice, 
     state.aiProducts, 
     state.markets, 
-    state.money
+    state.money,
+    state.aiFinances
   ]);
 
   const playerRank = ranked.findIndex(c => c.isPlayer) + 1;
   const defunct = Object.entries(AI_COMPANIES)
-    .filter(([, ai]) => ai.disappearsYear && currentYear > ai.disappearsYear);
+    .filter(([id, ai]) => (ai.disappearsYear && currentYear > ai.disappearsYear) || aiFinances[id]?.isBankrupt);
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">

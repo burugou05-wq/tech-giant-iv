@@ -8,7 +8,7 @@ import { MarketRivalry } from './Market/MarketRivalry.jsx';
 import { calculateEffectiveAppeal, getCurrentEffects } from '../../utils/gameLogic.js';
 
 export default function Market() {
-  const { markets, money, completedFocuses, upgradeMarketing, buildDirectStore, closeDirectStore, blueprints, aiProducts, currentYear, stockPrice, logs, contentOwned } = useGame();
+  const { markets, money, completedFocuses, upgradeMarketing, buildDirectStore, closeDirectStore, blueprints, aiProducts, aiFinances, currentYear, stockPrice, logs, contentOwned } = useGame();
   const [selectedCompany, setSelectedCompany] = useState(null);
   const canUseDirectStore = completedFocuses.includes('fc_direct_store');
 
@@ -73,11 +73,11 @@ export default function Market() {
                   </div>
                   <div className="w-full bg-slate-950 rounded-full h-4 overflow-hidden flex border border-slate-700/50 shadow-inner p-0.5">
                     <div className="bg-green-500 h-full rounded-l-full transition-all duration-1000" style={{ width: `${m.shares.player * 100}%` }} />
-                    {Object.keys(AI_COMPANIES).map(aiId => (
+                    {Object.keys(AI_COMPANIES).filter(id => !aiFinances[id]?.isBankrupt).map(aiId => (
                       <div
                         key={aiId}
                         className={`${AI_COMPANIES[aiId].color} h-full border-l border-white/5`}
-                        style={{ width: `${m.shares[aiId] * 100}%` }}
+                        style={{ width: `${(m.shares[aiId] || 0) * 100}%` }}
                       />
                     ))}
                   </div>
@@ -93,8 +93,10 @@ export default function Market() {
                     自社 <span className="ml-auto">{(m.shares.player * 100).toFixed(1)}%</span>
                   </div>
                   {Object.entries(AI_COMPANIES)
-                    .filter(([, ai]) => {
+                    .filter(([id, ai]) => {
                       const r = /** @type {Record<string, number>} */ (ai.regions);
+                      const fin = aiFinances[id];
+                      if (fin?.isBankrupt) return false;
                       return currentYear >= ai.appearsYear && 
                              currentYear <= (ai.disappearsYear || Infinity) &&
                              r && r[mKey] && currentYear >= r[mKey];
