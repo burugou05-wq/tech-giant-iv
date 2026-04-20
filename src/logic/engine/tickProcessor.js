@@ -10,7 +10,8 @@ import {
 } from '../../utils/gameLogic.js';
 import { 
   simulateAI, 
-  simulateMarketShares 
+  simulateMarketShares,
+  processAIBusinessLogic
 } from '../../utils/aiSimulation.js';
 
 import { updateOrgSystem } from '../../systems/orgSystem.js';
@@ -129,11 +130,18 @@ export function processGameTick(s) {
   }).filter(p => p.stock > 0 || p.isOnLine).sort((a, b) => b.app - a.app);
 
   simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarkets);
-  const totalPlayerDemandShare = simulateMarketShares(nextMarkets, nextAiProducts, sellableProducts[0] || null, calcYear, loopEffects);
+  
+  // AI 企業の収支・設備の更新用
+  const nextAiFinances = JSON.parse(JSON.stringify(s.aiFinances));
+  
+  const totalPlayerDemandShare = simulateMarketShares(nextMarkets, nextAiProducts, sellableProducts[0] || null, calcYear, loopEffects, nextAiFinances);
+  
+  // AI の経営判断（工場の増設・閉鎖）を実行
+  processAIBusinessLogic(nextAiFinances, calcYear, nextMarkets);
+
   const salesResults = executeSales(nextMarkets, sellableProducts, nextInv, loopEffects, nextYenRate, s.euExtraCost ?? 0);
 
   // --- AI 企業の収支・価格戦略の更新 ---
-  const nextAiFinances = JSON.parse(JSON.stringify(s.aiFinances));
   Object.entries(salesResults.aiSales).forEach(([id, sales]) => {
     const aiProduct = nextAiProducts[id];
     const aiFin = nextAiFinances[id];

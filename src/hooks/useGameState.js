@@ -20,7 +20,9 @@ const INITIAL_AI_FINANCES = Object.fromEntries(
   Object.entries(AI_COMPANIES).map(([id, ai]) => [id, {
     money: (ai && typeof ai.initialMoney === 'number') ? ai.initialMoney : 100000,
     isBankrupt: false,
-    activeMarkets: Object.keys(ai.regions || { jp: 0 })
+    activeMarkets: Object.keys(ai.regions || { jp: 0 }),
+    factories: Math.max(5, Math.floor(((ai && ai.initialMoney) || 100000) / 15000)), // 資金に応じて初期工場数を設定
+    operatingRate: 0.8 // 初期は 80% 稼働
   }])
 );
 

@@ -161,15 +161,16 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarke
  * @param {any} bestItem
  * @param {number} calcYear
  * @param {any} loopEffects
+ * @param {any} aiFinances
  */
-export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calcYear, loopEffects) {
+export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calcYear, loopEffects, aiFinances) {
   let totalPlayerDemandShare = 0;
 
   Object.keys(nextMarkets).forEach(mKey => {
     const m = nextMarkets[mKey];
     const storeBuff = 1.0 + m.stores * 0.2;
     
-    // 1. カテゴリー内の競合価格平均を算出（市場基準価格）
+    // 1. カテゴリー内の競合価格平均を算出
     const competitorPrices = Object.values(nextAiProducts)
       .filter(p => p.category === m.category || (bestItem && p.category === bestItem.bp.category))
       .map(p => p.price);
@@ -180,24 +181,19 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
     let playerEffectiveApp = 0;
     if (!m.locked && bestItem) {
       const safePrice = (bestItem.bp && Number.isFinite(bestItem.bp.price)) ? Math.max(1, bestItem.bp.price) : 100;
-      
-      // 価格係数：市場平均と比較してペナルティを課す
-      // 平均の2倍で魅力は半分以下、3倍でほぼゼロになるように指数関数的に減衰
       const relativePrice = safePrice / avgMarketPrice;
-      const priceFactor = Math.exp(-Math.pow(relativePrice - 0.8, 2) * 0.5); // 0.8倍付近が最も効率が良い
+      const priceFactor = Math.exp(-Math.pow(relativePrice - 0.8, 2) * 0.5); 
       
       const launchYear = bestItem.bp.launchYear || calcYear;
       const decay = Math.max(0.4, 1 - Math.max(0, calcYear - launchYear - 4) * 0.1);
       
       let finalApp = bestItem.app * (Number.isFinite(priceFactor) ? priceFactor : 1.0) * decay * storeBuff;
 
-      // --- MAINSTREAM モメンタムバフ ---
       if (bestItem.bp.strategy === 'mainstream') {
         const prevShare = m.shares.player || 0;
-        const momentumBuff = 1.0 + Math.min(0.2, (prevShare / 0.1) * 0.05); // 10%シェアごとに+5%、最大1.2倍
+        const momentumBuff = 1.0 + Math.min(0.2, (prevShare / 0.1) * 0.05);
         finalApp *= momentumBuff;
       }
-
       playerEffectiveApp = Number.isFinite(finalApp) ? finalApp : 0;
     }
 
@@ -214,13 +210,10 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
       if (active && inRegion && aiProduct) {
         const decay = Math.max(0.4, 1 - Math.max(0, calcYear - aiProduct.launchYear - 4) * 0.1);
         const safeAiPrice = Number.isFinite(aiProduct.price) ? Math.max(1, aiProduct.price) : 100;
-        
         const relativePrice = safeAiPrice / avgMarketPrice;
-        // ブランド力(brand)が高いほど、高価格による魅力度減少(priceFactor)を抑える
-        // BUDGET 戦略のプレイヤーには AI トップクラスのブランド力を擬似的に与える
+        
         let brandPower = ai.brand || 0.3;
         if (bestItem && bestItem.bp.strategy === 'budget') {
-          // プレイヤーが BUDGET 戦略なら、価格競争において不利にならないよう補正
           brandPower = 0.8; 
         }
         
@@ -233,8 +226,8 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
       rawAppeals[id] = Number.isFinite(aiEffApp) ? aiEffApp : 0;
     });
 
+    // 2. 目標シェア（欲しい客の割合）を算出
     const exponent = 1.3; 
-    /** @type {Record<string, number>} */
     const weightedAppeals = {};
     let totalWeighted = 0;
     Object.entries(rawAppeals).forEach(([id, app]) => {
@@ -244,12 +237,40 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
     });
     totalWeighted = Math.max(0.01, totalWeighted);
 
-    /** @type {Record<string, number>} */
     const targetShares = {};
     Object.keys(weightedAppeals).forEach(id => {
       targetShares[id] = weightedAppeals[id] / totalWeighted;
     });
 
+    // 3. AI の生産能力制限を適用
+    let unmetDemand = 0;
+    const actualPotentialSales = {};
+    
+    Object.keys(AI_COMPANIES).forEach(id => {
+      const potentialSalesUnits = targetShares[id] * m.demand;
+      const finance = aiFinances[id];
+      if (!finance) return;
+
+      const maxWeeklyCapacity = (finance.factories || 5) * 40;
+      const actualSales = Math.min(potentialSalesUnits, maxWeeklyCapacity);
+      
+      actualPotentialSales[id] = actualSales;
+      unmetDemand += (potentialSalesUnits - actualSales);
+      
+      // 稼働率の更新（全市場の合計が必要だが、簡易的に市場ごとに加重平均的に計算）
+      const currentRate = potentialSalesUnits > 0 ? actualSales / potentialSalesUnits : 1.0;
+      finance.operatingRate = (finance.operatingRate * 0.8) + (Math.min(1.0, actualSales / Math.max(1, maxWeeklyCapacity)) * 0.2);
+    });
+
+    // 4. 溢れた需要（売り切れ分）をプレイヤーと他の供給余力があるメーカーに再分配
+    if (unmetDemand > 0) {
+      const playerTargetShare = targetShares.player || 0;
+      // プレイヤーがどれだけ「買えなかった客」を受け入れられるか（簡易化のため魅力度比率で分配）
+      const redistributionRatio = playerTargetShare / (1 - (targetShares.player || 0));
+      targetShares.player += (unmetDemand / m.demand) * Math.max(0.2, redistributionRatio);
+    }
+
+    // 5. 最終的なシェアの推移（徐々に変化）
     const shiftBase = 0.08; 
     const playerMarketingBonus = m.marketing * 0.05 * (loopEffects.marketingMulti || 1.0);
     const playerShareShift = (targetShares.player - m.shares.player) * (shiftBase + playerMarketingBonus);
@@ -266,6 +287,7 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
       m.shares[cId] = Math.max(0, current + (target - current) * shiftBase);
     });
 
+    // 合計を1に正規化
     const totalCurrentShare = m.shares.player + Object.keys(AI_COMPANIES).reduce((s, c) => s + (m.shares[c] || 0), 0);
     if (totalCurrentShare > 0) {
       m.shares.player /= totalCurrentShare;
@@ -278,4 +300,35 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
   });
 
   return totalPlayerDemandShare;
+}
+
+/**
+ * AI の経営判断ロジック（工場の増設・閉鎖）
+ * @param {any} nextAiFinances 
+ * @param {number} calcYear 
+ * @param {any} nextMarkets
+ */
+export function processAIBusinessLogic(nextAiFinances, calcYear, nextMarkets) {
+  // 3年に一度、経営判断を行う
+  if (calcYear % 3 !== 0) return;
+
+  Object.entries(nextAiFinances).forEach(([id, finance]) => {
+    if (finance.isBankrupt) return;
+
+    const ai = AI_COMPANIES[id];
+    const opRate = finance.operatingRate || 0;
+    const expansionCost = 20000; // 工場建設コスト（固定）
+
+    // 増設判断：稼働率が高く、資金がある場合
+    if (opRate > 0.92 && finance.money > expansionCost * 2) {
+      finance.factories = (finance.factories || 5) + 1;
+      finance.money -= expansionCost;
+    }
+    // 縮小判断：稼働率が極端に低く、資金繰りが苦しい場合
+    else if (opRate < 0.5 && finance.money < 50000 && finance.factories > 3) {
+      finance.factories -= 1;
+      // 閉鎖による特別利益（資産売却）を少し加算
+      finance.money += 5000;
+    }
+  });
 }

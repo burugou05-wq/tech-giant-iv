@@ -1,16 +1,18 @@
 import React from 'react';
-import { X, TrendingUp, BarChart2, Zap, Package, Landmark } from 'lucide-react';
+import { X, TrendingUp, BarChart2, Zap, Package, Landmark, Factory } from 'lucide-react';
 import { useGame } from '../context/GameContext.jsx';
 import { AI_COMPANIES } from '../constants/index.js';
 
 export default function CompanyDetailPanel({ companyId, onClose }) {
-  const { markets = {}, stockPrice = 100, aiProducts = {}, currentYear = 1946 } = useGame();
+  const { markets = {}, stockPrice = 100, aiProducts = {}, aiFinances = {}, currentYear = 1946 } = useGame();
   
   // プレイヤー自身、または無効なIDの場合は表示しない
   if (!companyId || companyId === 'player') return null;
   
   const ai = AI_COMPANIES[companyId];
   if (!ai) return null;
+
+  const finance = aiFinances[companyId] || { factories: 5, operatingRate: 0.8 };
 
   // --- 安全な計算ロジック ---
   const getCompanyStock = (id) => {
@@ -145,6 +147,53 @@ export default function CompanyDetailPanel({ companyId, onClose }) {
               <div className="text-2xl font-black text-white leading-none">${(getCompanyRevenue(companyId) / 1000).toFixed(0)}M</div>
               <div className="text-[9px] text-slate-500 mt-2 font-bold uppercase">Estimated Annual</div>
             </div>
+          </div>
+
+          {/* 3. 生産能力 & 稼働率 */}
+          <div className="bg-slate-800/80 backdrop-blur-md rounded-2xl p-5 border border-slate-700 shadow-xl relative overflow-hidden group">
+            <div className="absolute -right-4 -bottom-4 opacity-5">
+              <Factory size={80} className="text-blue-400" />
+            </div>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Factory size={16} className="text-blue-400" />
+                <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Production Status</span>
+              </div>
+              <div className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${
+                finance.operatingRate > 0.95 ? 'bg-red-500/10 text-red-500 border-red-500/20 animate-pulse' :
+                finance.operatingRate > 0.8 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                'bg-amber-500/10 text-amber-500 border-amber-500/20'
+              }`}>
+                {finance.operatingRate > 0.95 ? '⚠ 供給限界' : finance.operatingRate > 0.8 ? '✓ 順調' : '⚠ 設備過剰'}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <div className="text-[9px] text-slate-500 font-bold uppercase mb-1">保有工場数</div>
+                <div className="text-xl font-black text-white">{finance.factories || 0} <span className="text-[10px] text-slate-500">棟</span></div>
+              </div>
+              <div>
+                <div className="text-[9px] text-slate-500 font-bold uppercase mb-1">現在の稼働率</div>
+                <div className={`text-xl font-black ${
+                  finance.operatingRate > 0.95 ? 'text-red-500' : 'text-white'
+                }`}>
+                  {Math.round((finance.operatingRate || 0) * 100)}%
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800 p-0.5">
+              <div 
+                className={`h-full rounded-full transition-all duration-1000 ${
+                  finance.operatingRate > 0.95 ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]' : 'bg-blue-500'
+                }`}
+                style={{ width: `${Math.min(100, (finance.operatingRate || 0) * 100)}%` }} 
+              />
+            </div>
+            <p className="mt-3 text-[9px] text-slate-500 font-bold leading-tight">
+              稼働率が100%に近い場合、この企業は需要に対して供給が追いついていません。
+            </p>
           </div>
 
           {/* 3. ブランド力 & バフ表示 */}
