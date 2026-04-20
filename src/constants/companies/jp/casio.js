@@ -4,7 +4,7 @@ export const casio = {
   updateChance: 0.05, appealMod: 1.1, strongMarket: 'jp',
   prefixes: ['G-Shock', 'Exilim', 'Privia', 'Casio'],
   appearsYear: 1957, disappearsYear: 9999,
-  initialMoney: 80000, minMargin: 0.30,
+  initialMoney: 80000, initialFactories: 10, minMargin: 0.30,
   regions: { jp: 1957, na: 1970, eu: 1975 },
   stockBase: 120, revenueBase: 50000,
   strengths: ['究極の小型化・省電力技術', 'G-SHOCKに代表されるタフネス思想', '独自のUIと使い勝手'],

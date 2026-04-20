@@ -4,7 +4,7 @@ export const apple = {
   updateChance: 0.04, appealMod: 1.5, strongMarket: 'na',
   prefixes: ['Apple', 'iPod', 'Mac', 'iPhone', 'iPad'],
   appearsYear: 1976, disappearsYear: 9999,
-  initialMoney: 120000, minMargin: 0.45,
+  initialMoney: 120000, initialFactories: 6, minMargin: 0.45,
   regions: { na: 1976, eu: 1985, jp: 1990 },
   stockBase: 320, revenueBase: 180000,
   strengths: ['デザイン力とブランド価値', '垂直統合のエコシステム', '圧倒的な利益率'],

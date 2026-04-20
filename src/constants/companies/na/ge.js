@@ -4,7 +4,7 @@ export const ge = {
   updateChance: 0.02, appealMod: 0.95, strongMarket: 'na',
   prefixes: ['GE', 'General', 'Electric', 'Hotpoint'],
   appearsYear: 1946, disappearsYear: 2004,
-  initialMoney: 500000, minMargin: 0.22,
+  initialMoney: 500000, initialFactories: 25, minMargin: 0.22,
   regions: { na: 1946, eu: 1960 },
   stockBase: 250, revenueBase: 300000,
   strengths: ['圧倒的な資本力', '北米家電市場の支配', 'インフラとの相乗効果'],

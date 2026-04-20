@@ -4,7 +4,7 @@ export const panasonic = {
   updateChance: 0.030, appealMod: 1.1, strongMarket: 'jp',
   prefixes: ['Panasonic', 'National', 'Lumix', 'Technics'],
   appearsYear: 1946, disappearsYear: 9999,
-  initialMoney: 200000, minMargin: 0.20,
+  initialMoney: 200000, initialFactories: 15, minMargin: 0.20,
   regions: { jp: 1946, na: 1970, eu: 1980 },
   stockBase: 110, revenueBase: 150000,
   strengths: ['家電の王様', '強力な系列店ネットワーク', '圧倒的な量産力'],

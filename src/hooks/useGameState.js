@@ -21,7 +21,7 @@ const INITIAL_AI_FINANCES = Object.fromEntries(
     money: (ai && typeof ai.initialMoney === 'number') ? ai.initialMoney : 100000,
     isBankrupt: false,
     activeMarkets: Object.keys(ai.regions || { jp: 0 }),
-    factories: Math.max(5, Math.floor(((ai && ai.initialMoney) || 100000) / 15000)), // 資金に応じて初期工場数を設定
+    factories: ai.initialFactories || Math.max(5, Math.floor(((ai && ai.initialMoney) || 100000) / 15000)), // 個別設定があればそれを使用
     operatingRate: 0.8 // 初期は 80% 稼働
   }])
 );
