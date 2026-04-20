@@ -12,7 +12,7 @@ export const FactorySummary = ({
   onAddLine 
 }) => {
   const supplyRatio = estimatedDemand > 0 ? totalProduction / estimatedDemand : 0;
-  const expansionCost = 20000 + (totalFactories - 10) * 5000;
+  const expansionCost = 20000;
 
   return (
     <Card className="p-6 bg-slate-800 border-slate-700 shadow-lg flex flex-wrap justify-between items-center gap-6">

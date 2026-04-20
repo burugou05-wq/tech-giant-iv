@@ -30,7 +30,7 @@ export default function Production() {
 
   // 工場増設ハンドラ
   const handleExpandFactories = () => {
-    const cost = 20000 + (totalFactories - 10) * 5000;
+    const cost = 20000; // 固定価格 $20M
     if (money < cost) return;
     setMoney(prev => prev - cost);
     setTotalFactories(prev => prev + 1);
