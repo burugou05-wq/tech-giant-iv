@@ -291,11 +291,13 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
     });
 
     // 合計を1に正規化
-    const totalCurrentShare = m.shares.player + Object.keys(AI_COMPANIES).reduce((s, c) => s + (m.shares[c] || 0), 0);
+    const shares = /** @type {Record<string, number>} */ (m.shares);
+    const totalCurrentShare = m.shares.player + Object.keys(AI_COMPANIES).reduce((s, c) => s + (shares[c] || 0), 0);
     if (totalCurrentShare > 0) {
       m.shares.player /= totalCurrentShare;
       Object.keys(AI_COMPANIES).forEach(c => { 
-        m.shares[c] = (m.shares[c] || 0) / totalCurrentShare; 
+        const shares = /** @type {Record<string, number>} */ (m.shares);
+        shares[c] = (shares[c] || 0) / totalCurrentShare; 
       });
     }
     
@@ -319,7 +321,8 @@ export function processAIBusinessLogic(nextAiFinances, ticks, dateStr, newLogs) 
   Object.entries(nextAiFinances).forEach(([id, finance]) => {
     if (finance.isBankrupt) return;
 
-    const aiDef = AI_COMPANIES[id];
+    const companies = /** @type {Record<string, any>} */ (AI_COMPANIES);
+    const aiDef = companies[id];
     const opRate = finance.operatingRate || 0;
     const expansionCost = 20000; // 工場建設コスト（固定）
 
