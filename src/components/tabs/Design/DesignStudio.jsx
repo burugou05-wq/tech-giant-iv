@@ -109,23 +109,37 @@ export const DesignStudio = ({
           </div>
 
           {/* 相場ガイド */}
-          {specs.recommendation && (
-            <div className="mt-2 p-3 bg-slate-900/40 rounded-xl border border-slate-800/50 flex items-center justify-between">
+          <div className="mt-2 p-3 bg-slate-900/40 rounded-xl border border-slate-800/50 flex items-center justify-between gap-4">
+            {specs.recommendation && (
               <div className="space-y-1">
                 <div className="text-[8px] text-slate-500 font-black uppercase tracking-widest">市場相場</div>
-                <div className="text-xs font-black text-slate-300">${specs.recommendation.avg}k</div>
+                <div className="flex items-center gap-2">
+                  <div className="text-xs font-black text-slate-300">${specs.recommendation.avg}k</div>
+                  <button 
+                    onClick={() => setDesignPrice(specs.recommendation.price)}
+                    className="px-2 py-0.5 bg-indigo-500/20 hover:bg-indigo-500/40 border border-indigo-500/30 rounded text-indigo-300 text-[8px] font-black transition-all"
+                  >
+                    おすすめ適用 (${specs.recommendation.price}k)
+                  </button>
+                </div>
               </div>
-              <div className="text-center">
-                <div className="text-[8px] text-indigo-400 font-black uppercase tracking-widest mb-1">おすすめ</div>
+            )}
+            
+            {designStrategy === 'high-end' && (
+              <div className="space-y-1 text-right">
+                <div className="text-[8px] text-amber-500 font-black uppercase tracking-widest flex items-center justify-end gap-1">
+                  <span className="w-1 h-1 bg-amber-500 rounded-full animate-ping" />
+                  HIGH-END 最低価格
+                </div>
                 <button 
-                  onClick={() => setDesignPrice(specs.recommendation.price)}
-                  className="px-3 py-1 bg-indigo-500/20 hover:bg-indigo-500/40 border border-indigo-500/30 rounded-lg text-indigo-300 text-[10px] font-black transition-all"
+                  onClick={() => setDesignPrice(Math.ceil(specs.cost * 2.5))}
+                  className="px-2 py-0.5 bg-amber-500/20 hover:bg-amber-500/40 border border-amber-500/30 rounded text-amber-300 text-[8px] font-black transition-all"
                 >
-                  ${specs.recommendation.price}k を適用
+                  ${Math.ceil(specs.cost * 2.5)}k を適用 (バフ条件)
                 </button>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* マーケット戦略選択 */}
