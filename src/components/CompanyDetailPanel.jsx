@@ -133,25 +133,70 @@ export default function CompanyDetailPanel({ companyId, onClose }) {
             )}
           </div>
 
-          {/* 2. 主要KPI */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-slate-800/80 backdrop-blur-md rounded-2xl p-4 border border-slate-700 shadow-xl group hover:border-indigo-500/50 transition-colors">
-              <div className="flex items-center gap-2 text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">
-                <TrendingUp size={12} className="text-indigo-400" /> Market Cap
+          {/* 2. 財務インテリジェンス (統合セクション) */}
+          <div className="bg-slate-800/80 backdrop-blur-md rounded-3xl p-6 border border-slate-700 shadow-2xl relative overflow-hidden group">
+            <div className="absolute -right-6 -top-6 opacity-5 group-hover:opacity-10 transition-opacity">
+              <Landmark size={120} className="text-indigo-400" />
+            </div>
+            
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-indigo-500/20 rounded-lg">
+                  <Landmark size={16} className="text-indigo-400" />
+                </div>
+                <span className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">Financial Intelligence</span>
               </div>
-              <div className="text-2xl font-black text-white leading-none">${getCompanyStock(companyId).toLocaleString()}</div>
-              <div className="mt-2 flex items-center gap-1">
-                <div className="w-full bg-slate-900 h-1 rounded-full overflow-hidden">
-                  <div className="bg-indigo-500 h-full transition-all duration-1000" style={{ width: `${Math.min(100, (getCompanyStock(companyId) / Math.max(1, stockPrice)) * 50)}%` }} />
+              
+              {/* 倒産危険度ステータス */}
+              {(() => {
+                const money = rawFinance.money || 0;
+                const isBankrupt = rawFinance.isBankrupt;
+                let risk = { label: '安全', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' };
+                
+                if (isBankrupt) {
+                  risk = { label: '破綻済み', color: 'text-red-500', bg: 'bg-red-500/20', border: 'border-red-500/40' };
+                } else if (money < 0) {
+                  risk = { label: '破綻寸前', color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/20 animate-pulse' };
+                } else if (money < 20000) {
+                  risk = { label: '警戒', color: 'text-orange-500', bg: 'bg-orange-500/10', border: 'border-orange-500/20' };
+                } else if (money < 50000) {
+                  risk = { label: '注意', color: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' };
+                }
+                
+                return (
+                  <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full border ${risk.bg} ${risk.border}`}>
+                    <div className={`w-1.5 h-1.5 rounded-full ${risk.color.replace('text-', 'bg-')} animate-pulse`} />
+                    <span className={`text-[10px] font-black uppercase ${risk.color}`}>リスク: {risk.label}</span>
+                  </div>
+                );
+              })()}
+            </div>
+
+            <div className="space-y-6">
+              {/* 総資産 (Money) */}
+              <div>
+                <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1 ml-1">Total Assets (Cash Balance)</div>
+                <div className="flex items-baseline gap-2">
+                  <div className={`text-4xl font-black tracking-tighter ${rawFinance.money < 0 ? 'text-red-500' : 'text-white'}`}>
+                    ${((rawFinance.money || 0) / 1000).toFixed(1)}<span className="text-xl ml-1">M</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="bg-slate-800/80 backdrop-blur-md rounded-2xl p-4 border border-slate-700 shadow-xl group hover:border-emerald-500/50 transition-colors">
-              <div className="flex items-center gap-2 text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">
-                <BarChart2 size={12} className="text-emerald-400" /> Revenue
+
+              <div className="grid grid-cols-2 gap-6 pt-4 border-t border-slate-700/50">
+                <div>
+                  <div className="flex items-center gap-1.5 text-slate-500 text-[9px] font-black uppercase tracking-widest mb-1">
+                    <TrendingUp size={10} className="text-indigo-400" /> Market Cap
+                  </div>
+                  <div className="text-xl font-black text-slate-200">${getCompanyStock(companyId).toLocaleString()}</div>
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5 text-slate-500 text-[9px] font-black uppercase tracking-widest mb-1">
+                    <BarChart2 size={10} className="text-emerald-400" /> Est. Revenue
+                  </div>
+                  <div className="text-xl font-black text-slate-200">${(getCompanyRevenue(companyId) / 1000).toFixed(0)}M</div>
+                </div>
               </div>
-              <div className="text-2xl font-black text-white leading-none">${(getCompanyRevenue(companyId) / 1000).toFixed(0)}M</div>
-              <div className="text-[9px] text-slate-500 mt-2 font-bold uppercase">Estimated Annual</div>
             </div>
           </div>
 
