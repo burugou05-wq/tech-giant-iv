@@ -318,7 +318,6 @@ export function processAIBusinessLogic(nextAiFinances, calcYear, nextMarkets) {
   Object.entries(nextAiFinances).forEach(([id, finance]) => {
     if (finance.isBankrupt) return;
 
-    const ai = AI_COMPANIES[id];
     const opRate = finance.operatingRate || 0;
     const expansionCost = 20000; // 工場建設コスト（固定）
 
