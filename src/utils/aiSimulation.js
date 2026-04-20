@@ -306,18 +306,20 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
 }
 
 /**
- * AI の経営判断ロジック（工場の増設・閉鎖）
+ * AI の経営判断（工場の増設・閉鎖）を実行
  * @param {any} nextAiFinances 
- * @param {number} calcYear 
- * @param {any} nextMarkets
+ * @param {number} ticks
+ * @param {string} dateStr
+ * @param {any[]} newLogs
  */
-export function processAIBusinessLogic(nextAiFinances, calcYear, nextMarkets) {
-  // 3年に一度、経営判断を行う
-  if (calcYear % 3 !== 0) return;
+export function processAIBusinessLogic(nextAiFinances, ticks, dateStr, newLogs) {
+  // 3年に一度（約78ターンに一度）、経営判断を行う
+  if (ticks % 78 !== 0) return;
 
   Object.entries(nextAiFinances).forEach(([id, finance]) => {
     if (finance.isBankrupt) return;
 
+    const aiDef = AI_COMPANIES[id];
     const opRate = finance.operatingRate || 0;
     const expansionCost = 20000; // 工場建設コスト（固定）
 
@@ -325,12 +327,22 @@ export function processAIBusinessLogic(nextAiFinances, calcYear, nextMarkets) {
     if (opRate > 0.92 && finance.money > expansionCost * 2) {
       finance.factories = (finance.factories || 5) + 1;
       finance.money -= expansionCost;
+      newLogs.push({ 
+        time: dateStr, 
+        msg: `【AI動向】${aiDef.name}が生産能力を増強（工場 ${finance.factories} 棟へ）`, 
+        type: 'info' 
+      });
     }
     // 縮小判断：稼働率が極端に低く、資金繰りが苦しい場合
     else if (opRate < 0.5 && finance.money < 50000 && finance.factories > 3) {
       finance.factories -= 1;
-      // 閉鎖による特別利益（資産売却）を少し加算
       finance.money += 5000;
+      newLogs.push({ 
+        time: dateStr, 
+        msg: `【AI動向】${aiDef.name}が過剰設備を削減（工場 ${finance.factories} 棟へ）`, 
+        type: 'info',
+        color: 'text-orange-400'
+      });
     }
   });
 }

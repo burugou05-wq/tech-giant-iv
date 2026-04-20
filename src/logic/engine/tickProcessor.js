@@ -149,7 +149,7 @@ export function processGameTick(s) {
   const totalPlayerDemandShare = simulateMarketShares(nextMarkets, nextAiProducts, sellableProducts[0] || null, calcYear, loopEffects, nextAiFinances);
   
   // AI の経営判断（工場の増設・閉鎖）を実行
-  processAIBusinessLogic(nextAiFinances, calcYear, nextMarkets);
+  processAIBusinessLogic(nextAiFinances, newTick, dateStr, newLogs);
 
   const salesResults = executeSales(nextMarkets, sellableProducts, nextInv, loopEffects, nextYenRate, s.euExtraCost ?? 0);
 
