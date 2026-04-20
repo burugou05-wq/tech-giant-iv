@@ -97,6 +97,9 @@ export default function Design() {
         onUpdatePrice={(id, newPrice) => {
           setBlueprints(prev => prev.map(bp => bp.id === id ? { ...bp, price: newPrice } : bp));
         }}
+        onUpdateStrategy={(id, newStrategy) => {
+          setBlueprints(prev => prev.map(bp => bp.id === id ? { ...bp, strategy: newStrategy } : bp));
+        }}
         onRefresh={refreshBlueprint}
       />
       

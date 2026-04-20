@@ -11,9 +11,17 @@ export const BlueprintCatalog = ({
   onRemove, 
   onRefresh, 
   onUpdatePrice,
+  onUpdateStrategy,
   productionLines 
 }) => {
   const { contentOwned, currentEffects } = useGame();
+  
+  const strategies = [
+    { id: 'high-end', name: 'H', label: 'HIGH-END', color: 'amber' },
+    { id: 'mainstream', name: 'M', label: 'MAINSTREAM', color: 'blue' },
+    { id: 'budget', name: 'B', label: 'BUDGET', color: 'emerald' },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between px-2">
@@ -56,22 +64,36 @@ export const BlueprintCatalog = ({
                 </button>
               </div>
 
-              <div className="flex items-center gap-2 mb-3 px-1">
-                <span className={`text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter ${
-                  bp.strategy === 'high-end' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' :
-                  bp.strategy === 'budget' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
-                  'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                }`}>
-                  {bp.strategy || 'mainstream'}
-                </span>
-                {bp.strategy === 'high-end' && bp.price < bp.cost * 2.5 && (
-                  <span className="text-[8px] font-black text-rose-500 animate-pulse flex items-center gap-1">
-                    <span className="w-1 h-1 bg-rose-500 rounded-full" /> 価格不足でバフ無効
-                  </span>
-                )}
-                {bp.strategy === 'mainstream' && (
-                  <span className="text-[7px] font-bold text-slate-500 uppercase">シェア連動型</span>
-                )}
+              {/* 戦略切り替えセクション */}
+              <div className="flex items-center gap-2 mb-3 bg-slate-950/60 p-1 rounded-xl border border-slate-800/50 w-fit">
+                {strategies.map(s => (
+                  <button
+                    key={s.id}
+                    onClick={() => onUpdateStrategy && onUpdateStrategy(bp.id, s.id)}
+                    className={`px-3 py-1 rounded-lg text-[9px] font-black transition-all ${
+                      (bp.strategy || 'mainstream') === s.id
+                        ? `bg-${s.color}-500/20 text-${s.color}-400 border border-${s.color}-500/40 shadow-sm`
+                        : 'text-slate-600 hover:text-slate-400'
+                    }`}
+                    title={s.label}
+                  >
+                    {s.name}
+                  </button>
+                ))}
+                
+                <div className="ml-2 pr-2 border-l border-slate-800 pl-2">
+                  {bp.strategy === 'high-end' && bp.price < bp.cost * 2.5 && (
+                    <span className="text-[8px] font-black text-rose-500 animate-pulse flex items-center gap-1">
+                      <span className="w-1 h-1 bg-rose-500 rounded-full" /> 価格不足
+                    </span>
+                  )}
+                  {bp.strategy === 'mainstream' && (
+                    <span className="text-[7px] font-bold text-slate-500 uppercase">シェア連動</span>
+                  )}
+                  {bp.strategy === 'budget' && (
+                    <span className="text-[7px] font-bold text-emerald-500 uppercase">低価格特化</span>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3 mb-4">
