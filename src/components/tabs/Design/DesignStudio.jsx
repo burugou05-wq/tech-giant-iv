@@ -8,6 +8,7 @@ export const DesignStudio = ({
   selectedChassisId, setSelectedChassisId,
   designSlots, setDesignSlots,
   designPrice, setDesignPrice,
+  designStrategy, setDesignStrategy,
   unlockedChassis, unlockedModules,
   specs, canSave, onSave
 }) => {
@@ -125,6 +126,31 @@ export const DesignStudio = ({
               </div>
             </div>
           )}
+        </div>
+
+        {/* マーケット戦略選択 */}
+        <div className="space-y-3 pt-4 border-t border-slate-700/50">
+          <label className="text-[10px] text-slate-500 font-black uppercase px-1 tracking-widest flex justify-between">
+            マーケット戦略 <span>Select Strategy</span>
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { id: 'high-end', name: 'HIGH-END', color: 'border-amber-500/50', bg: 'bg-amber-500/10', text: 'text-amber-400', desc: '魅力 1.3倍 / 高価格必須' },
+              { id: 'mainstream', name: 'MAINSTREAM', color: 'border-blue-500/50', bg: 'bg-blue-500/10', text: 'text-blue-400', desc: 'シェア連動バフ / 定番' },
+              { id: 'budget', name: 'BUDGET', color: 'border-emerald-500/50', bg: 'bg-emerald-500/10', text: 'text-emerald-400', desc: 'ブランド無視 / 魅力減' },
+            ].map(s => (
+              <button
+                key={s.id}
+                onClick={() => setDesignStrategy(s.id)}
+                className={`p-2 rounded-xl border text-center transition-all group ${
+                  designStrategy === s.id ? `${s.bg} ${s.color} ring-1 ring-white/20` : 'bg-slate-950 border-slate-800 opacity-40 grayscale hover:opacity-70'
+                }`}
+              >
+                <div className={`text-[10px] font-black ${s.text} group-hover:scale-105 transition-transform`}>{s.name}</div>
+                <div className="text-[7px] font-bold text-slate-500 leading-tight mt-1">{s.desc}</div>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* プレビュー数値 */}

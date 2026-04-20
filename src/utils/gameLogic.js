@@ -66,5 +66,19 @@ export const calculateEffectiveAppeal = (bp, year, ownedContentList, effects) =>
     }
   });
   app *= Math.min(synergyMult, 3.0) * effects.synergyMulti;
+
+  // --- 戦略別バフの適用 ---
+  if (bp.strategy === 'high-end') {
+    // 原価の 2.5倍以上の価格設定なら 1.3倍のバフ
+    const minPrice = bp.cost * 2.5;
+    if (bp.price >= minPrice) {
+      app *= 1.3;
+    }
+  } else if (bp.strategy === 'budget') {
+    // 格安戦略は魅力度が 0.8倍に低下する
+    app *= 0.8;
+  }
+  // MAINSTREAM のモメンタムバフは市場シェアに依存するため、シミュレーション側で適用
+
   return app;
 };

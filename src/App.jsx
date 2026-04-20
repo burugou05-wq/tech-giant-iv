@@ -35,6 +35,7 @@ export default function App() {
   const [designSlots, setDesignSlots]             = useState({});
   const [designName, setDesignName]               = useState('');
   const [designPrice, setDesignPrice]             = useState(100);
+  const [designStrategy, setDesignStrategy]       = useState('mainstream');
 
   const engine = useGameEngine();
 
@@ -49,6 +50,7 @@ export default function App() {
     designSlots, setDesignSlots,
     designName, setDesignName,
     designPrice, setDesignPrice,
+    designStrategy, setDesignStrategy,
     
     // Engine state & handlers
     ...engine,

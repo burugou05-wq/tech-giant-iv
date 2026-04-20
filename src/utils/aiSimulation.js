@@ -187,9 +187,17 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
       const priceFactor = Math.exp(-Math.pow(relativePrice - 0.8, 2) * 0.5); // 0.8倍付近が最も効率が良い
       
       const launchYear = bestItem.bp.launchYear || calcYear;
-      const decay = Math.max(0.5, 1 - Math.max(0, calcYear - launchYear - 3) * 0.08);
+      const decay = Math.max(0.4, 1 - Math.max(0, calcYear - launchYear - 4) * 0.1);
       
-      const finalApp = bestItem.app * (Number.isFinite(priceFactor) ? priceFactor : 1.0) * decay * storeBuff;
+      let finalApp = bestItem.app * (Number.isFinite(priceFactor) ? priceFactor : 1.0) * decay * storeBuff;
+
+      // --- MAINSTREAM モメンタムバフ ---
+      if (bestItem.bp.strategy === 'mainstream') {
+        const prevShare = m.shares.player || 0;
+        const momentumBuff = 1.0 + Math.min(0.2, (prevShare / 0.1) * 0.05); // 10%シェアごとに+5%、最大1.2倍
+        finalApp *= momentumBuff;
+      }
+
       playerEffectiveApp = Number.isFinite(finalApp) ? finalApp : 0;
     }
 
@@ -204,12 +212,18 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
       const aiProduct = nextAiProducts[id];
       let aiEffApp = 0;
       if (active && inRegion && aiProduct) {
-        const decay = Math.max(0.5, 1 - Math.max(0, calcYear - aiProduct.launchYear - 3) * 0.08);
+        const decay = Math.max(0.4, 1 - Math.max(0, calcYear - aiProduct.launchYear - 4) * 0.1);
         const safeAiPrice = Number.isFinite(aiProduct.price) ? Math.max(1, aiProduct.price) : 100;
         
         const relativePrice = safeAiPrice / avgMarketPrice;
         // ブランド力(brand)が高いほど、高価格による魅力度減少(priceFactor)を抑える
-        const brandPower = ai.brand || 0.3;
+        // BUDGET 戦略のプレイヤーには AI トップクラスのブランド力を擬似的に与える
+        let brandPower = ai.brand || 0.3;
+        if (bestItem && bestItem.bp.strategy === 'budget') {
+          // プレイヤーが BUDGET 戦略なら、価格競争において不利にならないよう補正
+          brandPower = 0.8; 
+        }
+        
         const priceSensitivity = Math.max(0.1, 0.5 - brandPower * 0.4);
         const priceFactor = Math.exp(-Math.pow(relativePrice - 0.8, 2) * priceSensitivity);
         
