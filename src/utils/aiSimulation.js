@@ -10,9 +10,13 @@ import { getTrendMultiplier } from '../utils/gameLogic.js';
  * @param {string} dateStr - 日付文字列（ログ用）
  * @param {any[]} newLogs - 新しいログの配列
  * @param {any} nextMarkets - 市場データ
+ * @param {any} aiFinances - AI財務データ
  */
-export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarkets) {
+export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarkets, aiFinances) {
   Object.entries(AI_COMPANIES).forEach(([aiId, ai]) => {
+    // 倒産している場合は何もしない
+    if (aiFinances?.[aiId]?.isBankrupt) return;
+
     // 競合他社は活動期間中のみ新製品を出す
     if (calcYear < ai.appearsYear || calcYear > (ai.disappearsYear || Infinity)) return;
 
@@ -210,9 +214,10 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
       const r = /** @type {Record<string, number>} */ (ai.regions);
       const inRegion = r && r[mKey] && calcYear >= r[mKey];
       
+      const aiFin = aiFinances[id];
       const aiProduct = nextAiProducts[id];
       let aiEffApp = 0;
-      if (active && inRegion && aiProduct) {
+      if (active && inRegion && aiProduct && !aiFin?.isBankrupt) {
         const decay = Math.max(0.4, 1 - Math.max(0, calcYear - aiProduct.launchYear - 4) * 0.1);
         const safeAiPrice = Number.isFinite(aiProduct.price) ? Math.max(1, aiProduct.price) : 100;
         const relativePrice = safeAiPrice / avgMarketPrice;

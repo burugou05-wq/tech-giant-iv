@@ -129,8 +129,6 @@ export function processGameTick(s) {
     };
   }).filter(p => p.stock > 0 || p.isOnLine).sort((a, b) => b.app - a.app);
 
-  simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarkets);
-  
   // AI 企業の収支・設備の更新用 (セルフヒーリング付き)
   const nextAiFinances = JSON.parse(JSON.stringify(s.aiFinances || {}));
   Object.keys(AI_COMPANIES).forEach(id => {
@@ -145,6 +143,8 @@ export function processGameTick(s) {
       };
     }
   });
+
+  simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarkets, nextAiFinances);
   
   const totalPlayerDemandShare = simulateMarketShares(nextMarkets, nextAiProducts, sellableProducts[0] || null, calcYear, loopEffects, nextAiFinances);
   
