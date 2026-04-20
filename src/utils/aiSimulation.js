@@ -228,6 +228,7 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
 
     // 2. 目標シェア（欲しい客の割合）を算出
     const exponent = 1.3; 
+    /** @type {Record<string, number>} */
     const weightedAppeals = {};
     let totalWeighted = 0;
     Object.entries(rawAppeals).forEach(([id, app]) => {
@@ -237,6 +238,7 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
     });
     totalWeighted = Math.max(0.01, totalWeighted);
 
+    /** @type {Record<string, number>} */
     const targetShares = {};
     Object.keys(weightedAppeals).forEach(id => {
       targetShares[id] = weightedAppeals[id] / totalWeighted;
@@ -244,6 +246,7 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
 
     // 3. AI の生産能力制限を適用
     let unmetDemand = 0;
+    /** @type {Record<string, number>} */
     const actualPotentialSales = {};
     
     Object.keys(AI_COMPANIES).forEach(id => {
