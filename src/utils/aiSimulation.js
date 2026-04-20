@@ -220,7 +220,12 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
         const priceSensitivity = Math.max(0.1, 0.5 - brandPower * 0.4);
         const priceFactor = Math.exp(-Math.pow(relativePrice - 0.8, 2) * priceSensitivity);
         
-        aiEffApp = aiProduct.appeal * (Number.isFinite(priceFactor) ? priceFactor : 1.0) * decay;
+        // 時代（黄金期・暗黒期）の判定
+        const currentEra = ai.eras?.find(e => calcYear >= e.start && calcYear <= e.end);
+        const eraBuff = currentEra ? currentEra.buff : 1.0;
+        const appealMod = ai.appealMod || 1.0;
+        
+        aiEffApp = aiProduct.appeal * appealMod * eraBuff * (Number.isFinite(priceFactor) ? priceFactor : 1.0) * decay;
         if (ai.strongMarket === mKey) aiEffApp *= 1.15; 
       }
       rawAppeals[id] = Number.isFinite(aiEffApp) ? aiEffApp : 0;
