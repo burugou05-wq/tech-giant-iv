@@ -12,7 +12,11 @@ export default function CompanyDetailPanel({ companyId, onClose }) {
   const ai = AI_COMPANIES[companyId];
   if (!ai) return null;
 
-  const finance = aiFinances[companyId] || { factories: 5, operatingRate: 0.8 };
+  const rawFinance = aiFinances[companyId] || {};
+  const finance = {
+    factories: rawFinance.factories || ai.initialFactories || 5,
+    operatingRate: rawFinance.operatingRate || 0
+  };
 
   // --- 安全な計算ロジック ---
   const getCompanyStock = (id) => {

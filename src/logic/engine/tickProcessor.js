@@ -131,8 +131,20 @@ export function processGameTick(s) {
 
   simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarkets);
   
-  // AI 企業の収支・設備の更新用
-  const nextAiFinances = JSON.parse(JSON.stringify(s.aiFinances));
+  // AI 企業の収支・設備の更新用 (セルフヒーリング付き)
+  const nextAiFinances = JSON.parse(JSON.stringify(s.aiFinances || {}));
+  Object.keys(AI_COMPANIES).forEach(id => {
+    if (!nextAiFinances[id]) {
+      const ai = AI_COMPANIES[id];
+      nextAiFinances[id] = {
+        money: ai.initialMoney || 100000,
+        isBankrupt: false,
+        activeMarkets: Object.keys(ai.regions || { jp: 0 }),
+        factories: ai.initialFactories || Math.max(5, Math.floor((ai.initialMoney || 100000) / 15000)),
+        operatingRate: 0.8
+      };
+    }
+  });
   
   const totalPlayerDemandShare = simulateMarketShares(nextMarkets, nextAiProducts, sellableProducts[0] || null, calcYear, loopEffects, nextAiFinances);
   
