@@ -162,25 +162,49 @@ export function processGameTick(s) {
       const buyerDef = AI_COMPANIES[deal.buyerId];
 
       if (deal.type === 'SUBSIDIARY') {
-        targetFin.parentId = deal.buyerId;
-        targetFin.money = 5000; // 手元資金をリセット
-        buyerFin.money -= 10000; // 買収コスト
+        // 買収側の「真のボス（最上位親）」を探す
+        let ultimateParentId = deal.buyerId;
+        while (nextAiFinances[ultimateParentId]?.parentId) {
+          ultimateParentId = nextAiFinances[ultimateParentId].parentId;
+        }
+
+        const oldTargetId = deal.targetId;
+        targetFin.parentId = ultimateParentId;
+        targetFin.money = 5000;
+        nextAiFinances[ultimateParentId].money -= 10000; // ボスが代金を支払う
+
+        // 被買収側が連れていた子会社も、すべて新しいボスに紐付け直す
+        Object.values(nextAiFinances).forEach(f => {
+          if (f.parentId === oldTargetId) {
+            f.parentId = ultimateParentId;
+          }
+        });
+
         newLogs.push({ 
           time: dateStr, 
-          msg: `【買収】${buyerDef.name}が${targetDef.name}を子会社化。ブランドは維持され、${buyerDef.name}グループ傘下で再建を目指します。`, 
+          msg: `【グループ入り】${AI_COMPANIES[ultimateParentId].name}が${targetDef.name}を傘下に収めました。`, 
           type: 'warning' 
         });
       } 
       else if (deal.type === 'ABSORPTION') {
+        const ultimateParentId = deal.buyerId; // 吸収側をそのまま親とする
+        
         // 工場とシェアを吸収
         const factoriesToTransfer = Math.max(1, Math.floor(targetFin.factories * 0.7));
         buyerFin.factories += factoriesToTransfer;
         if (targetFin.money > 0) buyerFin.money += targetFin.money;
         
-        targetFin.isBankrupt = true; // 事実上の消滅
+        // 被買収側の子会社を救済（買収側に紐付け直す）
+        Object.values(nextAiFinances).forEach(f => {
+          if (f.parentId === deal.targetId) {
+            f.parentId = ultimateParentId;
+          }
+        });
+
+        targetFin.isBankrupt = true;
         newLogs.push({ 
           time: dateStr, 
-          msg: `【吸収合併】${buyerDef.name}が経営不振の${targetDef.name}を吸収合併しました。設備と技術が統合され、巨大な勢力が誕生します。`, 
+          msg: `【吸収合併】${buyerDef.name}が${targetDef.name}を完全に統合しました。`, 
           type: 'error' 
         });
       }
@@ -194,6 +218,16 @@ export function processGameTick(s) {
 
         survivor.factories += absorbed.factories;
         survivor.money += absorbed.money;
+        
+        // 被合併側の子会社を、存続側に紐付け直す
+        const absorbedId = isTargetSurvivor ? deal.buyerId : deal.targetId;
+        const survivorId = isTargetSurvivor ? deal.targetId : deal.buyerId;
+        Object.values(nextAiFinances).forEach(f => {
+          if (f.parentId === absorbedId) {
+            f.parentId = survivorId;
+          }
+        });
+
         absorbed.isBankrupt = true;
         
         newLogs.push({ 
