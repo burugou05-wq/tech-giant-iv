@@ -269,21 +269,24 @@ export function processGameTick(s) {
         nextAiFinances[aiFin.parentId].money += finalTickProfit;
         aiFin.money = Math.max(5000, aiFin.money); 
       } else {
-        aiFin.money += finalTickProfit;
+        // 雇用維持助成金: 利益が極端に低い場合、政府が補填して最低限の活動を保証する
+        const subsidizedProfit = Math.max(2000, finalTickProfit);
+        aiFin.money += subsidizedProfit;
       }
       
-      // ... (価格設定ロジックは維持) ...
+      // ... (価格設定ロジック) ...
 
-      // --- 公的資金注入 (ラストリゾート) ---
+      // --- 超大型・公的資金注入 (ラストリゾート) ---
       if (!aiFin.isBankrupt && aiFin.money < -80000 && !aiFin.hasHadBailout) {
-        aiFin.money += 100000;
+        // 負債をすべて帳消しにした上で、$200Mを注入
+        aiFin.money = 200000; 
         aiFin.hasHadBailout = true;
         aiFin.isUnderBailout = true;
         aiFin.bailoutTicks = 130; // 5年間（130ターン）
         
         newLogs.push({ 
           time: dateStr, 
-          msg: `【公的支援】政府は経営危機の${aiDef.name}に対し、公的資金$100Mの注入を決定。倒産は回避されましたが、5年間の政府管理下に置かれます。`, 
+          msg: `【国家救済】政府は${aiDef.name}の破滅を回避するため、巨額の負債を肩代わりし、$200Mの公的資金を注入。国家的管理下で再出発します。`, 
           type: 'warning',
           color: 'text-blue-400'
         });
