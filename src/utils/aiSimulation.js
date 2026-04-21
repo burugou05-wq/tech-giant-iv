@@ -14,8 +14,8 @@ import { getTrendMultiplier } from '../utils/gameLogic.js';
  */
 export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarkets, aiFinances) {
   Object.entries(AI_COMPANIES).forEach(([aiId, ai]) => {
-    // 倒産している場合は何もしない
-    if (aiFinances?.[aiId]?.isBankrupt) return;
+    const aiFin = aiFinances?.[aiId];
+    if (aiFin?.isBankrupt) return;
 
     // 競合他社は活動期間中のみ新製品を出す
     if (calcYear < ai.appearsYear || calcYear > (ai.disappearsYear || Infinity)) return;
