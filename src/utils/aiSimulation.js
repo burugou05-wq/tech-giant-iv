@@ -180,7 +180,8 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
     // 1. カテゴリー内の競合価格平均を算出 (その市場に進出している企業のみ)
     const competitorPrices = Object.entries(nextAiProducts)
       .filter(([id, p]) => {
-        const ai = AI_COMPANIES[id];
+        const companies = /** @type {Record<string, any>} */ (AI_COMPANIES);
+        const ai = companies[id];
         if (!ai) return false;
         const active = calcYear >= ai.appearsYear && calcYear <= (ai.disappearsYear || Infinity);
         const r = /** @type {Record<string, number>} */ (ai.regions);
