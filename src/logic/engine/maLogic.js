@@ -19,6 +19,9 @@ export function negotiateMA(aiFinances, aiProducts, currentYear) {
     const targetFin = aiFinances[targetId];
     if (!targetFin || targetFin.isBankrupt || targetFin.parentId) continue;
 
+    // その年において活動中の企業のみを対象にする
+    if (currentYear < targetDef.appearsYear || currentYear > (targetDef.disappearsYear || Infinity)) continue;
+
     // 経営難の判定 (現金 5000k 未満、または倒産寸前)
     const isDistressed = targetFin.money < 5000 || targetFin.money < -50000;
     if (!isDistressed) continue;
@@ -32,6 +35,9 @@ export function negotiateMA(aiFinances, aiProducts, currentYear) {
       if (buyerId === targetId || processed.has(buyerId)) continue;
       const buyerFin = aiFinances[buyerId];
       if (!buyerFin || buyerFin.isBankrupt || buyerFin.parentId) continue;
+
+      // その年において活動中の企業のみを対象にする
+      if (currentYear < buyerDef.appearsYear || currentYear > (buyerDef.disappearsYear || Infinity)) continue;
 
       let score = 0;
       let currentType = null;
