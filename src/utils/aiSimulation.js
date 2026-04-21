@@ -363,8 +363,8 @@ export function processAIBusinessLogic(nextAiFinances, ticks, dateStr, newLogs) 
       }
     }
 
-    // 2. 通常の経営判断 (3年周期)
-    if (ticks % 78 === 0) {
+    // 2. 通常の経営判断 (1年周期)
+    if (ticks % 26 === 0) {
       const opRate = aiFin.operatingRate || 0;
       const expansionCost = 20000;
 
