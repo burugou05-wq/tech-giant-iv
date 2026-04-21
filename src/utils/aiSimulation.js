@@ -332,7 +332,7 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
 
 /**
  * AI の経営判断（工場の増設・閉鎖）を実行
- * @param {any} nextAiFinances 
+ * @param {Record<string, any>} nextAiFinances 
  * @param {number} ticks
  * @param {string} dateStr
  * @param {any[]} newLogs
@@ -343,50 +343,36 @@ export function processAIBusinessLogic(nextAiFinances, ticks, dateStr, newLogs) 
 
     const companies = /** @type {Record<string, any>} */ (AI_COMPANIES);
     const ai = companies[id];
+    if (!ai) return;
 
-    // --- 再建モード中の過激なリストラ ---
+    // 1. 再建モード中の過激なリストラ (毎ターン判定)
     if (aiFin.isRestructuring) {
       if (aiFin.operatingRate < 0.6 && aiFin.factories > 1) {
         const drop = Math.max(1, Math.floor(aiFin.factories * 0.3));
         aiFin.factories -= drop;
         aiFin.money += drop * 5000; // 売却益
         newLogs.push({ time: dateStr, msg: `【リストラ】${ai.name}が再建のため工場を${drop}棟閉鎖しました。`, type: 'info' });
-        return; // 再建中は一気に動くため、一回の判定で終了
+        return; 
       }
     }
-  });
 
-  // 3年に一度（約78ターンに一度）、経営判断を行う
-  if (ticks % 78 !== 0) return;
+    // 2. 通常の経営判断 (3年周期)
+    if (ticks % 78 === 0) {
+      const opRate = aiFin.operatingRate || 0;
+      const expansionCost = 20000;
 
-  Object.entries(nextAiFinances).forEach(([id, finance]) => {
-    if (finance.isBankrupt) return;
-
-    const companies = /** @type {Record<string, any>} */ (AI_COMPANIES);
-    const aiDef = companies[id];
-    const opRate = finance.operatingRate || 0;
-    const expansionCost = 20000; // 工場建設コスト（固定）
-
-    // 増設判断：稼働率が高く、資金がある場合
-    if (opRate > 0.92 && finance.money > expansionCost * 2) {
-      finance.factories = (finance.factories || 5) + 1;
-      finance.money -= expansionCost;
-      newLogs.push({ 
-        time: dateStr, 
-        msg: `【AI動向】${aiDef.name}が生産能力を増強（工場 ${finance.factories} 棟へ）`, 
-        type: 'info' 
-      });
-    }
-    // 縮小判断：稼働率が極端に低く、資金繰りが苦しい場合
-    else if (opRate < 0.5 && finance.money < 50000 && finance.factories > 3) {
-      finance.factories -= 1;
-      finance.money += 5000;
-      newLogs.push({ 
-        time: dateStr, 
-        msg: `【AI動向】${aiDef.name}が過剰設備を削減（工場 ${finance.factories} 棟へ）`, 
-        type: 'info',
-        color: 'text-orange-400'
-      });
+      // 増設判断
+      if (opRate > 0.92 && aiFin.money > expansionCost * 2) {
+        aiFin.factories = (aiFin.factories || 5) + 1;
+        aiFin.money -= expansionCost;
+        newLogs.push({ time: dateStr, msg: `【AI動向】${ai.name}が生産能力を増強（工場 ${aiFin.factories} 棟へ）`, type: 'info' });
+      }
+      // 削減判断
+      else if ((opRate < 0.4 || aiFin.money < 5000) && aiFin.factories > 1) {
+        aiFin.factories -= 1;
+        aiFin.money += 5000;
+        newLogs.push({ time: dateStr, msg: `【AI動向】${ai.name}が過剰設備を削減（工場 ${aiFin.factories} 棟へ）`, type: 'info' });
+      }
     }
   });
 }
