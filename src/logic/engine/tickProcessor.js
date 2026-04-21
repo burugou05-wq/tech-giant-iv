@@ -250,13 +250,43 @@ export function processGameTick(s) {
       const revenue = sales.units * aiProduct.price;
       const cost = sales.units * (aiProduct.baseCost || 70);
       const tickProfit = revenue - cost;
-      
+      // --- 利益計算 & 子会社/公的資金返済の処理 ---
+      let finalTickProfit = tickProfit;
+
+      // 公的資金支援を受けている場合、利益の30%を返済として徴収
+      if (aiFin.isUnderBailout && finalTickProfit > 0) {
+        const repayment = Math.floor(finalTickProfit * 0.3);
+        finalTickProfit -= repayment;
+        aiFin.bailoutTicks = (aiFin.bailoutTicks || 0) - 1;
+        if (aiFin.bailoutTicks <= 0) {
+          aiFin.isUnderBailout = false;
+          newLogs.push({ time: dateStr, msg: `【完済】${aiDef.name}が公的資金を完済し、政府管理下から脱しました。`, type: 'info' });
+        }
+      }
+
       // 子会社の場合は利益を親会社に送る
       if (aiFin.parentId && nextAiFinances[aiFin.parentId]) {
-        nextAiFinances[aiFin.parentId].money += tickProfit;
-        aiFin.money = Math.max(5000, aiFin.money); // 子会社の手元資金は一定に保つ
+        nextAiFinances[aiFin.parentId].money += finalTickProfit;
+        aiFin.money = Math.max(5000, aiFin.money); 
       } else {
-        aiFin.money += tickProfit;
+        aiFin.money += finalTickProfit;
+      }
+      
+      // ... (価格設定ロジックは維持) ...
+
+      // --- 公的資金注入 (ラストリゾート) ---
+      if (!aiFin.isBankrupt && aiFin.money < -80000 && !aiFin.hasHadBailout) {
+        aiFin.money += 100000;
+        aiFin.hasHadBailout = true;
+        aiFin.isUnderBailout = true;
+        aiFin.bailoutTicks = 130; // 5年間（130ターン）
+        
+        newLogs.push({ 
+          time: dateStr, 
+          msg: `【公的支援】政府は経営危機の${aiDef.name}に対し、公的資金$100Mの注入を決定。倒産は回避されましたが、5年間の政府管理下に置かれます。`, 
+          type: 'warning',
+          color: 'text-blue-400'
+        });
       }
       
       // 利益率ベースの動的価格設定
