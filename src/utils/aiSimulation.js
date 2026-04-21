@@ -294,18 +294,26 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
     // 5. 最終的なシェアの推移（徐々に変化）
     const shiftBase = 0.08; 
     const playerMarketingBonus = m.marketing * 0.05 * (loopEffects.marketingMulti || 1.0);
-    const playerShareShift = (targetShares.player - m.shares.player) * (shiftBase + playerMarketingBonus);
     
-    let finalPlayerShift = playerShareShift;
+    // 自社のシェア推移
+    const pTarget = targetShares.player || 0;
+    // ターゲットが0（製品なし）なら急速に失う(0.5)、あれば徐々に変化(0.08 + bonus)
+    const pSpeed = pTarget === 0 ? 0.5 : (shiftBase + playerMarketingBonus);
+    
+    let finalPlayerShift = (pTarget - m.shares.player) * pSpeed;
     if (loopEffects.jpBonus && mKey === 'jp') finalPlayerShift *= 1.5;
     if (loopEffects.globalPenalty && mKey !== 'jp') finalPlayerShift -= 0.01;
 
     m.shares.player = Math.max(0, Math.min(0.98, m.shares.player + finalPlayerShift));
+    if (m.shares.player < 0.005) m.shares.player = 0;
 
+    // AIのシェア推移
     Object.keys(AI_COMPANIES).forEach(cId => {
       const target = targetShares[cId] || 0;
       const current = m.shares[cId] || 0;
-      m.shares[cId] = Math.max(0, current + (target - current) * shiftBase);
+      const speed = target === 0 ? 0.5 : shiftBase; 
+      m.shares[cId] = Math.max(0, current + (target - current) * speed);
+      if (m.shares[cId] < 0.005) m.shares[cId] = 0;
     });
 
     // 合計を1に正規化
