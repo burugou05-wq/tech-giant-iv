@@ -89,13 +89,13 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarke
     const playerShare = playerShareInStrongMarket;
     if (playerShare > 0.1) {
       if (ai.priceTarget === 'budget' || brandVal < 0.4) {
-        // 非ブランド/格安メーカーは過激に下げる
+        // 非ブランド/格安メーカーは過激に下げるが、原価割れはさせない
         const reduction = Math.min(0.4, playerShare * 0.6); 
-        targetMargin *= (1.0 - reduction);
+        targetMargin = Math.max(1.05, targetMargin * (1.0 - reduction));
       } else {
-        // ブランドメーカーはブランドイメージを重視し、あまり下げない
+        // ブランドメーカーはブランドイメージを重視
         const reduction = Math.min(0.15, playerShare * 0.2);
-        targetMargin *= (1.0 - reduction);
+        targetMargin = Math.max(1.1, targetMargin * (1.0 - reduction));
       }
     }
     
@@ -140,12 +140,12 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarke
 
     // 再建モード時の特殊ロジック (ダンプ販売 ＆ ブランド低下)
     if (aiFin?.isRestructuring) {
-      // ダンプ販売: 原価 + 10% で投げ売りして現金を回収
-      finalPrice = Math.floor(bestChassis.cost * 1.1);
+      // ダンプ販売: 実際の原価(compCost)に対して5%の利益を乗せる
+      finalPrice = Math.floor(compCost * 1.05);
       
-      // ブランドの毀損: 毎ターン ブランド力と魅力度補正が低下
-      ai.brand = Math.max(0.05, (ai.brand || 0.3) - 0.005);
-      ai.appealMod = Math.max(0.5, (ai.appealMod || 1.0) - 0.005);
+      // ブランドの毀損: 低下速度を緩和
+      ai.brand = Math.max(0.1, (ai.brand || 0.3) - 0.002);
+      ai.appealMod = Math.max(0.7, (ai.appealMod || 1.0) - 0.002);
     }
 
     nextAiProducts[aiId] = {
