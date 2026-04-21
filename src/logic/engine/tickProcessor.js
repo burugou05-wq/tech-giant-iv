@@ -264,14 +264,29 @@ export function processGameTick(s) {
         }
       }
 
+      // 雇用維持助成金の返済処理
+      if (finalTickProfit > 10000 && aiFin.subsidyDebt > 0) {
+        const repayment = Math.min(aiFin.subsidyDebt, Math.floor(finalTickProfit * 0.2));
+        finalTickProfit -= repayment;
+        aiFin.subsidyDebt -= repayment;
+        // 完済ログ（頻繁に出すぎないよう、100000以上返した時か完済時のみ出す検討もできるが、まずはシンプルに）
+        if (aiFin.subsidyDebt <= 0) {
+          newLogs.push({ time: dateStr, msg: `【完済】${aiDef.name}が雇用維持助成金をすべて完済しました。`, type: 'info' });
+        }
+      }
+
       // 子会社の場合は利益を親会社に送る
       if (aiFin.parentId && nextAiFinances[aiFin.parentId]) {
         nextAiFinances[aiFin.parentId].money += finalTickProfit;
         aiFin.money = Math.max(5000, aiFin.money); 
       } else {
-        // 雇用維持助成金: 利益が極端に低い場合、政府が補填して最低限の活動を保証する
-        const subsidizedProfit = Math.max(2000, finalTickProfit);
-        aiFin.money += subsidizedProfit;
+        // 雇用維持助成金: 利益が極端に低い場合、政府が補填
+        if (finalTickProfit < 2000) {
+          const subsidyAmount = 2000 - finalTickProfit;
+          aiFin.subsidyDebt = (aiFin.subsidyDebt || 0) + subsidyAmount;
+          finalTickProfit = 2000;
+        }
+        aiFin.money += finalTickProfit;
       }
       
       // ... (価格設定ロジック) ...
