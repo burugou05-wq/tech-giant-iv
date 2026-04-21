@@ -306,9 +306,27 @@ export function processGameTick(s) {
       if (aiFin.money < -100000) {
         aiFin.isBankrupt = true;
         newLogs.push({ time: dateStr, msg: `【倒産】${aiDef.name}が経営破綻し、市場から撤退しました。`, type: 'error', color: 'text-red-500' });
+        
         // 全市場からシェアを抹消
         Object.keys(nextMarkets).forEach(mKey => {
-          if (nextMarkets[mKey].shares[id]) nextMarkets[mKey].shares[id] = 0;
+          const m = nextMarkets[mKey];
+          if (m && m.shares) {
+            if (m.shares[id]) m.shares[id] = 0;
+          }
+        });
+
+        // 子会社を解放（独立）させる
+        Object.values(nextAiFinances).forEach(f => {
+          if (f.parentId === id) {
+            f.parentId = null;
+            f.money = Math.max(f.money, 10000); // 独立祝い金
+          }
+        });
+        
+        newLogs.push({ 
+          time: dateStr, 
+          msg: `【独立】${aiDef.name}の破綻に伴い、傘下企業が独立を宣言。再び自立した経営に乗り出しました。`, 
+          type: 'info' 
         });
       }
     }
