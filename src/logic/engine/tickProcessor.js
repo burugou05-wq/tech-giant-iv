@@ -242,10 +242,11 @@ export function processGameTick(s) {
   const salesResults = executeSales(nextMarkets, sellableProducts, nextInv, loopEffects, nextYenRate, s.euExtraCost ?? 0);
 
   // --- AI 企業の収支・価格戦略の更新 ---
-  Object.entries(salesResults.aiSales).forEach(([id, sales]) => {
+  Object.entries(nextAiFinances).forEach(([id, aiFin]) => {
+    const sales = salesResults.aiSales[id] || { units: 0, revenue: 0 };
     const aiProduct = nextAiProducts[id];
-    const aiFin = nextAiFinances ? nextAiFinances[id] : null;
     const aiDef = AI_COMPANIES[id];
+    
     if (aiProduct && aiFin && !aiFin.isBankrupt) {
       const revenue = sales.units * aiProduct.price;
       const cost = sales.units * (aiProduct.baseCost || 70);
