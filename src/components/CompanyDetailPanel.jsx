@@ -60,6 +60,11 @@ export default function CompanyDetailPanel({ companyId, onClose }) {
           <div className="flex items-center gap-3">
             <span className={`w-4 h-4 rounded-full ${bgColor} shadow-sm`} />
             <h2 className="text-xl font-black text-white">{ai.name || 'Unknown'}</h2>
+            {rawFinance.parentId && AI_COMPANIES[rawFinance.parentId] && (
+              <span className="text-[10px] font-black text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">
+                {AI_COMPANIES[rawFinance.parentId].name} グループ
+              </span>
+            )}
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 ${textColor} w-fit`}>{ai.trait || '調査中'}</span>
@@ -72,6 +77,8 @@ export default function CompanyDetailPanel({ companyId, onClose }) {
                     status = { label: '経営破綻', color: 'text-red-500', bg: 'bg-red-500/20' };
                   } else if (rawFinance.isRestructuring) {
                     status = { label: '再建中', color: 'text-orange-500', bg: 'bg-orange-500/20' };
+                  } else if (rawFinance.parentId) {
+                    status = { label: '子会社', color: 'text-indigo-400', bg: 'bg-indigo-500/20' };
                   } else if (currentEra?.type === 'golden') {
                     status = { label: '黄金期', color: 'text-amber-400', bg: 'bg-amber-500/20' };
                   } else if (currentEra?.type === 'dark') {

@@ -4,6 +4,7 @@ import {
   CORPORATE_FOCUSES
 } from '../../constants/index.js';
 import { AI_COMPANIES } from '../../constants/companies/index.js';
+import { negotiateMA } from './maLogic.js';
 import { 
   getCurrentEffects, 
   calculateEffectiveAppeal 
@@ -151,19 +152,78 @@ export function processGameTick(s) {
   // AI の経営判断（工場の増設・閉鎖）を実行
   processAIBusinessLogic(nextAiFinances, newTick, dateStr, newLogs);
 
+  // M&A 交渉の実行 (半年に一度)
+  if (newTick % 13 === 0) {
+    const deals = negotiateMA(nextAiFinances, nextAiProducts, calcYear);
+    deals.forEach(deal => {
+      const targetFin = nextAiFinances[deal.targetId];
+      const buyerFin = nextAiFinances[deal.buyerId];
+      const targetDef = AI_COMPANIES[deal.targetId];
+      const buyerDef = AI_COMPANIES[deal.buyerId];
+
+      if (deal.type === 'SUBSIDIARY') {
+        targetFin.parentId = deal.buyerId;
+        targetFin.money = 5000; // 手元資金をリセット
+        buyerFin.money -= 10000; // 買収コスト
+        newLogs.push({ 
+          time: dateStr, 
+          msg: `【買収】${buyerDef.name}が${targetDef.name}を子会社化。ブランドは維持され、${buyerDef.name}グループ傘下で再建を目指します。`, 
+          type: 'warning' 
+        });
+      } 
+      else if (deal.type === 'ABSORPTION') {
+        // 工場とシェアを吸収
+        const factoriesToTransfer = Math.max(1, Math.floor(targetFin.factories * 0.7));
+        buyerFin.factories += factoriesToTransfer;
+        if (targetFin.money > 0) buyerFin.money += targetFin.money;
+        
+        targetFin.isBankrupt = true; // 事実上の消滅
+        newLogs.push({ 
+          time: dateStr, 
+          msg: `【吸収合併】${buyerDef.name}が経営不振の${targetDef.name}を吸収合併しました。設備と技術が統合され、巨大な勢力が誕生します。`, 
+          type: 'error' 
+        });
+      }
+      else if (deal.type === 'MERGER') {
+        // 対等合併: IDが若い方を存続会社とする
+        const isTargetSurvivor = deal.targetId < deal.buyerId;
+        const survivor = isTargetSurvivor ? targetFin : buyerFin;
+        const absorbed = isTargetSurvivor ? buyerFin : targetFin;
+        const sDef = isTargetSurvivor ? targetDef : buyerDef;
+        const aDef = isTargetSurvivor ? buyerDef : targetDef;
+
+        survivor.factories += absorbed.factories;
+        survivor.money += absorbed.money;
+        absorbed.isBankrupt = true;
+        
+        newLogs.push({ 
+          time: dateStr, 
+          msg: `【対等合併】${sDef.name}と${aDef.name}が合併し、経営基盤を強化しました。`, 
+          type: 'warning' 
+        });
+      }
+    });
+  }
+
   const salesResults = executeSales(nextMarkets, sellableProducts, nextInv, loopEffects, nextYenRate, s.euExtraCost ?? 0);
 
   // --- AI 企業の収支・価格戦略の更新 ---
   Object.entries(salesResults.aiSales).forEach(([id, sales]) => {
     const aiProduct = nextAiProducts[id];
-    const aiFin = nextAiFinances[id];
+    const aiFin = nextAiFinances ? nextAiFinances[id] : null;
     const aiDef = AI_COMPANIES[id];
     if (aiProduct && aiFin && !aiFin.isBankrupt) {
       const revenue = sales.units * aiProduct.price;
       const cost = sales.units * (aiProduct.baseCost || 70);
       const tickProfit = revenue - cost;
       
-      aiFin.money += tickProfit;
+      // 子会社の場合は利益を親会社に送る
+      if (aiFin.parentId && nextAiFinances[aiFin.parentId]) {
+        nextAiFinances[aiFin.parentId].money += tickProfit;
+        aiFin.money = Math.max(5000, aiFin.money); // 子会社の手元資金は一定に保つ
+      } else {
+        aiFin.money += tickProfit;
+      }
       
       // 利益率ベースの動的価格設定
       const currentMargin = tickProfit / (Math.abs(revenue) || 1);
