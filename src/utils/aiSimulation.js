@@ -141,8 +141,16 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarke
 
     if (isNewMasterpiece) {
       newLogs.push({ time: dateStr, msg: `【歴史的傑作】${ai.name}が伝説的製品「${finalName}」を世界発表！市場が震撼しています。`, type: 'warning' });
-    } else if (finalAppeal > (prevProduct.appeal || 0) * 1.1) {
-      newLogs.push({ time: dateStr, msg: `${ai.name}が最新技術を投入した新製品「${finalName}」を発売！($${Math.floor(finalPrice)})`, type: 'info' });
+    }
+
+    // 再建モード時の特殊ロジック (ダンプ販売 ＆ ブランド低下)
+    if (aiFin?.isRestructuring) {
+      // ダンプ販売: 原価 + 10% で投げ売りして現金を回収
+      finalPrice = Math.floor(bestChassis.cost * 1.1);
+      
+      // ブランドの毀損: 毎ターン ブランド力と魅力度補正が低下
+      ai.brand = Math.max(0.05, (ai.brand || 0.3) - 0.005);
+      ai.appealMod = Math.max(0.5, (ai.appealMod || 1.0) - 0.005);
     }
 
     nextAiProducts[aiId] = {
@@ -330,6 +338,24 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
  * @param {any[]} newLogs
  */
 export function processAIBusinessLogic(nextAiFinances, ticks, dateStr, newLogs) {
+  Object.entries(nextAiFinances).forEach(([id, aiFin]) => {
+    if (aiFin.isBankrupt) return;
+
+    const companies = /** @type {Record<string, any>} */ (AI_COMPANIES);
+    const ai = companies[id];
+
+    // --- 再建モード中の過激なリストラ ---
+    if (aiFin.isRestructuring) {
+      if (aiFin.operatingRate < 0.6 && aiFin.factories > 1) {
+        const drop = Math.max(1, Math.floor(aiFin.factories * 0.3));
+        aiFin.factories -= drop;
+        aiFin.money += drop * 5000; // 売却益
+        newLogs.push({ time: dateStr, msg: `【リストラ】${ai.name}が再建のため工場を${drop}棟閉鎖しました。`, type: 'info' });
+        return; // 再建中は一気に動くため、一回の判定で終了
+      }
+    }
+  });
+
   // 3年に一度（約78ターンに一度）、経営判断を行う
   if (ticks % 78 !== 0) return;
 

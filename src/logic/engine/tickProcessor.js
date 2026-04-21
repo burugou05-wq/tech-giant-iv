@@ -175,6 +175,39 @@ export function processGameTick(s) {
         aiProduct.price = Math.round(aiProduct.price * 0.99); // 余裕があれば値下げしてシェア取り
       }
       
+      // --- 救済増資 & 再建モードの判定 ---
+      if (!aiFin.isBankrupt && aiFin.money < 5000 && !aiFin.isRestructuring) {
+        const lastFinancing = aiFin.lastFinancingTick || 0;
+        // 10年（14日×260週 = 3640日 ≒ 10年）に一度だけ実行可能
+        if (newTick - lastFinancing > 260) {
+          const marketCap = (aiDef.stockBase || 100) * 1000; // 簡易時価総額
+          const injectAmount = Math.floor(marketCap * 0.2); // 時価総額の20%を注入
+          
+          aiFin.money += injectAmount;
+          aiFin.isRestructuring = true;
+          aiFin.restructuringTicks = 78; // 3年間（78ターン）再建モード
+          aiFin.lastFinancingTick = newTick;
+          aiFin.valuationPenalty = 0.7; // 時価総額 30% ダウンのペナルティ
+          
+          newLogs.push({ 
+            time: dateStr, 
+            msg: `【経営再建】${aiDef.name}が第三者割当増資を実施し、$${(injectAmount/1000).toFixed(1)}Mを確保。再建屋CEOが就任し、過激なリストラを開始。`, 
+            type: 'warning',
+            color: 'text-orange-400'
+          });
+        }
+      }
+
+      // 再建モードのカウントダウン
+      if (aiFin.isRestructuring) {
+        aiFin.restructuringTicks = (aiFin.restructuringTicks || 0) - 1;
+        if (aiFin.restructuringTicks <= 0) {
+          aiFin.isRestructuring = false;
+          aiFin.valuationPenalty = 1.0; // ペナルティ解除（ただしブランド低下は残る）
+          newLogs.push({ time: dateStr, msg: `【再建完了】${aiDef.name}の再建モードが終了しました。`, type: 'info' });
+        }
+      }
+
       // 倒産判定（債務超過）
       if (aiFin.money < -100000) {
         aiFin.isBankrupt = true;

@@ -37,7 +37,8 @@ export const calculateMarketCap = (id, stockPrice, currentYear, aiProducts, mark
     });
   }
   
-  const finalCap = Math.floor(base * (0.8 + appeal / 30) * yearFactor * (1 + totalShareEffect * 0.01) * 1000);
+  const penalty = aiFinances?.[id]?.valuationPenalty || 1.0;
+  const finalCap = Math.floor(base * (0.8 + appeal / 30) * yearFactor * (1 + totalShareEffect * 0.01) * 1000 * penalty);
   return Number.isFinite(finalCap) ? finalCap : 0;
 };
 

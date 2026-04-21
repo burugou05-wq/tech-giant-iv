@@ -70,6 +70,8 @@ export default function CompanyDetailPanel({ companyId, onClose }) {
                   
                   if (rawFinance.isBankrupt) {
                     status = { label: '経営破綻', color: 'text-red-500', bg: 'bg-red-500/20' };
+                  } else if (rawFinance.isRestructuring) {
+                    status = { label: '再建中', color: 'text-orange-500', bg: 'bg-orange-500/20' };
                   } else if (currentEra?.type === 'golden') {
                     status = { label: '黄金期', color: 'text-amber-400', bg: 'bg-amber-500/20' };
                   } else if (currentEra?.type === 'dark') {
