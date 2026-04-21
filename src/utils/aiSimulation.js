@@ -177,10 +177,19 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
     const m = nextMarkets[mKey];
     const storeBuff = 1.0 + m.stores * 0.2;
     
-    // 1. カテゴリー内の競合価格平均を算出
-    const competitorPrices = Object.values(nextAiProducts)
-      .filter(p => p.category === m.category || (bestItem && p.category === bestItem.bp.category))
-      .map(p => p.price);
+    // 1. カテゴリー内の競合価格平均を算出 (その市場に進出している企業のみ)
+    const competitorPrices = Object.entries(nextAiProducts)
+      .filter(([id, p]) => {
+        const ai = AI_COMPANIES[id];
+        if (!ai) return false;
+        const active = calcYear >= ai.appearsYear && calcYear <= (ai.disappearsYear || Infinity);
+        const r = /** @type {Record<string, number>} */ (ai.regions);
+        const inRegion = r && r[mKey] && calcYear >= r[mKey];
+        const matchCategory = p.category === m.category || (bestItem && p.category === bestItem.bp.category);
+        return active && inRegion && matchCategory;
+      })
+      .map(([id, p]) => p.price);
+
     const avgMarketPrice = competitorPrices.length > 0 
       ? competitorPrices.reduce((a, b) => a + b, 0) / competitorPrices.length 
       : 100;
