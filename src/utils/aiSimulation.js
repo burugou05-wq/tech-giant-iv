@@ -24,12 +24,7 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarke
     const currentEra = ai.eras?.find(e => calcYear >= e.start && calcYear <= e.end);
     const isEraStart = currentEra && currentEra.start === calcYear;
 
-    // 時代開始時のログ
-    if (isEraStart) {
-      const typeStr = currentEra.type === 'golden' ? '【黄金期】' : '【暗黒期】';
-      const msg = `${typeStr}${ai.name}が「${currentEra.name}」に突入しました。${currentEra.desc}`;
-      newLogs.push({ time: dateStr, msg, type: currentEra.type === 'golden' ? 'warning' : 'info' });
-    }
+    // 時代開始時のログは削除 (ユーザー要望)
 
     // 前回の製品データを取得
     const prevProduct = nextAiProducts[aiId] || { appeal: 10, price: 100, name: `${ai.name} Classic`, launchYear: calcYear };
