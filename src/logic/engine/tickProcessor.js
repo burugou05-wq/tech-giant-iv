@@ -250,6 +250,10 @@ export function processGameTick(s) {
       const revenue = sales.units * aiProduct.price;
       const cost = sales.units * (aiProduct.baseCost || 70);
       const tickProfit = revenue - cost;
+
+      // 稼働率の計算 (全市場の合計販売数 / 合計生産能力)
+      const totalCapacity = Math.max(1, (aiFin.factories || 1) * 100);
+      aiFin.operatingRate = sales.units / totalCapacity;
       // --- 利益計算 & 子会社/公的資金返済の処理 ---
       let finalTickProfit = tickProfit;
 
