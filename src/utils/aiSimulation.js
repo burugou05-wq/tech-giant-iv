@@ -338,12 +338,16 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
  * @param {any[]} newLogs
  */
 export function processAIBusinessLogic(nextAiFinances, ticks, dateStr, newLogs) {
+  const currentYear = 1946 + Math.floor(ticks / 26);
   Object.entries(nextAiFinances).forEach(([id, aiFin]) => {
     if (aiFin.isBankrupt) return;
 
     const companies = /** @type {Record<string, any>} */ (AI_COMPANIES);
     const ai = companies[id];
     if (!ai) return;
+
+    // その年において活動中の企業のみを対象にする
+    if (currentYear < ai.appearsYear || currentYear > (ai.disappearsYear || Infinity)) return;
 
     // 1. 再建モード中の過激なリストラ (毎ターン判定)
     if (aiFin.isRestructuring) {
