@@ -274,7 +274,7 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
     
     Object.keys(AI_COMPANIES).forEach(id => {
       const potentialSalesUnits = targetShares[id] * m.demand;
-      const finance = aiFinances[id];
+      const finance = aiFinances ? aiFinances[id] : null;
       if (!finance) return;
 
       const maxWeeklyCapacity = (finance.factories || 5) * 40;

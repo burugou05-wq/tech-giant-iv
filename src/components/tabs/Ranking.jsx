@@ -26,7 +26,7 @@ export default function Ranking() {
 
   const playerRank = ranked.findIndex(c => c.isPlayer) + 1;
   const defunct = Object.entries(AI_COMPANIES)
-    .filter(([id, ai]) => (ai.disappearsYear && currentYear > ai.disappearsYear) || aiFinances[id]?.isBankrupt);
+    .filter(([id, ai]) => (ai.disappearsYear && currentYear > ai.disappearsYear) || (aiFinances && aiFinances[id]?.isBankrupt));
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">

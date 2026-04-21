@@ -73,7 +73,7 @@ export default function Market() {
                   </div>
                   <div className="w-full bg-slate-950 rounded-full h-4 overflow-hidden flex border border-slate-700/50 shadow-inner p-0.5">
                     <div className="bg-green-500 h-full rounded-l-full transition-all duration-1000" style={{ width: `${m.shares.player * 100}%` }} />
-                    {Object.keys(AI_COMPANIES).filter(id => !aiFinances[id]?.isBankrupt).map(aiId => (
+                    {Object.keys(AI_COMPANIES).filter(id => aiFinances && !aiFinances[id]?.isBankrupt).map(aiId => (
                       <div
                         key={aiId}
                         className={`${AI_COMPANIES[aiId].color} h-full border-l border-white/5`}
@@ -95,7 +95,7 @@ export default function Market() {
                   {Object.entries(AI_COMPANIES)
                     .filter(([id, ai]) => {
                       const r = /** @type {Record<string, number>} */ (ai.regions);
-                      const fin = aiFinances[id];
+                      const fin = aiFinances ? aiFinances[id] : null;
                       if (fin?.isBankrupt) return false;
                       return currentYear >= ai.appearsYear && 
                              currentYear <= (ai.disappearsYear || Infinity) &&
