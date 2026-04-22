@@ -24,8 +24,9 @@ export function negotiateMA(aiFinances, aiProducts, currentYear, markets) {
     if (currentYear < targetDef.appearsYear || currentYear > (targetDef.disappearsYear || Infinity)) continue;
     
     // --- 歴史的合併（Destiny）の優先処理 ---
-    if (targetDef.mergerDestiny && Math.floor(currentYear) === targetDef.mergerDestiny.year) {
-      const { partner, type } = targetDef.mergerDestiny;
+    const destiny = /** @type {any} */(targetDef).mergerDestiny;
+    if (destiny && Math.floor(currentYear) === destiny.year) {
+      const { partner, type } = destiny;
       // パートナーが存在し、かつ破綻していない場合のみ実行
       if (aiFinances[partner] && !aiFinances[partner].isBankrupt) {
         deals.push({ targetId, buyerId: partner, type: type, score: 999 });

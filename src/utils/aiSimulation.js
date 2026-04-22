@@ -257,7 +257,8 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
         const priceFactor = Math.exp(-Math.pow(relativePrice - 0.8, 2) * priceSensitivity);
         
         // 時代（黄金期・暗黒期）の判定
-        const currentEra = ai.eras?.find(e => calcYear >= e.start && calcYear <= e.end);
+        const eras = /** @type {any} */(ai).eras;
+        const currentEra = Array.isArray(eras) ? eras.find(e => calcYear >= e.start && calcYear <= e.end) : null;
         const eraBuff = currentEra ? currentEra.buff : 1.0;
         const appealMod = ai.appealMod || 1.0;
         
