@@ -47,11 +47,18 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarke
     if (activeMasterpiece) currentUpdateChance *= 3;
     if (currentEra?.type === 'golden') currentUpdateChance *= 1.5;
     
-    if (Math.random() > currentUpdateChance && !isNewMasterpiece) return;
+    const hasNoProduct = !nextAiProducts[aiId];
+    if (Math.random() > currentUpdateChance && !isNewMasterpiece && !hasNoProduct) return;
 
-    // 最新技術の選定
-    // ... (既存の技術選定ロジック) ...
-    const avail = CHASSIS_TECH.filter(c => c.era <= calcYear);
+    // 最新技術の選定 (自分の主要市場のカテゴリーに合わせる)
+    const targetCategory = nextMarkets[ai.strongMarket]?.category || 'home_appliance';
+    let avail = CHASSIS_TECH.filter(c => c.era <= calcYear && c.category === targetCategory);
+    
+    // カテゴリーに合う技術がない場合は、全カテゴリーから最新を選ぶ
+    if (avail.length === 0) {
+      avail = CHASSIS_TECH.filter(c => c.era <= calcYear);
+    }
+    
     if (avail.length === 0) return;
     const bestChassis = avail.reduce((b, c) => (c.era >= b.era ? c : b), avail[0]);
     const availMods = COMPONENT_TECH.filter(m => m.era <= calcYear);
