@@ -147,10 +147,6 @@ export function processGameTick(s) {
     }
   });
 
-  simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarkets, nextAiFinances);
-  
-  const totalPlayerDemandShare = simulateMarketShares(nextMarkets, nextAiProducts, sellableProducts[0] || null, calcYear, loopEffects, nextAiFinances);
-  
   // AI の経営判断（工場の増設・閉鎖）を実行
   processAIBusinessLogic(nextAiFinances, newTick, dateStr, newLogs);
 
@@ -338,11 +334,11 @@ export function processGameTick(s) {
   });
 
   // --- AI の意思決定と市場シェアのシミュレーション ---
-  simulateAI(nextAiProducts, nextMarkets, calcYear, nextAiFinances, dateStr, newLogs);
+  simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarkets, nextAiFinances);
   
   // プレイヤーの代表製品（最も魅力が高いもの）を取得
   const bestPlayerProduct = sellableProducts.length > 0 ? sellableProducts[0] : null;
-  simulateMarketShares(nextMarkets, nextAiProducts, bestPlayerProduct, calcYear, loopEffects, nextAiFinances);
+  const totalPlayerDemandShare = simulateMarketShares(nextMarkets, nextAiProducts, bestPlayerProduct, calcYear, loopEffects, nextAiFinances);
 
   const salesResults = executeSales(nextMarkets, sellableProducts, nextInv, loopEffects, nextYenRate, s.euExtraCost ?? 0);
 
