@@ -98,14 +98,23 @@ export default function Market() {
                     <span className="text-[10px] text-slate-400 font-black uppercase tracking-wider">勢力図</span>
                   </div>
                   <div className="w-full bg-slate-950 rounded-full h-4 overflow-hidden flex border border-slate-700/50 shadow-inner p-0.5">
-                    <div className="bg-green-500 h-full rounded-l-full transition-all duration-1000" style={{ width: `${m.shares.player * 100}%` }} />
-                    {Object.keys(AI_COMPANIES).filter(id => aiFinances && !aiFinances[id]?.isBankrupt).map(aiId => (
-                      <div
-                        key={aiId}
-                        className={`${AI_COMPANIES[aiId].color} h-full border-l border-white/5`}
-                        style={{ width: `${(m.shares[aiId] || 0) * 100}%` }}
-                      />
-                    ))}
+                    <div 
+                      className="bg-green-500 h-full rounded-l-full transition-all duration-1000" 
+                      style={{ width: `${m.shares.player * 100}%` }} 
+                      title={`自社: ${(m.shares.player * 100).toFixed(1)}%`}
+                    />
+                    {Object.keys(AI_COMPANIES).filter(id => aiFinances && !aiFinances[id]?.isBankrupt).map(aiId => {
+                      const share = (m.shares[aiId] || 0) * 100;
+                      if (share <= 0) return null;
+                      return (
+                        <div
+                          key={aiId}
+                          className={`${AI_COMPANIES[aiId].color} h-full border-l border-white/5 cursor-help`}
+                          style={{ width: `${share}%` }}
+                          title={`${AI_COMPANIES[aiId].name}: ${share.toFixed(1)}%`}
+                        />
+                      );
+                    })}
                   </div>
                   
                   {/* 直接対決：ライバル分析 */}
