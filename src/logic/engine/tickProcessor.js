@@ -419,6 +419,9 @@ export function processGameTick(s) {
       div.level = Math.min(10, div.level + 1); 
     }
   });
+  
+  // 4. 市場需要とイベントフラグの更新
+  updateMarketSystem(nextMarkets, preciseYear, calcYear, nextFlags, dateStr, newLogs, nextYenRate);
 
   // 4. 計算結果をまとめる
   return {
