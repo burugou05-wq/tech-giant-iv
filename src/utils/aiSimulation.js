@@ -301,10 +301,10 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
     });
 
     // 4. 溢れた需要（売り切れ分）をプレイヤーと他の供給余力があるメーカーに再分配
-    if (unmetDemand > 0) {
-      const playerTargetShare = targetShares.player || 0;
+    const playerTargetShare = targetShares.player || 0;
+    if (unmetDemand > 0 && playerTargetShare > 0) {
       // プレイヤーがどれだけ「買えなかった客」を受け入れられるか（簡易化のため魅力度比率で分配）
-      const redistributionRatio = playerTargetShare / (1 - (targetShares.player || 0));
+      const redistributionRatio = playerTargetShare / (1 - playerTargetShare);
       targetShares.player += (unmetDemand / m.demand) * Math.max(0.2, redistributionRatio);
     }
 
