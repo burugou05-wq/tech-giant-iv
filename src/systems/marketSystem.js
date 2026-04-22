@@ -3,18 +3,16 @@
  */
 export function updateMarketSystem(nextMarkets, preciseYear, calcYear, nextFlags, dateStr, newLogs, nextYenRate) {
   Object.keys(nextMarkets).forEach(k => {
+    // ロックされていても需要の計算は継続する（AIが裏で活動するため）
     if (nextMarkets[k].locked) {
-      // 中国市場の自動アンロック（1995年）
       if (k === 'cn' && preciseYear >= 1995) {
         nextMarkets[k].locked = false;
         newLogs.push({ 
           time: dateStr, 
-          msg: '【市場開放】中国市場がアンロックされました！巨大な人口と急速な経済成長が期待されます。', 
+          msg: '【市場開放】中国市場がアンロックされました！', 
           type: 'info', 
           color: 'text-emerald-400' 
         });
-      } else {
-        return;
       }
     }
     
@@ -68,11 +66,10 @@ export function executeSales(nextMarkets, sellableProducts, nextInv, loopEffects
 
   Object.keys(nextMarkets).forEach(mKey => {
     const m = nextMarkets[mKey];
-    if (m.locked) return;
-    
-    // 1. プレイヤーの販売
-    let totalMarketDemand = Math.floor(m.demand * m.shares.player);
-    let revMulti = loopEffects.propBonus ? (m.shares.player >= 0.5 ? 1.5 : 0.6) : 1.0;
+    // 1. プレイヤーの販売 (市場がロックされている場合はスキップ)
+    if (!m.locked) {
+      let totalMarketDemand = Math.floor(m.demand * m.shares.player);
+      let revMulti = loopEffects.propBonus ? (m.shares.player >= 0.5 ? 1.5 : 0.6) : 1.0;
 
     // 魅力度が高い順に在庫を売る
     for (const prod of sellableProducts) {
@@ -101,13 +98,14 @@ export function executeSales(nextMarkets, sellableProducts, nextInv, loopEffects
         let revenue = sold * sellPrice * revMulti * strategyPriceMult;
         if (mKey !== 'jp') revenue /= nextYenRate;
         
-        if (Number.isFinite(revenue)) {
-          currentRevenue += revenue;
-        }
+          if (Number.isFinite(revenue)) {
+            currentRevenue += revenue;
+          }
 
-        if (mKey === 'eu' && euExtraCost > 0) {
-          const extra = sold * euExtraCost;
-          if (Number.isFinite(extra)) currentVarCostAdd += extra;
+          if (mKey === 'eu' && euExtraCost > 0) {
+            const extra = sold * euExtraCost;
+            if (Number.isFinite(extra)) currentVarCostAdd += extra;
+          }
         }
       }
     }
