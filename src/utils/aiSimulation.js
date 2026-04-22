@@ -318,7 +318,7 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
     }
 
     // 5. 最終的なシェアの推移（徐々に変化）
-    const shiftBase = 0.08; 
+    const shiftBase = 0.16; 
     const playerMarketingBonus = m.marketing * 0.05 * (loopEffects.marketingMulti || 1.0);
     
     // プレイヤーのシェア推移
