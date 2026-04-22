@@ -354,8 +354,11 @@ export function processGameTick(s) {
     
     if (aiProduct && aiFin && !aiFin.isBankrupt) {
       const revenue = sales.units * aiProduct.price;
-      const cost = sales.units * (aiProduct.baseCost || 70);
-      const tickProfit = revenue - cost;
+      const varCost = sales.units * (aiProduct.baseCost || 70);
+      
+      // AI にも工場の維持費（固定費）を適用
+      const fixedCost = (aiFin.factories || 0) * 40 + 500;
+      const tickProfit = revenue - varCost - fixedCost;
 
       // 稼働率の計算 (全市場の合計販売数 / 合計生産能力)
       const totalCapacity = Math.max(1, (aiFin.factories || 1) * 100);
