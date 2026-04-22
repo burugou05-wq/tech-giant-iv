@@ -192,14 +192,23 @@ export function processGameTick(s) {
         });
       } 
       else if (deal.type === 'ABSORPTION') {
-        const ultimateParentId = deal.buyerId; // 吸収側をそのまま親とする
+        const ultimateParentId = deal.buyerId; 
         
-        // 工場とシェアを吸収
+        // 工場と資金を吸収
         const factoriesToTransfer = Math.max(1, Math.floor(targetFin.factories * 0.7));
         buyerFin.factories += factoriesToTransfer;
         if (targetFin.money > 0) buyerFin.money += targetFin.money;
+
+        // 市場シェアを存続会社へ即時移転
+        Object.keys(nextMarkets).forEach(mKey => {
+          const m = nextMarkets[mKey];
+          if (m.shares && m.shares[deal.targetId]) {
+            m.shares[ultimateParentId] = (m.shares[ultimateParentId] || 0) + m.shares[deal.targetId];
+            m.shares[deal.targetId] = 0;
+          }
+        });
         
-        // 被買収側の子会社を救済（買収側に紐付け直す）
+        // 被買収側の子会社を救済
         Object.values(nextAiFinances).forEach(f => {
           if (f.parentId === deal.targetId) {
             f.parentId = ultimateParentId;
@@ -209,15 +218,25 @@ export function processGameTick(s) {
         targetFin.isBankrupt = true;
         newLogs.push({ 
           time: dateStr, 
-          msg: `【吸収合併】${buyerDef.name}が${targetDef.name}を完全に統合しました。`, 
+          msg: `【吸収合併】${buyerDef.name}が${targetDef.name}を完全に統合し、全市場シェアを継承しました。`, 
           type: 'error' 
         });
       }
       else if (deal.type === 'ABSORPTION' && deal.buyerId === 'player') {
         nextFactories += targetFin.factories;
         nextMoney -= 15000;
+
+        // プレイヤーへのシェア移転
+        Object.keys(nextMarkets).forEach(mKey => {
+          const m = nextMarkets[mKey];
+          if (m.shares && m.shares[deal.targetId]) {
+            m.shares.player = (m.shares.player || 0) + m.shares[deal.targetId];
+            m.shares[deal.targetId] = 0;
+          }
+        });
+
         targetFin.isBankrupt = true;
-        newLogs.push({ time: dateStr, msg: `【企業買収】経営難の${targetDef.name}を救済買収し、工場を統合しました。`, type: 'error' });
+        newLogs.push({ time: dateStr, msg: `【企業買収】経営難の${targetDef.name}を救済買収し、その販路と工場を統合しました。`, type: 'error' });
       }
       else if (deal.type === 'JV') {
         // 合弁会社の設立
@@ -245,17 +264,26 @@ export function processGameTick(s) {
       else if (deal.type === 'MERGER') {
         // 対等合併: IDが若い方を存続会社とする
         const isTargetSurvivor = deal.targetId < deal.buyerId;
-        const survivor = isTargetSurvivor ? targetFin : buyerFin;
-        const absorbed = isTargetSurvivor ? buyerFin : targetFin;
+        const survivorId = isTargetSurvivor ? deal.targetId : deal.buyerId;
+        const absorbedId = isTargetSurvivor ? deal.buyerId : deal.targetId;
+        const survivor = nextAiFinances[survivorId];
+        const absorbed = nextAiFinances[absorbedId];
         const sDef = isTargetSurvivor ? targetDef : buyerDef;
         const aDef = isTargetSurvivor ? buyerDef : targetDef;
 
         survivor.factories += absorbed.factories;
         survivor.money += absorbed.money;
+
+        // 市場シェアを存続会社へ即時移転
+        Object.keys(nextMarkets).forEach(mKey => {
+          const m = nextMarkets[mKey];
+          if (m.shares && m.shares[absorbedId]) {
+            m.shares[survivorId] = (m.shares[survivorId] || 0) + m.shares[absorbedId];
+            m.shares[absorbedId] = 0;
+          }
+        });
         
         // 被合併側の子会社を、存続側に紐付け直す
-        const absorbedId = isTargetSurvivor ? deal.buyerId : deal.targetId;
-        const survivorId = isTargetSurvivor ? deal.targetId : deal.buyerId;
         Object.values(nextAiFinances).forEach(f => {
           if (f.parentId === absorbedId) {
             f.parentId = survivorId;
@@ -266,7 +294,7 @@ export function processGameTick(s) {
         
         newLogs.push({ 
           time: dateStr, 
-          msg: `【対等合併】${sDef.name}と${aDef.name}が合併し、経営基盤を強化しました。`, 
+          msg: `【対等合併】${sDef.name}と${aDef.name}が合併。シェアを統合し、強力な新勢力が誕生しました。`, 
           type: 'warning' 
         });
       }
