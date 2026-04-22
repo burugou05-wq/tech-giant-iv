@@ -5,7 +5,7 @@ export const philips = {
   prefixes: ['Philips', 'Senseo', 'Sonic', 'Euro'],
   appearsYear: 1946, disappearsYear: 2015,
   initialMoney: 150000, initialFactories: 13, minMargin: 0.35,
-  regions: { eu: 1946, na: 1950, jp: 1970 },
+  regions: { eu: 1946, na: 1950, jp: 1970, cn: 1985 },
   stockBase: 120, revenueBase: 100000,
   strengths: ['欧州市場の絶対的支配', '音響・照明技術の先駆者', '安定した製品供給'],
   eras: [

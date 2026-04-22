@@ -5,7 +5,7 @@ export const samsung = {
   prefixes: ['Galaxy', 'Wave', 'Samsung', 'OLED', 'Z-Fold'],
   appearsYear: 1969, disappearsYear: 9999,
   initialMoney: 250000, initialFactories: 20, minMargin: 0.18,
-  regions: { eu: 1969, na: 1980, jp: 2000 },
+  regions: { eu: 1969, na: 1980, jp: 2000, cn: 1995 },
   stockBase: 70, revenueBase: 210000,
   strengths: ['圧倒的な量産・コスト競争力', '欧州・新興国市場での普及率', '垂直統合によるスピード'],
   eras: [

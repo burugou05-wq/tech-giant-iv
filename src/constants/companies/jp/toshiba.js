@@ -5,7 +5,7 @@ export const toshiba = {
   prefixes: ['Dynabook', 'Regza', 'Toshiba', 'Satellite'],
   appearsYear: 1946, disappearsYear: 9999,
   initialMoney: 120000, initialFactories: 12, minMargin: 0.25,
-  regions: { jp: 1946, na: 1960, eu: 1965 },
+  regions: { jp: 1946, na: 1960, eu: 1965, cn: 1985 },
   stockBase: 95, revenueBase: 80000,
   strengths: ['日本市場での強いブランド', 'ノートPCの先駆者', '幅広いインフラ技術'],
   eras: [
