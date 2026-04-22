@@ -19,7 +19,7 @@ export default function Market() {
   const filteredLogs = useMemo(() => {
     if (newsFilter === 'all') return logs;
     if (newsFilter === 'alert') return logs.filter(l => l.type === 'alert' || l.type === 'error');
-    if (newsFilter === 'ma') return logs.filter(l => l.msg.includes('【') && (l.msg.includes('提携') || l.msg.includes('買収') || l.msg.includes('統合') || l.msg.includes('独立') || l.msg.includes('再建') || l.msg.includes('再生') || l.msg.includes('子会社')));
+    if (newsFilter === 'ma') return logs.filter(l => l.msg.includes('【') && (l.msg.includes('提携') || l.msg.includes('買収') || l.msg.includes('統合') || l.msg.includes('独立') || l.msg.includes('再建') || l.msg.includes('再生') || l.msg.includes('子会社') || l.msg.includes('歴史的傑作')));
     return logs;
   }, [logs, newsFilter]);
 

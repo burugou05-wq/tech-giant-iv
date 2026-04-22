@@ -34,8 +34,13 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarke
     // 傑作機（歴史的製品）の判定
     const history = /** @type {any} */(ai).history;
     const activeMasterpiece = Array.isArray(history) ? history.find(h => calcYear >= h.year && calcYear <= h.year + (/** @type {any} */ (h).duration || 5)) : null;
-    const isFirstLaunch = activeMasterpiece && activeMasterpiece.year === calcYear;
-    const isNewMasterpiece = isFirstLaunch && !prevName.startsWith(activeMasterpiece.product);
+    
+    // 傑作機の年になった最初の1回だけログを出し、フラグを立てる
+    const isMasterpieceYear = activeMasterpiece && activeMasterpiece.year === calcYear;
+    const isNewMasterpiece = isMasterpieceYear && !aiFin.launchedMasterpieceYear;
+    if (isNewMasterpiece) {
+      aiFin.launchedMasterpieceYear = calcYear; // 今年は既にログを出した
+    }
 
     // 更新判定
     let currentUpdateChance = ai.updateChance;
