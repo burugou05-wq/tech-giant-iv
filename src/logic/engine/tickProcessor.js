@@ -156,7 +156,7 @@ export function processGameTick(s) {
 
   // M&A 交渉の実行 (半年に一度)
   if (newTick % 13 === 0) {
-    const deals = negotiateMA(nextAiFinances, nextAiProducts, calcYear);
+    const deals = negotiateMA(nextAiFinances, nextAiProducts, calcYear, nextMarkets);
     deals.forEach(deal => {
       const targetFin = nextAiFinances[deal.targetId];
       const buyerFin = deal.buyerId === 'player' ? null : nextAiFinances[deal.buyerId];
@@ -223,6 +223,16 @@ export function processGameTick(s) {
         targetFin.isBankrupt = true;
         newLogs.push({ time: dateStr, msg: `【企業買収】経営難の${targetDef.name}を救済買収し、工場を統合しました。`, type: 'error' });
       }
+      else if (deal.type === 'JV') {
+        // 合弁会社の設立
+        targetFin.parentId = deal.buyerId;
+        targetFin.maType = 'JV';
+        newLogs.push({ 
+          time: dateStr, 
+          msg: `【提携発表】${buyerDef.name}と${targetDef.name}が戦略的合弁を設立。市場での反撃を開始します。`, 
+          type: 'warning' 
+        });
+      }
       else if (deal.type === 'MERGER') {
         // 対等合併: IDが若い方を存続会社とする
         const isTargetSurvivor = deal.targetId < deal.buyerId;
@@ -253,6 +263,40 @@ export function processGameTick(s) {
       }
     });
   }
+
+  // --- JVの維持・解消チェック ---
+  Object.keys(nextAiFinances).forEach(id => {
+    const fin = nextAiFinances[id];
+    if (fin.parentId && fin.maType === 'JV' && !fin.isBankrupt) {
+      const parentId = fin.parentId;
+      const parentFin = nextAiFinances[parentId];
+      const targetDef = AI_COMPANIES[id];
+      const buyerDef  = AI_COMPANIES[parentId];
+      
+      // シェアの合計を計算 (主力市場で)
+      const marketKey = targetDef.strongMarket;
+      const totalShare = (nextMarkets[marketKey]?.shares[id] || 0) + (nextMarkets[marketKey]?.shares[parentId] || 0);
+      
+      // 解消・吸収の条件 (シェアが一定以上に成長した場合)
+      if (totalShare > 0.20) { 
+         if (parentFin.money > fin.money * 2.5) {
+            // 吸収 (子会社化)
+            fin.maType = 'SUBSIDIARY';
+            newLogs.push({ time: dateStr, msg: `【資本統合】合弁の成功を受け、${buyerDef.name}が${targetDef.name}を完全子会社化しました。`, type: 'warning' });
+         } else if (Math.random() < 0.1) {
+            // 円満解消
+            fin.parentId = null;
+            fin.maType = null;
+            newLogs.push({ time: dateStr, msg: `【合弁解消】${buyerDef.name}と${targetDef.name}は、目的を達成したとして合弁を解消。再び独立した競合に戻ります。`, type: 'warning' });
+         }
+      }
+      // もし一方が破綻したら強制解消
+      if (parentFin.isBankrupt) {
+        fin.parentId = null;
+        fin.maType = null;
+      }
+    }
+  });
 
   // --- AI の意思決定と市場シェアのシミュレーション ---
   simulateAI(nextAiProducts, nextMarkets, calcYear, nextAiFinances, dateStr, newLogs);

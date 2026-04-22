@@ -56,6 +56,17 @@ export default function Market() {
       <div className="max-w-4xl mx-auto">
         {Object.keys(markets).filter(k => k === activeMarket).map(mKey => {
           const m = markets[mKey];
+
+          // JVペアの特定
+          const jvPairs = {};
+          Object.keys(aiFinances).forEach(id => {
+            const f = aiFinances[id];
+            if (f.parentId && f.maType === 'JV') {
+              if (!jvPairs[f.parentId]) jvPairs[f.parentId] = [];
+              jvPairs[f.parentId].push(id);
+            }
+          });
+
           return (
             <Card key={mKey} hover glass={!m.locked} className={m.locked ? 'opacity-70' : ''}>
               <CardHeader>
@@ -103,15 +114,27 @@ export default function Market() {
                       style={{ width: `${m.shares.player * 100}%` }} 
                       title={`自社: ${(m.shares.player * 100).toFixed(1)}%`}
                     />
-                    {Object.keys(AI_COMPANIES).filter(id => aiFinances && !aiFinances[id]?.isBankrupt).map(aiId => {
-                      const share = (m.shares[aiId] || 0) * 100;
+                    {Object.keys(AI_COMPANIES).filter(id => {
+                      const f = aiFinances[id];
+                      if (!f || f.isBankrupt) return false;
+                      if (f.parentId && f.maType === 'JV') return false; // JV子は親がまとめて描画
+                      return true;
+                    }).map(id => {
+                      let share = (m.shares[id] || 0) * 100;
+                      let label = AI_COMPANIES[id].name;
+                      if (jvPairs[id]) {
+                        jvPairs[id].forEach(childId => {
+                          share += (m.shares[childId] || 0) * 100;
+                          label += ` & ${AI_COMPANIES[childId].name}`;
+                        });
+                      }
                       if (share <= 0) return null;
                       return (
                         <div
-                          key={aiId}
-                          className={`${AI_COMPANIES[aiId].color} h-full border-l border-white/5 cursor-help`}
+                          key={id}
+                          className={`${AI_COMPANIES[id].color} h-full border-l border-white/5 cursor-help`}
                           style={{ width: `${share}%` }}
-                          title={`${AI_COMPANIES[aiId].name}: ${share.toFixed(1)}%`}
+                          title={`${label}: ${share.toFixed(1)}%`}
                         />
                       );
                     })}
@@ -131,22 +154,35 @@ export default function Market() {
                     .filter(([id, ai]) => {
                       const r = /** @type {Record<string, number>} */ (ai.regions);
                       const fin = aiFinances ? aiFinances[id] : null;
-                      if (fin?.isBankrupt) return false;
+                      if (!fin || fin.isBankrupt) return false;
+                      if (fin.parentId && fin.maType === 'JV') return false; // JV子はスキップ
                       return currentYear >= ai.appearsYear && 
                              currentYear <= (ai.disappearsYear || Infinity) &&
                              r && r[mKey] && currentYear >= r[mKey];
                     })
-                    .map(([id, ai]) => (
-                    <button
-                      key={id}
-                      onClick={() => setSelectedCompany(id)}
-                      className="flex items-center gap-2 hover:bg-slate-700/50 p-1 rounded transition-colors group"
-                    >
-                      <div className={`w-2 h-2 ${ai.color} rounded-full`} />
-                      <span className={`${ai.textColor} font-bold group-hover:underline`}>{ai.name}</span>
-                      <span className="text-slate-500 ml-auto font-mono">{((m.shares[id] || 0) * 100).toFixed(1)}%</span>
-                    </button>
-                  ))}
+                    .map(([id, ai]) => {
+                      let label = ai.name;
+                      let share = (m.shares[id] || 0) * 100;
+                      if (jvPairs[id]) {
+                        jvPairs[id].forEach(childId => {
+                          label += ` & ${AI_COMPANIES[childId].name}`;
+                          share += (m.shares[childId] || 0) * 100;
+                        });
+                      }
+                      return (
+                        <button
+                          key={id}
+                          onClick={() => setSelectedCompany(id)}
+                          className="flex items-center gap-2 hover:bg-slate-700/50 p-1 rounded transition-colors group"
+                        >
+                          <div className={`w-2 h-2 ${ai.color} rounded-full`} />
+                          <span className={`${ai.textColor} font-bold group-hover:underline text-left truncate max-w-[80px]`}>
+                            {label}
+                          </span>
+                          <span className="text-slate-500 ml-auto font-mono">{share.toFixed(1)}%</span>
+                        </button>
+                      );
+                    })}
                 </div>
 
                 {/* 店舗管理 */}

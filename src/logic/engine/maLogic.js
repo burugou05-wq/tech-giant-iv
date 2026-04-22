@@ -5,9 +5,10 @@ import { AI_COMPANIES } from '../../constants/index.js';
  * @param {Record<string, any>} aiFinances 
  * @param {Record<string, any>} aiProducts 
  * @param {number} currentYear 
+ * @param {Record<string, any>} markets
  * @returns {any[]} 交渉成立したイベントのリスト
  */
-export function negotiateMA(aiFinances, aiProducts, currentYear) {
+export function negotiateMA(aiFinances, aiProducts, currentYear, markets) {
   const deals = [];
   const companies = Object.entries(AI_COMPANIES);
   
@@ -35,6 +36,29 @@ export function negotiateMA(aiFinances, aiProducts, currentYear) {
 
     // 経営難の判定 (現金 5000k 未満、または倒産寸前)
     const isDistressed = targetFin.money < 5000 || targetFin.money < -50000;
+
+    // --- 合弁会社 (JV) の検討 ---
+    // シェアが低く、かつ独立している企業同士
+    const targetStrongMarket = targetDef.strongMarket;
+    const targetShare = markets[targetStrongMarket]?.shares[targetId] || 0;
+
+    if (!isDistressed && targetShare < 0.10 && !targetFin.parentId && currentYear > 1990) {
+       for (const [pId, pDef] of companies) {
+         if (pId === targetId || processed.has(pId)) continue;
+         const pFin = aiFinances[pId];
+         if (!pFin || pFin.isBankrupt || pFin.parentId) continue;
+
+         const pShare = markets[targetStrongMarket]?.shares[pId] || 0;
+         if (pShare < 0.10 && pDef.strongMarket === targetStrongMarket) {
+           // 戦略的提携 (JV)
+           deals.push({ targetId, buyerId: pId, type: 'JV', score: 80 });
+           processed.add(targetId);
+           processed.add(pId);
+           break;
+         }
+       }
+       if (processed.has(targetId)) continue;
+    }
     if (!isDistressed) continue;
 
     // パートナー候補を探す
