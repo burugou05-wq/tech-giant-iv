@@ -125,6 +125,12 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarke
       finalAppeal *= 1.8;
     }
 
+    // 提携・再生によるバフ
+    if (aiFin?.parentId) {
+      if (aiFin.maType === 'JV') finalAppeal *= 1.2; // 提携効果
+      if (aiFin.maType === 'REHAB') finalAppeal *= 1.4; // 親会社からの強力な技術支援
+    }
+
     // 製品名生成
     /** @type {Record<string, string[]>} */
     const SUFFIXES = {

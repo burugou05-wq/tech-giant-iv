@@ -59,6 +59,24 @@ export function negotiateMA(aiFinances, aiProducts, currentYear, markets) {
        }
        if (processed.has(targetId)) continue;
     }
+
+    // --- 事業再生型・子会社化 (REHAB) の検討 ---
+    // シェアが 0% の企業を巨大企業が拾い上げる
+    if (targetShare <= 0 && !targetFin.parentId) {
+       for (const [pId, pDef] of companies) {
+         if (pId === targetId || processed.has(pId)) continue;
+         const pFin = aiFinances[pId];
+         // 親候補は潤沢な資金 (300,000k以上) を持っていること
+         if (!pFin || pFin.isBankrupt || pFin.parentId || pFin.money < 300000) continue;
+
+         // 再生案件として成立
+         deals.push({ targetId, buyerId: pId, type: 'REHAB', score: 90 });
+         processed.add(targetId);
+         break;
+       }
+       if (processed.has(targetId)) continue;
+    }
+
     if (!isDistressed) continue;
 
     // パートナー候補を探す

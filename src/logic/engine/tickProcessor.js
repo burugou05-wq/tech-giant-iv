@@ -233,6 +233,19 @@ export function processGameTick(s) {
           type: 'warning' 
         });
       }
+      else if (deal.type === 'REHAB') {
+        // 事業再生型の子会社化
+        targetFin.parentId = deal.buyerId;
+        targetFin.maType = 'REHAB';
+        // 親から子へ再建資金を注入 (50,000k)
+        if (buyerFin) buyerFin.money -= 50000;
+        targetFin.money += 50000;
+        newLogs.push({ 
+          time: dateStr, 
+          msg: `【事業再生】シェアを失った${targetDef.name}が${buyerDef.name}の傘下に入り、再建を開始しました。`, 
+          type: 'warning' 
+        });
+      }
       else if (deal.type === 'MERGER') {
         // 対等合併: IDが若い方を存続会社とする
         const isTargetSurvivor = deal.targetId < deal.buyerId;
@@ -294,6 +307,32 @@ export function processGameTick(s) {
       if (parentFin.isBankrupt) {
         fin.parentId = null;
         fin.maType = null;
+      }
+    }
+    // --- 再生案件の独立(MBO)チェック ---
+    if (fin.parentId && fin.maType === 'REHAB' && !fin.isBankrupt) {
+      const parentId = fin.parentId;
+      const parentFin = nextAiFinances[parentId];
+      const targetDef = AI_COMPANIES[id];
+      const marketKey = targetDef.strongMarket;
+      
+      const subShare = nextMarkets[marketKey]?.shares[id] || 0;
+      const parentShare = nextMarkets[marketKey]?.shares[parentId] || 0;
+      
+      // 子が親のシェアを超えたら独立を検討
+      if (subShare > parentShare && subShare > 0.05) {
+         const severance = Math.floor(fin.money * 0.4 + 30000); // 別れ金
+         if (fin.money > severance) {
+            fin.money -= severance;
+            if (parentFin) parentFin.money += severance;
+            fin.parentId = null;
+            fin.maType = null;
+            newLogs.push({ 
+              time: dateStr, 
+              msg: `【独立・MBO】再建に成功した${targetDef.name}が${AI_COMPANIES[parentId].name}から独立！莫大な別れ金を支払い、再びライバルとなります。`, 
+              type: 'warning' 
+            });
+         }
       }
     }
   });
