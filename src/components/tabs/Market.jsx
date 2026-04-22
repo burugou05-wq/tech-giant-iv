@@ -13,6 +13,14 @@ export default function Market() {
   const canUseDirectStore = completedFocuses.includes('fc_direct_store');
 
   const effects = useMemo(() => getCurrentEffects(completedFocuses), [completedFocuses]);
+  const [activeMarket, setActiveMarket] = useState('jp');
+
+  const marketTabs = [
+    { id: 'jp', name: '日本市場', icon: '🇯🇵' },
+    { id: 'na', name: '北米市場', icon: '🇺🇸' },
+    { id: 'eu', name: '欧州市場', icon: '🇪🇺' },
+    { id: 'cn', name: '中国市場', icon: '🇨🇳' },
+  ];
 
   // 各市場でのプレイヤーの最良製品を特定
   const getPlayerBest = (mKey) => {
@@ -27,8 +35,26 @@ export default function Market() {
 
   return (
     <div className="space-y-6 relative">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {Object.keys(markets).map(mKey => {
+      {/* 地域サブタブ */}
+      <div className="flex bg-slate-900/60 p-1 rounded-2xl border border-slate-700/50 w-full lg:w-fit mx-auto shadow-2xl backdrop-blur-md">
+        {marketTabs.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveMarket(tab.id)}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-black transition-all duration-300 ${
+              activeMarket === tab.id 
+                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/40 scale-105' 
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <span className="text-lg">{tab.icon}</span>
+            {tab.name}
+          </button>
+        ))}
+      </div>
+
+      <div className="max-w-4xl mx-auto">
+        {Object.keys(markets).filter(k => k === activeMarket).map(mKey => {
           const m = markets[mKey];
           return (
             <Card key={mKey} hover glass={!m.locked} className={m.locked ? 'opacity-70' : ''}>
