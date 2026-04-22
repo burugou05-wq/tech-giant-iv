@@ -41,7 +41,13 @@ export function useGameEngine() {
   }, [state]);
 
   const addLog = (msg, type = 'info', color = null) => {
-    setLogs(prev => [{ time: currentDateStr, msg, type, color }, ...prev].slice(0, 50));
+    setLogs(prev => {
+      const isMA = (l) => l.msg.includes('【') && (l.msg.includes('提携') || l.msg.includes('買収') || l.msg.includes('統合') || l.msg.includes('独立') || l.msg.includes('再建') || l.msg.includes('再生') || l.msg.includes('子会社'));
+      const combined = [{ time: currentDateStr, msg, type, color }, ...prev];
+      const maLogs = combined.filter(isMA);
+      const otherLogs = combined.filter(l => !isMA(l)).slice(0, 50);
+      return combined.filter(l => isMA(l) || otherLogs.includes(l));
+    });
   };
 
   const currentEffects = useMemo(() => getCurrentEffects(completedFocuses), [completedFocuses]);
@@ -97,7 +103,13 @@ export function useGameEngine() {
       setLastTickProfit(lastTickProfit);
 
       if (newLogs.length > 0) {
-        setLogs(prev => [...newLogs, ...prev].slice(0, 50));
+        setLogs(prev => {
+          const isMA = (l) => l.msg.includes('【') && (l.msg.includes('提携') || l.msg.includes('買収') || l.msg.includes('統合') || l.msg.includes('独立') || l.msg.includes('再建') || l.msg.includes('再生') || l.msg.includes('子会社'));
+          const combined = [...newLogs, ...prev];
+          const maLogs = combined.filter(isMA);
+          const otherLogs = combined.filter(l => !isMA(l)).slice(0, 50);
+          return combined.filter(l => isMA(l) || otherLogs.includes(l));
+        });
       }
 
       if (nextState.ticks % 2 === 0) {
