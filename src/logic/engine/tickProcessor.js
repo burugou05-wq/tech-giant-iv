@@ -31,6 +31,8 @@ export function processGameTick(s) {
   const calcYear     = Math.floor(preciseYear);
   const dateStr      = new Date(START_DATE.getTime() + newTick * 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
+  let nextMoney        = s.money;
+  let nextFactories    = s.totalFactories;
   let nextLines        = s.productionLines.map(l => ({ ...l }));
   let nextInv          = structuredClone(s.inventory);
   let nextMarkets      = structuredClone(s.markets);
@@ -157,11 +159,18 @@ export function processGameTick(s) {
     const deals = negotiateMA(nextAiFinances, nextAiProducts, calcYear);
     deals.forEach(deal => {
       const targetFin = nextAiFinances[deal.targetId];
-      const buyerFin = nextAiFinances[deal.buyerId];
+      const buyerFin = deal.buyerId === 'player' ? null : nextAiFinances[deal.buyerId];
       const targetDef = AI_COMPANIES[deal.targetId];
-      const buyerDef = AI_COMPANIES[deal.buyerId];
+      const buyerDef = deal.buyerId === 'player' ? { name: '自社' } : AI_COMPANIES[deal.buyerId];
 
-      if (deal.type === 'SUBSIDIARY') {
+      if (deal.type === 'SUBSIDIARY' && deal.buyerId === 'player') {
+         // プレイヤーが子会社化（簡易化のため、工場と資金を吸収して破綻処理）
+         nextFactories += targetFin.factories;
+         nextMoney -= 20000; // 買収費用
+         targetFin.isBankrupt = true;
+         newLogs.push({ time: dateStr, msg: `【買収完了】${targetDef.name}の全事業を買収し、技術と設備を統合しました。`, type: 'warning' });
+      }
+      else if (deal.type === 'SUBSIDIARY') {
         // 買収側の「真のボス（最上位親）」を探す
         let ultimateParentId = deal.buyerId;
         while (nextAiFinances[ultimateParentId]?.parentId) {
@@ -207,6 +216,12 @@ export function processGameTick(s) {
           msg: `【吸収合併】${buyerDef.name}が${targetDef.name}を完全に統合しました。`, 
           type: 'error' 
         });
+      }
+      else if (deal.type === 'ABSORPTION' && deal.buyerId === 'player') {
+        nextFactories += targetFin.factories;
+        nextMoney -= 15000;
+        targetFin.isBankrupt = true;
+        newLogs.push({ time: dateStr, msg: `【企業買収】経営難の${targetDef.name}を救済買収し、工場を統合しました。`, type: 'error' });
       }
       else if (deal.type === 'MERGER') {
         // 対等合併: IDが若い方を存続会社とする
@@ -427,9 +442,10 @@ export function processGameTick(s) {
   return {
     type: 'TICK',
     nextState: {
-      money: s.money + profit + instantEffectMoney,
+      money: nextMoney + profit + instantEffectMoney,
       researchPoints: s.researchPoints + rpGain,
       leadershipPower: s.leadershipPower + 1,
+      totalFactories: nextFactories,
       stockPrice: financeResults.newStockPrice(s.stockPrice),
       yenRate: nextYenRate,
       ticks: newTick,

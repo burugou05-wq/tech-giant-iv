@@ -22,6 +22,8 @@ import { zenith } from './na/zenith.js';
 import { lenovo } from './cn/lenovo.js';
 import { huawei } from './cn/huawei.js';
 import { xiaomi } from './cn/xiaomi.js';
+import { aiwa } from './jp/aiwa.js';
+import { commodore } from './na/commodore.js';
 
 export const AI_COMPANIES = {
   toshiba,
@@ -47,5 +49,7 @@ export const AI_COMPANIES = {
   zenith,
   lenovo,
   huawei,
-  xiaomi
+  xiaomi,
+  aiwa,
+  commodore
 };
