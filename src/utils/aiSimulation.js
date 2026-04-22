@@ -21,7 +21,8 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarke
     if (calcYear < ai.appearsYear || calcYear > (ai.disappearsYear || Infinity)) return;
 
     // 現在の「時代 (Era)」の判定
-    const currentEra = ai.eras?.find(e => calcYear >= e.start && calcYear <= e.end);
+    const eras = /** @type {any} */(ai).eras;
+    const currentEra = Array.isArray(eras) ? eras.find(e => calcYear >= e.start && calcYear <= e.end) : null;
     const isEraStart = currentEra && currentEra.start === calcYear;
 
     // 時代開始時のログは削除 (ユーザー要望)
@@ -31,7 +32,8 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarke
     const prevName = prevProduct.name || prevProduct.productName || '';
     
     // 傑作機（歴史的製品）の判定
-    const activeMasterpiece = ai.history?.find(h => calcYear >= h.year && calcYear <= h.year + (/** @type {any} */ (h).duration || 5));
+    const history = /** @type {any} */(ai).history;
+    const activeMasterpiece = Array.isArray(history) ? history.find(h => calcYear >= h.year && calcYear <= h.year + (/** @type {any} */ (h).duration || 5)) : null;
     const isFirstLaunch = activeMasterpiece && activeMasterpiece.year === calcYear;
     const isNewMasterpiece = isFirstLaunch && !prevName.startsWith(activeMasterpiece.product);
 
