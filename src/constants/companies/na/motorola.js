@@ -16,4 +16,5 @@ export const motorola = {
     { year: 1983, product: 'DynaTAC',        desc: '世界初の商用携帯電話。' },
     { year: 2004, product: 'RAZR',           desc: '超薄型携帯電話で世界的なヒット。' },
   ],
+  mergerDestiny: { year: 2012, type: 'ABSORPTION', partner: 'google' },
 };

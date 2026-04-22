@@ -3,7 +3,7 @@ export const ibm = {
   trait: 'ビジネス界の巨人', strategy: 'innovator', priceTarget: 'premium', brand: 0.7,
   updateChance: 0.02, appealMod: 1.1, strongMarket: 'na',
   prefixes: ['ThinkPad', 'System/360', 'IBM PC', 'Power', 'DeepBlue'],
-  appearsYear: 1946, disappearsYear: 9999,
+  appearsYear: 1946, disappearsYear: 2005,
   initialMoney: 400000, initialFactories: 18, minMargin: 0.4,
   regions: { na: 1946, eu: 1955, jp: 1960 },
   stockBase: 280, revenueBase: 250000,
@@ -15,4 +15,5 @@ export const ibm = {
     { year: 1964, product: 'System/360',    desc: 'コンピュータの互換性の概念を確立。' },
     { year: 1981, product: 'IBM PC',         desc: 'パーソナルコンピュータのデファクトスタンダードを創出した。' },
   ],
+  mergerDestiny: { year: 2005, type: 'ABSORPTION', partner: 'lenovo' },
 };

@@ -21,6 +21,17 @@ export function negotiateMA(aiFinances, aiProducts, currentYear) {
 
     // その年において活動中の企業のみを対象にする
     if (currentYear < targetDef.appearsYear || currentYear > (targetDef.disappearsYear || Infinity)) continue;
+    
+    // --- 歴史的合併（Destiny）の優先処理 ---
+    if (targetDef.mergerDestiny && Math.floor(currentYear) === targetDef.mergerDestiny.year) {
+      const { partner, type } = targetDef.mergerDestiny;
+      // パートナーが存在し、かつ破綻していない場合のみ実行
+      if (aiFinances[partner] && !aiFinances[partner].isBankrupt) {
+        deals.push({ targetId, buyerId: partner, type: type, score: 999 });
+        processed.add(targetId);
+        continue;
+      }
+    }
 
     // 経営難の判定 (現金 5000k 未満、または倒産寸前)
     const isDistressed = targetFin.money < 5000 || targetFin.money < -50000;

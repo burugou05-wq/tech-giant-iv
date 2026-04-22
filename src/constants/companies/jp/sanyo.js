@@ -15,4 +15,5 @@ export const sanyo = {
     { year: 1953, product: 'Jet Washer',     desc: '噴流式洗濯機で大ヒットし、家庭の家事負担を激減させた。' },
     { year: 2005, product: 'Eneloop',        desc: '充電式電池のデファクトスタンダードを確立。' },
   ],
+  mergerDestiny: { year: 2011, type: 'ABSORPTION', partner: 'panasonic' },
 };
