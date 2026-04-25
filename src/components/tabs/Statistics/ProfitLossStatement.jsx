@@ -4,7 +4,6 @@ import { Card } from '../../ui/index.js';
 export const ProfitLossStatement = ({ lastTickProfit, profit, totalCost, divisions }) => {
   const costBreakdown = [
     { label: '変動費（材料・製造）', value: lastTickProfit.varCost, color: 'bg-rose-500' },
-    { label: '輸送費（物流・海外）', value: lastTickProfit.logisticsCost || 0, color: 'bg-emerald-500' },
     { label: '固定費（工場維持）', value: lastTickProfit.fixedCost, color: 'bg-orange-500' },
     { label: 'マーケティング費', value: lastTickProfit.marketingCost, color: 'bg-blue-500' },
     { label: '直営店運営費', value: lastTickProfit.storeCost, color: 'bg-indigo-500' },
@@ -56,18 +55,13 @@ export const ProfitLossStatement = ({ lastTickProfit, profit, totalCost, divisio
               )}
               <tr>
                 <td className="p-4 text-slate-500 font-bold uppercase tracking-widest text-[10px]">売上原価 / 変動費 (COGS)</td>
-                <td className="p-4 text-right text-rose-500/80 font-bold">-${Math.floor(lastTickProfit.varCost + (lastTickProfit.logisticsCost || 0)).toLocaleString()}k</td>
+                <td className="p-4 text-right text-rose-500/80 font-bold">-${Math.floor(lastTickProfit.varCost).toLocaleString()}k</td>
               </tr>
-              {(lastTickProfit.logisticsCost || 0) > 0 && (
-                <tr className="bg-slate-900/20">
-                  <td className="p-3 text-slate-500 pl-8 font-bold text-[9px] uppercase italic">└ 輸送・物流費 (LOGISTICS)</td>
-                  <td className="p-3 text-right text-slate-500 font-bold text-xs">-${Math.floor(lastTickProfit.logisticsCost).toLocaleString()}k</td>
-                </tr>
-              )}
+
               <tr className="bg-slate-900/30">
                 <td className="p-4 text-slate-300 font-black uppercase tracking-widest text-xs">売上総利益 (GROSS MARGIN)</td>
-                <td className={`p-4 text-right font-black text-base ${lastTickProfit.revenue - (lastTickProfit.varCost + (lastTickProfit.logisticsCost || 0)) >= 0 ? 'text-emerald-400' : 'text-rose-500'}`}>
-                  ${Math.floor(lastTickProfit.revenue - (lastTickProfit.varCost + (lastTickProfit.logisticsCost || 0))).toLocaleString()}k
+                <td className={`p-4 text-right font-black text-base ${lastTickProfit.revenue - lastTickProfit.varCost >= 0 ? 'text-emerald-400' : 'text-rose-500'}`}>
+                  ${Math.floor(lastTickProfit.revenue - lastTickProfit.varCost).toLocaleString()}k
                 </td>
               </tr>
               <tr>
