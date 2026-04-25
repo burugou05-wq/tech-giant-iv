@@ -1,10 +1,8 @@
 import { START_DATE } from '../../constants/index.js';
 import { getCurrentEffects } from '../../utils/gameLogic.js';
-import { 
-  simulateAI, 
-  simulateMarketShares,
-  processAIBusinessLogic
-} from '../../utils/aiSimulation.js';
+import { processAIBusinessLogic } from '../../systems/aiBusinessSystem.js';
+import { simulateMarketShares } from '../../systems/aiMarketSystem.js';
+import { simulateAI } from '../../systems/aiProductSystem.js';
 
 import { updateOrgSystem } from '../../systems/orgSystem.js';
 import { updateMarketSystem, executeSales } from '../../systems/marketSystem.js';
