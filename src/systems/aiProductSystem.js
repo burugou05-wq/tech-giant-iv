@@ -13,6 +13,23 @@ import { getTrendMultiplier } from '../utils/gameLogic.js';
  * @param {any} aiFinances - AI財務データ
  */
 export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarkets, aiFinances) {
+  // 全市場のシェアから実質的な売上ボリューム（順位）を推測する
+  const volumeMap = { player: 0 };
+  Object.keys(AI_COMPANIES).forEach(id => volumeMap[id] = 0);
+  
+  Object.values(nextMarkets).forEach(m => {
+    if (m.locked) return;
+    Object.keys(m.shares).forEach(cId => {
+      volumeMap[cId] = (volumeMap[cId] || 0) + (m.shares[cId] * m.demand);
+    });
+  });
+
+  // ボリューム順にソート
+  const sortedCompanies = Object.keys(volumeMap).sort((a, b) => volumeMap[b] - volumeMap[a]);
+  const playerRank = sortedCompanies.indexOf('player') + 1;
+  const isPlayerTop = playerRank === 1;
+  const aiRanking = sortedCompanies.filter(c => c !== 'player'); // AIのみの順位
+
   Object.entries(AI_COMPANIES).forEach(([aiId, ai]) => {
     const aiFin = aiFinances?.[aiId];
     if (aiFin?.isBankrupt) return;
@@ -45,17 +62,32 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarke
     // 更新判定
     let currentUpdateChance = ai.updateChance;
     
-    // プレイヤーが強い市場を持っている場合、AIは危機感を持って製品開発を急ぐ
     const playerShareInStrongMarket = nextMarkets[ai.strongMarket]?.shares?.player || 0;
-    if (playerShareInStrongMarket > 0.3) {
-      currentUpdateChance *= (1.0 + playerShareInStrongMarket * 2); // プレイヤーが強いほど開発頻度アップ
+    
+    // 性格と状況の判定
+    const myAiRank = aiRanking.indexOf(aiId) + 1; // 1位〜
+    let isDesperate = false;
+    let isCopycat = false;
+
+    // プレイヤーが首位で、このAIがトップ3（旧覇者）なら「王座奪還モード」
+    if (isPlayerTop && myAiRank <= 3) isDesperate = true;
+    // または、得意市場を荒らされている場合は「地元防衛モード」
+    if (playerShareInStrongMarket > 0.3) isDesperate = true;
+    // プレイヤーが首位で、このAIが下位（4位以下）なら「模倣モード」
+    if (isPlayerTop && myAiRank > 3) isCopycat = true;
+
+    // 更新頻度へのバフ
+    if (isDesperate) currentUpdateChance *= 3.0; // 必死に新製品を出す
+    else if (isCopycat) currentUpdateChance *= 1.5;
+    else if (playerShareInStrongMarket > 0.15) {
+      currentUpdateChance *= (1.0 + playerShareInStrongMarket * 2);
     }
 
     if (activeMasterpiece) currentUpdateChance *= 3;
     if (currentEra?.type === 'golden') currentUpdateChance *= 1.5;
     
     const hasNoProduct = !nextAiProducts[aiId];
-    if (Math.random() > currentUpdateChance && !isNewMasterpiece && !hasNoProduct) return;
+    if (Math.random() > currentUpdateChance && !isNewMasterpiece && !hasNoProduct && !isDesperate) return;
 
     // 最新技術の選定 (自分の主要市場のカテゴリーに合わせる)
     const targetCategory = nextMarkets[ai.strongMarket]?.category || 'home_appliance';
@@ -115,10 +147,20 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarke
     
     // 各企業固有の下限（minMargin）を守る。ただし格安メーカーは原価を割る直前まで行く
     const marginFloor = 1.0 + (ai.minMargin || 0.1);
-    const finalMargin = Math.max(marginFloor, targetMargin);
+    let finalMargin = Math.max(marginFloor, targetMargin);
+
+    // モードによる最終補正
+    if (isDesperate) {
+      finalMargin = 1.02; // 利益度外視の超攻撃的価格（原価+2%）
+    } else if (isCopycat) {
+      finalMargin = 1.10; // 模倣品として薄利多売
+    }
     
     let finalPrice = compCost * finalMargin;
     let finalAppeal = (bestChassis.baseAppeal + compApp) * ai.appealMod * getTrendMultiplier(bestChassis, calcYear);
+
+    if (isDesperate) finalAppeal *= 1.2; // クランチ（深夜残業）による一時的な品質向上
+    if (isCopycat) finalAppeal *= 0.85;  // 模倣品のペナルティ（魅力度は劣る）
 
     // 時代・性格によるバフ
     if (ai.strategy === 'innovator') finalAppeal *= 1.25;
@@ -150,12 +192,20 @@ export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarke
     };
     const suffixes = SUFFIXES[bestChassis.category] || SUFFIXES.smart_device;
     let finalName = isNewMasterpiece ? activeMasterpiece.product : `${ai.prefixes[Math.floor(Math.random() * ai.prefixes.length)]} ${suffixes[Math.floor(Math.random() * suffixes.length)]}`;
-    if (activeMasterpiece && !isNewMasterpiece) {
-        finalName = `${activeMasterpiece.product} ${calcYear - activeMasterpiece.year + 1}`;
+    
+    if (isCopycat) {
+      finalName = `Clone ${suffixes[Math.floor(Math.random() * suffixes.length)]} by ${ai.name}`;
+    } else if (activeMasterpiece && !isNewMasterpiece) {
+      finalName = `${activeMasterpiece.product} ${calcYear - activeMasterpiece.year + 1}`;
     }
 
     if (isNewMasterpiece) {
       newLogs.push({ time: dateStr, msg: `【歴史的傑作】${ai.name}が伝説的製品「${finalName}」を世界発表！市場が震撼しています。`, type: 'warning' });
+    } else if (isDesperate && Math.random() > 0.8) {
+      // ログがうるさくならないよう20%の確率で表示
+      newLogs.push({ time: dateStr, msg: `【王座奪還】業界上位の${ai.name}が、プレイヤー企業打倒のために利益度外視の戦略製品「${finalName}」を市場に投入しました！`, type: 'error' });
+    } else if (isCopycat && Math.random() > 0.9) {
+      newLogs.push({ time: dateStr, msg: `【模倣品警戒】シェアを奪われた${ai.name}が、生き残りのためプレイヤーを模倣した廉価製品「${finalName}」を展開しています。`, type: 'info', color: 'text-amber-400' });
     }
 
     // 再建モード時の特殊ロジック (ダンプ販売 ＆ ブランド低下)

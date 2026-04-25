@@ -112,6 +112,25 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
       targetShares[id] = weightedAppeals[id] / totalWeighted;
     });
 
+    // --- 反独占（アンチ・モノポリー）ペナルティ ---
+    // プレイヤーの目標シェアが50%を超える場合、消費者の「飽和・一極集中への反発」によりシェアが削られる
+    if (targetShares.player > 0.5) {
+      const excess = targetShares.player - 0.5;
+      const penalty = excess * 0.6; // 超過分の60%を失う（独占すればするほど重くなる）
+      targetShares.player -= penalty;
+      
+      // 失ったシェアをAI（競合）に再分配し、彼らを延命・強化させる
+      let totalAiTarget = 0;
+      Object.keys(AI_COMPANIES).forEach(id => totalAiTarget += (targetShares[id] || 0));
+      if (totalAiTarget > 0) {
+        Object.keys(AI_COMPANIES).forEach(id => {
+          if (targetShares[id] !== undefined) {
+            targetShares[id] += penalty * (targetShares[id] / totalAiTarget);
+          }
+        });
+      }
+    }
+
     // 3. AI の生産能力制限を適用
     let unmetDemand = 0;
     /** @type {Record<string, number>} */
