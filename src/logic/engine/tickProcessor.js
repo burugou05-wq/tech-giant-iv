@@ -1,5 +1,4 @@
 import { START_DATE } from '../../constants/index.js';
-import { negotiateMA } from './maLogic.js';
 import { getCurrentEffects } from '../../utils/gameLogic.js';
 import { 
   simulateAI, 
@@ -16,10 +15,10 @@ import { handleHistoricalEvents } from '../../systems/eventSystem.js';
 import { progressCorporateFocus } from '../../systems/playerFocusSystem.js';
 import { 
   ensureAiFinances, 
-  applyMaDeals, 
   processCompanyRelations, 
   updateAiFinancials 
 } from '../../systems/aiSystem.js';
+import { processMADeals } from '../../systems/maSystem.js';
 import { 
   preparePlayerProductList, 
   updateDivisionExperience 
@@ -92,12 +91,11 @@ export function processGameTick(s) {
 
   // M&A 交渉の実行 (半年に一度)
   if (newTick % 13 === 0) {
-    const deals = negotiateMA(nextAiFinances, nextAiProducts, calcYear, nextMarkets);
     const maContext = { 
-      nextAiFinances, nextAiProducts, nextMarkets, dateStr, newLogs,
+      nextAiFinances, nextAiProducts, calcYear, nextMarkets, dateStr, newLogs,
       playerStats: { money: nextMoney, factories: nextFactories }
     };
-    applyMaDeals(deals, maContext);
+    processMADeals(maContext);
     nextMoney = maContext.playerStats.money;
     nextFactories = maContext.playerStats.factories;
   }
