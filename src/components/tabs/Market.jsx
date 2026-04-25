@@ -3,7 +3,6 @@ import { useGame } from '../../context/GameContext.jsx';
 import CompanyDetailPanel from '../CompanyDetailPanel.jsx';
 import MarketCard from './Market/MarketCard.jsx';
 import MarketNews from './Market/MarketNews.jsx';
-import WorldMap from '../WorldMap.jsx';
 import { useMarketData } from '../../hooks/useMarketData.js';
 
 export default function Market() {
@@ -31,8 +30,26 @@ export default function Market() {
 
   return (
     <div className="space-y-6 relative">
-      {/* グローバル戦略マップ */}
-      <WorldMap activeMarket={activeMarket} onSelectMarket={setActiveMarket} />
+      {/* 地域サブタブ */}
+      <div className="flex bg-slate-900/60 p-1 rounded-2xl border border-slate-700/50 w-full lg:w-fit mx-auto shadow-2xl backdrop-blur-md">
+        {marketTabs.map(tab => {
+          const isLocked = markets[tab.id]?.locked;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveMarket(tab.id)}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-black transition-all duration-300 ${
+                activeMarket === tab.id 
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/40 scale-105' 
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
+              } ${isLocked ? 'opacity-60' : ''}`}
+            >
+              <span className="text-lg">{isLocked ? '🔒' : tab.icon}</span>
+              {tab.name}
+            </button>
+          );
+        })}
+      </div>
 
       <div className="max-w-4xl mx-auto relative">
         {markets[activeMarket]?.locked && (
