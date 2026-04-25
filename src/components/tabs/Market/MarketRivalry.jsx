@@ -9,9 +9,7 @@ import { AI_COMPANIES } from '../../../constants/companies/index.js';
  * @param {Object} props.aiProducts - AI製品データ
  * @param {Object} props.playerBest - プレイヤーの最良製品データ
  */
-export const MarketRivalry = ({ market, aiProducts, playerBest }) => {
-  if (market.locked) return null;
-
+export const MarketRivalry = ({ market, aiProducts, playerBest, yenRate, mKey }) => {
   // 1. その市場でのトップライバルを特定 (自社を除く最大シェア)
   const rivalId = Object.entries(market.shares)
     .filter(([id]) => id !== 'player')
@@ -27,6 +25,22 @@ export const MarketRivalry = ({ market, aiProducts, playerBest }) => {
 
   if (!rival || !rivalProduct) return null;
 
+  // 現地通貨価格への換算ロジック
+  const isJpMarket = mKey === 'jp';
+  const rateMult = yenRate / 100;
+
+  // ライバル価格の換算 (海外メーカーが日本に来る or 日本メーカーが海外にいる)
+  const isRivalJp = rival.strongMarket === 'jp';
+  let rivalLocalPrice = rivalProduct.price;
+  if (isJpMarket && !isRivalJp) rivalLocalPrice *= rateMult; // 外資の日本価格 (円)
+  if (!isJpMarket && isRivalJp) rivalLocalPrice /= rateMult; // 日本勢の海外価格 (ドル)
+
+  // プレイヤー価格の換算 (常に日本企業として扱う)
+  let playerLocalPrice = playerBest?.bp?.price || 0;
+  if (!isJpMarket) playerLocalPrice /= rateMult; // 日本勢の海外価格 (ドル)
+
+  const currentCurrency = isJpMarket ? '¥' : '$';
+
   // 現在の時代の取得
   const currentEra = rival.eras?.find(e => rivalProduct.launchYear >= e.start && rivalProduct.launchYear <= e.end);
 
@@ -40,18 +54,18 @@ export const MarketRivalry = ({ market, aiProducts, playerBest }) => {
       unit: ''
     },
     { 
-      label: '実売価格 (Price)', 
+      label: '現地価格 (Price)', 
       icon: <DollarSign size={12} className="text-emerald-400" />,
-      player: playerBest?.bp?.price || 0,
-      rival: rivalProduct?.price || 100,
-      unit: '$',
+      player: playerLocalPrice,
+      rival: rivalLocalPrice,
+      unit: currentCurrency,
       lowerIsBetter: true
     },
     { 
       label: 'コスパ (Efficiency)', 
       icon: <TrendingUp size={12} className="text-indigo-400" />,
-      player: (playerBest?.app || 0) / ((playerBest?.bp?.price || 1) / 100),
-      rival: (rivalProduct?.appeal || 0) / ((rivalProduct?.price || 1) / 100),
+      player: (playerBest?.app || 0) / (Math.max(1, playerLocalPrice) / 100),
+      rival: (rivalProduct?.appeal || 0) / (Math.max(1, rivalLocalPrice) / 100),
       unit: 'pt'
     }
   ];

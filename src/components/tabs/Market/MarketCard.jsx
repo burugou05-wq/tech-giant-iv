@@ -11,6 +11,7 @@ export default function MarketCard({
   playerBest,
   currentYear,
   money,
+  yenRate,
   canUseDirectStore,
   upgradeMarketing,
   buildDirectStore,
@@ -20,15 +21,13 @@ export default function MarketCard({
   if (!market) return null;
 
   return (
-    <Card hover glass={!market.locked} className={market.locked ? 'opacity-70' : ''}>
+    <Card hover glass={!market.locked} className={market.locked ? 'opacity-90 grayscale-[0.3]' : ''}>
       <CardHeader>
         <div className="flex flex-col">
           <h4 className="text-xl font-black text-white">{market.name}</h4>
-          {!market.locked && (
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">
-              週次推定需要: <span className="text-blue-400">{market.demand.toLocaleString()}</span> 個
-            </span>
-          )}
+          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">
+            週次推定需要: <span className="text-blue-400">{market.demand.toLocaleString()}</span> 個
+          </span>
         </div>
         <div className="text-right">
           {market.locked && <div className="text-[10px] text-amber-300 font-bold">進出未完了</div>}
@@ -93,7 +92,7 @@ export default function MarketCard({
           </div>
           
           {/* 直接対決：ライバル分析 */}
-          <MarketRivalry market={market} aiProducts={aiProducts} playerBest={playerBest} />
+          <MarketRivalry market={market} aiProducts={aiProducts} playerBest={playerBest} yenRate={yenRate} mKey={mKey} />
         </div>
 
         {/* 凡例 */}

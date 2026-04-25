@@ -9,7 +9,7 @@ export default function Market() {
   const { 
     markets, money, completedFocuses, upgradeMarketing, 
     buildDirectStore, closeDirectStore, blueprints, 
-    aiProducts, aiFinances, currentYear, logs, contentOwned 
+    aiProducts, aiFinances, currentYear, logs, contentOwned, yenRate
   } = useGame();
   
   const [selectedCompany, setSelectedCompany] = useState(null);
@@ -42,10 +42,11 @@ export default function Market() {
                 activeMarket === tab.id 
                   ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/40 scale-105' 
                   : 'text-slate-400 hover:text-white hover:bg-slate-800'
-              } ${isLocked ? 'opacity-60' : ''}`}
+              }`}
             >
-              <span className="text-lg">{isLocked ? '🔒' : tab.icon}</span>
+              <span className="text-lg">{tab.icon}</span>
               {tab.name}
+              {isLocked && <span className="text-[10px] bg-slate-800 text-slate-500 px-1.5 py-0.5 rounded ml-1">未進出</span>}
             </button>
           );
         })}
@@ -53,15 +54,8 @@ export default function Market() {
 
       <div className="max-w-4xl mx-auto relative">
         {markets[activeMarket]?.locked && (
-          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-md rounded-3xl border-2 border-dashed border-slate-700 m-1 animate-in fade-in zoom-in duration-300">
-            <div className="bg-slate-800 p-6 rounded-full shadow-2xl mb-4 border border-slate-700">
-              <span className="text-5xl">🌐</span>
-            </div>
-            <h3 className="text-2xl font-black text-white mb-2">市場未踏足</h3>
-            <p className="text-slate-400 text-center max-w-xs mb-6 font-bold">
-              この市場への進出には企業方針<br/>
-              <span className="text-indigo-400">「海外展開戦略」</span>の研究完了が必要です。
-            </p>
+          <div className="absolute top-4 right-4 z-10 bg-rose-500/10 border border-rose-500/20 text-rose-400 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest backdrop-blur-md">
+            ⚠️ 市場未進出（販売不可）
           </div>
         )}
         <MarketCard 
@@ -73,6 +67,7 @@ export default function Market() {
           playerBest={playerBest}
           currentYear={currentYear}
           money={money}
+          yenRate={yenRate}
           canUseDirectStore={canUseDirectStore}
           upgradeMarketing={upgradeMarketing}
           buildDirectStore={buildDirectStore}
