@@ -7,7 +7,6 @@ import {
 import { getCurrentEffects, calculateEffectiveAppeal } from '../utils/gameLogic.js';
 import { useGameState } from './useGameState.js';
 import { useGameActions } from './useGameActions.js';
-import { simulateAI, simulateMarketShares } from '../utils/aiSimulation.js';
 import { saveSystem } from '../utils/saveSystem.js';
 
 import { processGameTick } from '../logic/engine/tickProcessor.js';
