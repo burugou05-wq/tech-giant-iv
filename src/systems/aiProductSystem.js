@@ -14,6 +14,7 @@ import { getTrendMultiplier } from '../utils/gameLogic.js';
  */
 export function simulateAI(nextAiProducts, calcYear, dateStr, newLogs, nextMarkets, aiFinances) {
   // 全市場のシェアから実質的な売上ボリューム（順位）を推測する
+  /** @type {Record<string, number>} */
   const volumeMap = { player: 0 };
   Object.keys(AI_COMPANIES).forEach(id => volumeMap[id] = 0);
   
