@@ -105,7 +105,7 @@ export function executeSales(nextMarkets, sellableProducts, nextInv, loopEffects
         if (mKey === 'cn') logisticsCostPerUnit = 3;
 
         if (mKey !== 'jp') {
-          revenue /= nextYenRate;
+          revenue *= (nextYenRate / 100);
           const logisticsCost = sold * (logisticsCostPerUnit + (mKey === 'eu' ? (euExtraCost || 0) : 0));
           if (Number.isFinite(logisticsCost)) {
             currentVarCostAdd += logisticsCost;

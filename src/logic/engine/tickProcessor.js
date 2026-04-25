@@ -70,7 +70,20 @@ export function processGameTick(s) {
   const orgResults = updateOrgSystem(nextOrgStructure, budget, baseEffects, calcYear, baseEffects, nextFlags, dateStr, newLogs, nextDivisions);
   const loopEffects = { ...baseEffects, ...orgResults, hasFlagship };
 
-  const nextYenRate = Number.isFinite(s.yenRate) ? Math.max(0.6, Math.min(1.5, s.yenRate + (Math.random() - 0.5) * 0.01)) : 1.0;
+  let nextYenRate = s.yenRate || 360;
+  if (calcYear < 1971) {
+    nextYenRate = 360.0;
+  } else if (calcYear < 1985) {
+    // 360から240へ向けて緩やかに円高
+    const target = 240;
+    nextYenRate = nextYenRate * 0.99 + target * 0.01 + (Math.random() - 0.5) * 1.5;
+  } else {
+    // プラザ合意（1985年）以降、またはフラグが立っている場合
+    const target = nextFlags.plazaAccord ? 110 : 200;
+    const speed = nextFlags.plazaAccord ? 0.05 : 0.01;
+    nextYenRate = nextYenRate * (1 - speed) + target * speed + (Math.random() - 0.5) * 2.0;
+  }
+  nextYenRate = Math.max(80, Math.min(360, nextYenRate));
   updateMarketSystem(nextMarkets, preciseYear, calcYear, nextFlags, dateStr, newLogs, nextYenRate);
 
   const prodResults = updateProductionSystem(

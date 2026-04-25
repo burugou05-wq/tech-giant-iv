@@ -40,7 +40,7 @@ export function useGameState() {
   const [totalFactories, setTotalFactories] = useState(10);
   const [qualityLevel, setQualityLevel]     = useState(80);
   const [contentOwned, setContentOwned]     = useState(/** @type {string[]} */ ([]));
-  const [yenRate, setYenRate]               = useState(1.0);
+  const [yenRate, setYenRate]               = useState(360.0);
   const [productionDebuff, setProductionDebuff] = useState(1.0);
   const [euExtraCost, setEuExtraCost]       = useState(0);
   const [divisions, setDivisions] = useState({

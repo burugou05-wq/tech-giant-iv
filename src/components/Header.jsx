@@ -5,7 +5,7 @@ const IconMap = { TrendingUp, Wrench, Globe, Target, AlertTriangle, AlertCircle 
 
 export default function Header() {
   const { 
-    money, leadershipPower, currentYear, currentMonth, 
+    money, leadershipPower, currentYear, currentMonth, yenRate,
     isPaused, setIsPaused, currentSpirits, gameSpeed, setGameSpeed,
     theme, setTheme 
   } = useGame();
@@ -19,6 +19,10 @@ export default function Header() {
         <div className="text-[10px] font-black tracking-widest text-slate-600">ローカルPC版</div>
       </div>
       <div className="flex items-center gap-4 md:gap-8">
+        <div className="hidden md:flex flex-col items-end">
+          <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Exchange Rate</div>
+          <div className="text-sm font-black text-amber-500">¥{Math.floor(yenRate)}/$</div>
+        </div>
         <div className="hidden md:flex gap-2">
           {currentSpirits.map(s => {
             const Icon = IconMap[s.icon] || Globe;
