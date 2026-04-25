@@ -62,6 +62,7 @@ export function updateMarketSystem(nextMarkets, preciseYear, calcYear, nextFlags
 export function executeSales(nextMarkets, sellableProducts, nextInv, loopEffects, nextYenRate, euExtraCost) {
   let currentRevenue = 0;
   let currentVarCostAdd = 0;
+  let currentLogisticsCost = 0;
   const aiSales = {};
 
   Object.keys(nextMarkets).forEach(mKey => {
@@ -96,19 +97,28 @@ export function executeSales(nextMarkets, sellableProducts, nextInv, loopEffects
         const baseCost = Number.isFinite(prod.bp.cost) ? prod.bp.cost : 50;
         const sellPrice = Number.isFinite(prod.bp.price) ? prod.bp.price : baseCost * 2.5;
         let revenue = sold * sellPrice * revMulti * strategyPriceMult;
-        if (mKey !== 'jp') revenue /= nextYenRate;
         
-          if (Number.isFinite(revenue)) {
-            currentRevenue += revenue;
-          }
+        // 輸送費の計算 (海外市場のみ)
+        let logisticsCostPerUnit = 0;
+        if (mKey === 'na') logisticsCostPerUnit = 4;
+        if (mKey === 'eu') logisticsCostPerUnit = 6;
+        if (mKey === 'cn') logisticsCostPerUnit = 3;
 
-          if (mKey === 'eu' && euExtraCost > 0) {
-            const extra = sold * euExtraCost;
-            if (Number.isFinite(extra)) currentVarCostAdd += extra;
+        if (mKey !== 'jp') {
+          revenue /= nextYenRate;
+          const logisticsCost = sold * (logisticsCostPerUnit + (mKey === 'eu' ? (euExtraCost || 0) : 0));
+          if (Number.isFinite(logisticsCost)) {
+            currentVarCostAdd += logisticsCost;
+            currentLogisticsCost += logisticsCost;
           }
+        }
+        
+        if (Number.isFinite(revenue)) {
+          currentRevenue += revenue;
         }
       }
     }
+  }
 
     // 2. AI 企業の販売集計（簡略化モデル：在庫無限として計算）
     Object.keys(m.shares).forEach(cId => {

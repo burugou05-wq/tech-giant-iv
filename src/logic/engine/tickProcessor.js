@@ -161,6 +161,7 @@ export function processGameTick(s) {
     lastTickProfit: {
       revenue: Number.isFinite(salesResults.currentRevenue) ? salesResults.currentRevenue : 0, 
       varCost: Number.isFinite(prodResults.currentVarCost) ? prodResults.currentVarCost : 0, 
+      logisticsCost: Number.isFinite(salesResults.currentLogisticsCost) ? salesResults.currentLogisticsCost : 0,
       fixedCost: Number.isFinite(financeResults.currentFixedCost) ? financeResults.currentFixedCost : 0,
       marketingCost: Number.isFinite(financeResults.currentMarketingCost) ? financeResults.currentMarketingCost : 0, 
       storeCost: Number.isFinite(financeResults.currentStoreCost) ? financeResults.currentStoreCost : 0,
