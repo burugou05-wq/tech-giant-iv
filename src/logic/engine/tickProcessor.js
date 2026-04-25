@@ -119,7 +119,7 @@ export function processGameTick(s) {
   
   // プレイヤーの代表製品（最も魅力が高いもの）を取得
   const bestPlayerProduct = sellableProducts.length > 0 ? sellableProducts[0] : null;
-  const totalPlayerDemandShare = simulateMarketShares(nextMarkets, nextAiProducts, bestPlayerProduct, calcYear, loopEffects, nextAiFinances);
+  const totalPlayerDemandShare = simulateMarketShares(nextMarkets, nextAiProducts, bestPlayerProduct, calcYear, loopEffects, nextAiFinances, nextYenRate);
 
   const salesResults = executeSales(nextMarkets, sellableProducts, nextInv, loopEffects, nextYenRate, s.euExtraCost ?? 0);
 

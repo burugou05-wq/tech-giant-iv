@@ -98,15 +98,16 @@ export function executeSales(nextMarkets, sellableProducts, nextInv, loopEffects
         const sellPrice = Number.isFinite(prod.bp.price) ? prod.bp.price : baseCost * 2.5;
         let revenue = sold * sellPrice * revMulti * strategyPriceMult;
         
-        // 輸送費の計算 (海外市場のみ)
-        let logisticsCostPerUnit = 0;
-        if (mKey === 'na') logisticsCostPerUnit = 4;
-        if (mKey === 'eu') logisticsCostPerUnit = 6;
-        if (mKey === 'cn') logisticsCostPerUnit = 3;
+        // 輸送費の計算 (海外市場のみ: ドル建て)
+        let logisticsCostPerUnitUsd = 0;
+        if (mKey === 'na') logisticsCostPerUnitUsd = 4;
+        if (mKey === 'eu') logisticsCostPerUnitUsd = 6;
+        if (mKey === 'cn') logisticsCostPerUnitUsd = 3;
 
         if (mKey !== 'jp') {
-          revenue *= (nextYenRate / 100);
-          const logisticsCost = sold * (logisticsCostPerUnit + (mKey === 'eu' ? (euExtraCost || 0) : 0));
+          // 売上は円ベースのまま（為替による恩恵は、現地で安く見えて販売個数が爆発的に増えることで表現済）
+          // ただし輸送費はドル建てのため、為替レートの影響を受ける
+          const logisticsCost = sold * (logisticsCostPerUnitUsd * (nextYenRate / 100) + (mKey === 'eu' ? (euExtraCost || 0) : 0));
           if (Number.isFinite(logisticsCost)) {
             currentVarCostAdd += logisticsCost;
             currentLogisticsCost += logisticsCost;

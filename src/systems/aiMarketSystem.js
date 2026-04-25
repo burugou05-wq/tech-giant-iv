@@ -9,8 +9,21 @@ import { AI_COMPANIES } from '../constants/companies/index.js';
  * @param {any} loopEffects
  * @param {any} aiFinances
  */
-export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calcYear, loopEffects, aiFinances) {
+export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calcYear, loopEffects, aiFinances, yenRate) {
   let totalPlayerDemandShare = 0;
+
+  const getLocalPrice = (basePrice, companyOrigin, targetMarket) => {
+    const isJpCompany = companyOrigin === 'jp';
+    const isJpMarket = targetMarket === 'jp';
+
+    if (isJpMarket) {
+      if (isJpCompany) return basePrice;
+      return basePrice * (yenRate / 100);
+    } else {
+      if (!isJpCompany) return basePrice;
+      return basePrice / (yenRate / 100);
+    }
+  };
 
   Object.keys(nextMarkets).forEach(mKey => {
     const m = nextMarkets[mKey];
@@ -28,16 +41,20 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
         const matchCategory = p.category === m.category || (bestItem && p.category === bestItem.bp.category);
         return active && inRegion && matchCategory;
       })
-      .map(([id, p]) => p.price);
+      .map(([id, p]) => {
+        const origin = AI_COMPANIES[id].strongMarket || 'na';
+        return getLocalPrice(p.price, origin, mKey);
+      });
 
     const avgMarketPrice = competitorPrices.length > 0 
       ? competitorPrices.reduce((a, b) => a + b, 0) / competitorPrices.length 
-      : 100;
+      : (mKey === 'jp' ? 100 * (yenRate / 100) : 100);
 
     let playerEffectiveApp = 0;
     if (!m.locked && bestItem) {
       const safePrice = (bestItem.bp && Number.isFinite(bestItem.bp.price)) ? Math.max(1, bestItem.bp.price) : 100;
-      const relativePrice = safePrice / avgMarketPrice;
+      const playerLocalPrice = getLocalPrice(safePrice, 'jp', mKey);
+      const relativePrice = playerLocalPrice / Math.max(1, avgMarketPrice);
       const priceFactor = Math.exp(-Math.pow(relativePrice - 0.8, 2) * 0.5); 
       
       const launchYear = bestItem.bp.launchYear || calcYear;
@@ -72,7 +89,9 @@ export function simulateMarketShares(nextMarkets, nextAiProducts, bestItem, calc
       if (active && inRegion && aiProduct && !aiFin?.isBankrupt) {
         const decay = Math.max(0.4, 1 - Math.max(0, calcYear - aiProduct.launchYear - 4) * 0.1);
         const safeAiPrice = Number.isFinite(aiProduct.price) ? Math.max(1, aiProduct.price) : 100;
-        const relativePrice = safeAiPrice / avgMarketPrice;
+        const aiOrigin = ai.strongMarket || 'na';
+        const aiLocalPrice = getLocalPrice(safeAiPrice, aiOrigin, mKey);
+        const relativePrice = aiLocalPrice / Math.max(1, avgMarketPrice);
         
         let brandPower = ai.brand || 0.3;
         if (bestItem && bestItem.bp.strategy === 'budget') {
