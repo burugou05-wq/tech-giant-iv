@@ -51,7 +51,7 @@ export const FinancialSummary = ({
         />
         <StatItem 
           label="為替レート" 
-          value={`1$ = ${Math.floor(250 * yenRate)}円`}
+          value={`1$ = ${Math.floor(yenRate)}円`}
           trendColor="text-blue-400"
         />
         <StatItem 
