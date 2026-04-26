@@ -89,11 +89,11 @@ export function processGameTick(s) {
   updateMarketSystem(nextMarkets, preciseYear, calcYear, nextFlags, dateStr, newLogs, nextYenRate);
 
   const prodResults = updateProductionSystem(
-    nextLines, nextInv, s.blueprints, s.qualityLevel, loopEffects, 
+    nextLines, nextInv, nextBlueprints, s.qualityLevel, loopEffects, 
     s.activeFocus, orgResults.isSiloActive, nextFlags.isStrike
   );
 
-  const sellableProducts = preparePlayerProductList(s.blueprints, nextInv, nextLines, calcYear, loopEffects, s.contentOwned);
+  const sellableProducts = preparePlayerProductList(nextBlueprints, nextInv, nextLines, calcYear, loopEffects, s.contentOwned);
 
   // AI 企業の収支・設備の更新用 (セルフヒーリング付き)
   ensureAiFinances(nextAiFinances);
@@ -154,7 +154,7 @@ export function processGameTick(s) {
   const profit = safeRevenue - totalTickCost;
 
   // 3. リソースと事業部経験値の更新
-  const rpGain = updateDivisionExperience(nextDivisions, nextLines, s.blueprints, calcYear, loopEffects, orgResults);
+  const rpGain = updateDivisionExperience(nextDivisions, nextLines, nextBlueprints, calcYear, loopEffects, orgResults);
   
   // 4. 市場需要とイベントフラグの更新
   updateMarketSystem(nextMarkets, preciseYear, calcYear, nextFlags, dateStr, newLogs, nextYenRate);

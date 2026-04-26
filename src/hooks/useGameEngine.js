@@ -21,7 +21,7 @@ export function useGameEngine() {
     yenRate, setYenRate, euExtraCost, setEuExtraCost,
     logs, setLogs, chartData, setChartData, setLastTickProfit,
     markets, setMarkets, aiProducts, setAiProducts, aiFinances, setAiFinances,
-    blueprints, productionLines, setProductionLines, inventory, setInventory,
+    blueprints, setBlueprints, productionLines, setProductionLines, inventory, setInventory,
     leadershipPower, setLeadershipPower,
     completedFocuses, setCompletedFocuses, setFlags,
     activeFocus, setActiveFocus, setUnlockedTrees,
@@ -87,6 +87,7 @@ export function useGameEngine() {
       setStockPrice(nextState.stockPrice);
       setYenRate(nextState.yenRate);
       setTicks(nextState.ticks);
+      setBlueprints(nextState.blueprints);
       setProductionLines(nextState.productionLines);
       setInventory(nextState.inventory);
       setMarkets(nextState.markets);
