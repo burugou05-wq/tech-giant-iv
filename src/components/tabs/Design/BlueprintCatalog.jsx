@@ -17,14 +17,15 @@ export const BlueprintCatalog = ({
   const { contentOwned, currentEffects } = useGame();
   
   return (
-    <div className="space-y-6 h-full flex flex-col">
+    <div className="space-y-6 h-full flex flex-col overflow-hidden">
       <div className="flex items-center justify-between px-2">
-        <h3 className="font-black text-slate-400 text-sm uppercase tracking-widest flex items-center gap-2">
-          Design Archive <span className="text-slate-600">({blueprints.length})</span>
+        <h3 className="font-black text-slate-400 text-xs uppercase tracking-[0.2em] flex items-center gap-2">
+          <span className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
+          Design Archive <span className="text-slate-600 font-mono">[{blueprints.length}]</span>
         </h3>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-auto pr-2 custom-scrollbar flex-1 pb-24">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 overflow-y-auto pr-3 custom-scrollbar flex-1 pb-32">
         {[...blueprints].reverse().map(bp => {
           const age = currentYear - (bp.launchYear || currentYear);
           const refreshCost = Math.max(8000, bp.cost * 3);
@@ -34,81 +35,84 @@ export const BlueprintCatalog = ({
           const appealLoss = bp.baseAppeal - Math.floor(currentApp);
 
           return (
-            <Card key={bp.id} className="p-6 bg-slate-900/60 border-slate-800 hover:border-indigo-500/30 transition-all group relative overflow-hidden">
+            <Card key={bp.id} className="p-7 bg-slate-900/40 border-slate-800/80 hover:border-indigo-500/40 transition-all group relative overflow-hidden backdrop-blur-sm">
               {/* 背景の装飾デコレーション */}
-              <div className="absolute -right-4 -top-4 opacity-[0.03] pointer-events-none font-black text-6xl italic group-hover:opacity-[0.07] transition-opacity">
+              <div className="absolute -right-6 -bottom-6 opacity-[0.04] pointer-events-none font-black text-8xl italic group-hover:opacity-[0.08] transition-all group-hover:-translate-y-2">
                 {bp.generation || 1}
               </div>
 
-              <div className="flex items-start justify-between mb-4">
+              <div className="flex items-start justify-between mb-6">
                 <div>
-                  <div className="font-black text-yellow-500 text-xl tracking-tight group-hover:text-yellow-400 transition-colors">
+                  <div className="font-black text-yellow-500 text-2xl tracking-tight group-hover:text-yellow-400 transition-colors flex items-center gap-3">
                     {bp.name}
+                    <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400 uppercase tracking-widest font-bold">Gen.{bp.generation || 1}</span>
                   </div>
-                  <div className="text-[10px] text-slate-500 font-bold mt-1 uppercase tracking-tighter">
-                    発売: {bp.launchYear}年 / 第 {bp.generation || 1} 世代
+                  <div className="text-xs text-slate-500 font-bold mt-2 uppercase tracking-widest">
+                    Launched: {bp.launchYear} / {bp.category}
                   </div>
                 </div>
                 <button
                   onClick={() => onRemove(bp.id)}
                   disabled={isUsedInProduction}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
                     isUsedInProduction 
-                      ? 'opacity-10 cursor-not-allowed' 
-                      : 'hover:bg-red-500/20 text-slate-600 hover:text-red-500'
+                      ? 'opacity-10 cursor-not-allowed bg-slate-800' 
+                      : 'bg-slate-800/50 hover:bg-red-500/20 text-slate-600 hover:text-red-500 border border-slate-700/50'
                   }`}
                   title={isUsedInProduction ? '生産ラインで使用中のため削除できません' : '削除'}
                 >
-                  <X size={16} />
+                  <X size={18} />
                 </button>
               </div>
 
               {/* 統計グリッド */}
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-slate-950/60 p-3 rounded-2xl border border-slate-800/50">
-                  <div className="text-[8px] text-slate-500 font-black uppercase mb-1">累計販売台数</div>
-                  <div className="text-lg font-black text-emerald-400">
-                    {(bp.totalSold || 0).toLocaleString()} <span className="text-[10px] text-slate-600">units</span>
+                <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800/50 relative overflow-hidden group/stat">
+                  <div className="text-[10px] text-slate-500 font-black uppercase mb-1 tracking-wider">累計販売台数</div>
+                  <div className="text-xl font-black text-emerald-400 flex items-baseline gap-1">
+                    {(bp.totalSold || 0).toLocaleString()} <span className="text-xs text-slate-600 font-bold uppercase">units</span>
                   </div>
+                  <div className="absolute top-0 right-0 w-1 h-full bg-emerald-500/20" />
                 </div>
-                <div className="bg-slate-950/60 p-3 rounded-2xl border border-slate-800/50">
-                  <div className="text-[8px] text-slate-500 font-black uppercase mb-1">現在の魅力度</div>
-                  <div className="flex items-baseline gap-1">
-                    <div className="text-lg font-black text-white">{Math.floor(currentApp)}</div>
+                <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800/50 relative overflow-hidden group/stat">
+                  <div className="text-[10px] text-slate-500 font-black uppercase mb-1 tracking-wider">現在の魅力度</div>
+                  <div className="flex items-baseline gap-2">
+                    <div className="text-xl font-black text-white">{Math.floor(currentApp)}</div>
                     {appealLoss > 0 && (
-                      <div className="text-[10px] font-bold text-rose-500 flex items-center">
-                        <TrendingDown size={10} /> {appealLoss}
+                      <div className="text-xs font-bold text-rose-500 flex items-center gap-0.5">
+                        <TrendingDown size={12} /> {appealLoss}
                       </div>
                     )}
                   </div>
+                  <div className="absolute top-0 right-0 w-1 h-full bg-indigo-500/20" />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="space-y-1">
-                  <div className="text-[9px] text-slate-600 font-black uppercase">製造原価 / 市場価格</div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-slate-400">${bp.cost}k</span>
+              <div className="grid grid-cols-2 gap-6 mb-8 px-1">
+                <div className="space-y-2">
+                  <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest">製造原価 / 市場価格</div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-bold text-slate-400 font-mono">${bp.cost}k</span>
                     <span className="text-slate-700">→</span>
-                    <div className="flex items-center gap-1 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
-                      <span className="text-xs font-black text-emerald-400">$</span>
+                    <div className="flex items-center gap-1.5 bg-emerald-500/5 px-3 py-1.5 rounded-xl border border-emerald-500/20 group-hover:border-emerald-500/40 transition-colors">
+                      <span className="text-sm font-black text-emerald-500">$</span>
                       <input 
                         type="number"
                         value={bp.price}
                         onChange={(e) => onUpdatePrice(bp.id, parseInt(e.target.value) || 0)}
-                        className="bg-transparent border-none p-0 w-16 text-xs font-black text-white focus:ring-0"
+                        className="bg-transparent border-none p-0 w-20 text-sm font-black text-white focus:ring-0 font-mono"
                       />
                     </div>
                   </div>
                 </div>
                 
-                <div className="space-y-1">
-                  <div className="text-[9px] text-slate-600 font-black uppercase">製品の鮮度</div>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-xs font-black ${age >= 4 ? 'text-amber-500 animate-pulse' : 'text-slate-400'}`}>
-                      {age}年経過
+                <div className="space-y-2 text-right">
+                  <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest">製品の鮮度</div>
+                  <div className="flex items-center justify-end gap-3">
+                    <span className={`text-sm font-black tracking-tight ${age >= 4 ? 'text-amber-500 animate-pulse' : 'text-slate-400'}`}>
+                      発売から {age} 年経過
                     </span>
-                    {age >= 4 && <div className="w-1.5 h-1.5 bg-amber-500 rounded-full" />}
+                    {age >= 4 && <div className="w-2 h-2 bg-amber-500 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.6)]" />}
                   </div>
                 </div>
               </div>
@@ -116,22 +120,22 @@ export const BlueprintCatalog = ({
               <button
                 onClick={() => onRefresh(bp.id)}
                 disabled={money < refreshCost}
-                className={`w-full py-3 rounded-xl text-[10px] font-black flex items-center justify-center gap-2 transition-all ${
+                className={`w-full py-4 rounded-2xl text-xs font-black flex items-center justify-center gap-3 transition-all ${
                   money < refreshCost 
                     ? 'bg-slate-800 text-slate-600 cursor-not-allowed border border-slate-700' 
-                    : 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-500'
+                    : 'bg-indigo-600 text-white shadow-xl shadow-indigo-500/20 hover:bg-indigo-500 hover:scale-[1.02] active:scale-[0.98]'
                 }`}
               >
-                <RefreshCcw size={12} />
-                次世代モデルを開発して更新 (-${(refreshCost / 1000).toFixed(1)}M)
+                <RefreshCcw size={14} />
+                次世代モデルの開発を承認 (-${(refreshCost / 1000).toFixed(1)}M)
               </button>
             </Card>
           );
         })}
 
         {blueprints.length === 0 && (
-          <div className="text-center p-12 bg-slate-900/30 border-2 border-dashed border-slate-800 rounded-3xl col-span-2">
-            <div className="text-slate-700 font-black uppercase tracking-[0.2em] text-xs">No Design History</div>
+          <div className="text-center p-20 bg-slate-900/20 border-2 border-dashed border-slate-800 rounded-[32px] col-span-full">
+            <div className="text-slate-700 font-black uppercase tracking-[0.4em] text-sm">Design Archive Empty</div>
           </div>
         )}
       </div>
