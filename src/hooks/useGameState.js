@@ -106,6 +106,8 @@ export function useGameState() {
   /** @param {any} s */
   const loadFullState = (s) => {
     if (!s) return;
+    setIsPaused(true); // ロード時は一旦停止して上書きを防ぐ
+
     if (s.money !== undefined) setMoney(s.money);
     if (s.ticks !== undefined) setTicks(s.ticks);
     if (s.playerEquity !== undefined) setPlayerEquity(s.playerEquity);
@@ -125,7 +127,17 @@ export function useGameState() {
     if (s.aiFinances !== undefined) setAiFinances(s.aiFinances);
     if (s.unlockedChassis !== undefined) setUnlockedChassis(s.unlockedChassis);
     if (s.unlockedModules !== undefined) setUnlockedModules(s.unlockedModules);
-    if (s.blueprints !== undefined) setBlueprints(s.blueprints);
+    
+    // 設計図のサニタイズ（古いデータに totalSold を追加）
+    if (s.blueprints !== undefined) {
+      const sanitized = s.blueprints.map(bp => ({
+        ...bp,
+        totalSold: bp.totalSold || 0,
+        generation: bp.generation || 1
+      }));
+      setBlueprints(sanitized);
+    }
+    
     if (s.productionLines !== undefined) setProductionLines(s.productionLines);
     if (s.inventory !== undefined) setInventory(s.inventory);
     if (s.leadershipPower !== undefined) setLeadershipPower(s.leadershipPower);

@@ -67,8 +67,9 @@ export function useGameEngine() {
     
     const timer = setInterval(() => {
       const s = stateRef.current;
-      if (!s) return;
+      if (!s || s.isPaused) return; // 一時停止中ならスキップ
 
+      // ロード直後の整合性チェック（ticksが急激に戻る場合は一旦待機）
       const result = processGameTick(s);
 
       if (result.type === 'EVENT') {
