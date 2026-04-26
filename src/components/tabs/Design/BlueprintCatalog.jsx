@@ -65,6 +65,27 @@ export const BlueprintCatalog = ({
                 </button>
               </div>
 
+              {/* 戦略選択（復活） */}
+              <div className="flex items-center gap-2 mb-6 bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800/50 w-full shadow-inner">
+                {[
+                  { id: 'mainstream', name: '標準', color: 'indigo', label: 'バランス型' },
+                  { id: 'high-end', name: '高級', color: 'amber', label: '利益重視' },
+                  { id: 'budget', name: '格安', color: 'emerald', label: 'シェア重視' }
+                ].map(s => (
+                  <button
+                    key={s.id}
+                    onClick={() => onUpdateStrategy && onUpdateStrategy(bp.id, s.id)}
+                    className={`flex-1 py-2 rounded-xl text-[10px] font-black transition-all ${
+                      (bp.strategy || 'mainstream') === s.id
+                        ? `bg-${s.color}-500/20 text-${s.color}-400 border border-${s.color}-500/40 shadow-sm`
+                        : 'text-slate-600 hover:text-slate-400 hover:bg-slate-800/50'
+                    }`}
+                  >
+                    {s.name}
+                  </button>
+                ))}
+              </div>
+
               {/* 統計グリッド */}
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800/50 relative overflow-hidden group/stat">
