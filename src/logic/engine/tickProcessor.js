@@ -37,9 +37,10 @@ export function processGameTick(s) {
   let nextFactories    = s.totalFactories;
   let nextLines        = s.productionLines.map(l => ({ ...l }));
   let nextInv          = structuredClone(s.inventory);
-  let nextBlueprints   = s.blueprints.map(bp => ({ ...bp, totalSold: bp.totalSold || 0 }));
+  let nextBlueprints   = (s.blueprints || []).map(bp => ({ ...bp, totalSold: bp.totalSold || 0 }));
   let nextMarkets      = structuredClone(s.markets);
   let nextAiProducts   = structuredClone(s.aiProducts);
+  let nextAiFinances   = structuredClone(s.aiFinances || {});
   let nextOrgStructure = structuredClone(s.orgStructure);
   let nextDivisions    = structuredClone(s.divisions);
   let nextFlags        = { ...s.flags };
@@ -95,7 +96,6 @@ export function processGameTick(s) {
   const sellableProducts = preparePlayerProductList(s.blueprints, nextInv, nextLines, calcYear, loopEffects, s.contentOwned);
 
   // AI 企業の収支・設備の更新用 (セルフヒーリング付き)
-  const nextAiFinances = JSON.parse(JSON.stringify(s.aiFinances || {}));
   ensureAiFinances(nextAiFinances);
 
   // AI の経営判断（工場の増設・閉鎖）を実行
@@ -126,6 +126,7 @@ export function processGameTick(s) {
 
   // --- AI 企業の収支・価格戦略の更新 ---
   updateAiFinancials({
+    nextAiFinances, nextAiProducts, nextMarkets, salesResults,
     newTick, dateStr, newLogs
   });
   
