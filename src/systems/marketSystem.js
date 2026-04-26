@@ -62,8 +62,8 @@ export function updateMarketSystem(nextMarkets, preciseYear, calcYear, nextFlags
 export function executeSales(nextMarkets, sellableProducts, nextInv, loopEffects, nextYenRate, euExtraCost) {
   let currentRevenue = 0;
   let currentVarCostAdd = 0;
-  let currentLogisticsCost = 0;
   const aiSales = {};
+  const blueprintSales = {}; // 設計図ごとの販売数
 
   Object.keys(nextMarkets).forEach(mKey => {
     const m = nextMarkets[mKey];
@@ -72,52 +72,54 @@ export function executeSales(nextMarkets, sellableProducts, nextInv, loopEffects
       let totalMarketDemand = Math.floor(m.demand * m.shares.player);
       let revMulti = loopEffects.propBonus ? (m.shares.player >= 0.5 ? 1.5 : 0.6) : 1.0;
 
-    // 魅力度が高い順に在庫を売る
-    for (const prod of sellableProducts) {
-      if (totalMarketDemand <= 0) break;
+      // 魅力度が高い順に在庫を売る
+      for (const prod of sellableProducts) {
+        if (totalMarketDemand <= 0) break;
 
-      const invItem = nextInv[prod.bp.id];
-      if (!invItem || invItem.amount <= 0) continue;
+        const invItem = nextInv[prod.bp.id];
+        if (!invItem || invItem.amount <= 0) continue;
 
-      let strategyAppealMult = 1.0;
-      let strategyPriceMult  = 1.0;
-      if (prod.strategy === 'flagship') {
-        strategyAppealMult = 1.5;
-      } else if (prod.strategy === 'discount') {
-        strategyAppealMult = 2.0;
-        strategyPriceMult  = 0.7;
-      }
+        let strategyAppealMult = 1.0;
+        let strategyPriceMult  = 1.0;
+        if (prod.strategy === 'flagship') {
+          strategyAppealMult = 1.5;
+        } else if (prod.strategy === 'discount') {
+          strategyAppealMult = 2.0;
+          strategyPriceMult  = 0.7;
+        }
 
-      const sold = Math.max(0, Math.min(invItem.amount, Math.floor(totalMarketDemand * strategyAppealMult)));
-      if (sold > 0 && Number.isFinite(sold)) {
-        invItem.amount -= sold;
-        invItem.sold   += sold;
-        totalMarketDemand -= Math.floor(sold / strategyAppealMult);
+        const sold = Math.max(0, Math.min(invItem.amount, Math.floor(totalMarketDemand * strategyAppealMult)));
+        if (sold > 0 && Number.isFinite(sold)) {
+          invItem.amount -= sold;
+          invItem.sold   += sold;
+          totalMarketDemand -= Math.floor(sold / strategyAppealMult);
 
-        const baseCost = Number.isFinite(prod.bp.cost) ? prod.bp.cost : 50;
-        const sellPrice = Number.isFinite(prod.bp.price) ? prod.bp.price : baseCost * 2.5;
-        let revenue = sold * sellPrice * revMulti * strategyPriceMult;
-        
-        if (Number.isFinite(revenue)) {
-          currentRevenue += revenue;
+          // 設計図ごとの統計更新
+          const bpId = prod.bp.id;
+          if (!blueprintSales[bpId]) blueprintSales[bpId] = 0;
+          blueprintSales[bpId] += sold;
+
+          const baseCost = Number.isFinite(prod.bp.cost) ? prod.bp.cost : 50;
+          const sellPrice = Number.isFinite(prod.bp.price) ? prod.bp.price : baseCost * 2.5;
+          let revenue = sold * sellPrice * revMulti * strategyPriceMult;
+          
+          if (Number.isFinite(revenue)) {
+            currentRevenue += revenue;
+          }
         }
       }
     }
-  }
 
-    // 2. AI 企業の販売集計（簡略化モデル：在庫無限として計算）
+    // 2. AI 企業の販売集計
     Object.keys(m.shares).forEach(cId => {
       if (cId === 'player') return;
       const share = m.shares[cId] || 0;
       const soldUnits = Math.floor(m.demand * share);
       
       if (!aiSales[cId]) aiSales[cId] = { revenue: 0, units: 0 };
-      
-      // AI 製品の価格を取得（本来は aiProducts から引くべきだが、一旦簡略化）
-      // ここでは aiProducts が渡されていないため、後で tickProcessor 側で補完するか引数を追加する
       aiSales[cId].units += soldUnits;
     });
   });
 
-  return { currentRevenue, currentVarCostAdd, aiSales };
+  return { currentRevenue, currentVarCostAdd, aiSales, blueprintSales };
 }

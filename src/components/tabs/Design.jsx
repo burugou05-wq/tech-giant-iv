@@ -21,6 +21,8 @@ export default function Design() {
     aiProducts
   } = useGame();
 
+  const [designSubTab, setDesignSubTab] = React.useState('studio');
+
   const chassis = useMemo(() => 
     CHASSIS_TECH.find(c => c.id === selectedChassisId) || CHASSIS_TECH[0],
     [selectedChassisId]
@@ -57,6 +59,7 @@ export default function Design() {
       modules: modules,
       launchYear: currentYear,
       generation: 1,
+      totalSold: 0,
     }]);
 
     // 入力リセット
@@ -64,44 +67,80 @@ export default function Design() {
     setDesignSlots({});
     setDesignPrice(100);
     setDesignStrategy('mainstream');
+    setDesignSubTab('archive'); // 保存したらアーカイブへ移動
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
-      {/* 左側: 設計スタジオ */}
-      <DesignStudio 
-        designName={designName}
-        setDesignName={setDesignName}
-        selectedChassisId={selectedChassisId}
-        setSelectedChassisId={setSelectedChassisId}
-        designSlots={designSlots}
-        setDesignSlots={setDesignSlots}
-        designPrice={designPrice}
-        setDesignPrice={setDesignPrice}
-        designStrategy={designStrategy}
-        setDesignStrategy={setDesignStrategy}
-        unlockedChassis={unlockedChassis}
-        unlockedModules={unlockedModules}
-        specs={specs}
-        canSave={canSave}
-        onSave={handleSave}
-      />
+    <div className="space-y-6 max-w-7xl mx-auto h-full flex flex-col">
+      {/* サブタブセレクター */}
+      <div className="flex bg-slate-900/60 p-1 rounded-2xl border border-slate-700/50 w-fit mx-auto shadow-2xl backdrop-blur-md">
+        <button
+          onClick={() => setDesignSubTab('studio')}
+          className={`flex items-center gap-2 px-8 py-2.5 rounded-xl text-sm font-black transition-all duration-300 ${
+            designSubTab === 'studio' 
+              ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/40 scale-105' 
+              : 'text-slate-400 hover:text-white hover:bg-slate-800'
+          }`}
+        >
+          <span className="text-lg">🏗️</span>
+          新規設計スタジオ
+        </button>
+        <button
+          onClick={() => setDesignSubTab('archive')}
+          className={`flex items-center gap-2 px-8 py-2.5 rounded-xl text-sm font-black transition-all duration-300 ${
+            designSubTab === 'archive' 
+              ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/40 scale-105' 
+              : 'text-slate-400 hover:text-white hover:bg-slate-800'
+          }`}
+        >
+          <span className="text-lg">📁</span>
+          設計図アーカイブ
+          {blueprints.length > 0 && (
+            <span className="bg-slate-800 text-indigo-400 text-[10px] px-1.5 py-0.5 rounded-md ml-1">{blueprints.length}</span>
+          )}
+        </button>
+      </div>
 
-      {/* 右側: カタログ */}
-      <BlueprintCatalog 
-        blueprints={blueprints}
-        currentYear={currentYear}
-        money={money}
-        productionLines={productionLines}
-        onRemove={(id) => setBlueprints(prev => prev.filter(b => b.id !== id))}
-        onUpdatePrice={(id, newPrice) => {
-          setBlueprints(prev => prev.map(bp => bp.id === id ? { ...bp, price: newPrice } : bp));
-        }}
-        onUpdateStrategy={(id, newStrategy) => {
-          setBlueprints(prev => prev.map(bp => bp.id === id ? { ...bp, strategy: newStrategy } : bp));
-        }}
-        onRefresh={refreshBlueprint}
-      />
+      <div className="flex-1 overflow-hidden">
+        {designSubTab === 'studio' ? (
+          <div className="h-full overflow-y-auto custom-scrollbar px-4">
+            <DesignStudio 
+              designName={designName}
+              setDesignName={setDesignName}
+              selectedChassisId={selectedChassisId}
+              setSelectedChassisId={setSelectedChassisId}
+              designSlots={designSlots}
+              setDesignSlots={setDesignSlots}
+              designPrice={designPrice}
+              setDesignPrice={setDesignPrice}
+              designStrategy={designStrategy}
+              setDesignStrategy={setDesignStrategy}
+              unlockedChassis={unlockedChassis}
+              unlockedModules={unlockedModules}
+              specs={specs}
+              canSave={canSave}
+              onSave={handleSave}
+            />
+          </div>
+        ) : (
+          <div className="h-full overflow-y-auto custom-scrollbar px-4">
+            <BlueprintCatalog 
+              blueprints={blueprints}
+              currentYear={currentYear}
+              money={money}
+              productionLines={productionLines}
+              onRemove={(id) => setBlueprints(prev => prev.filter(b => b.id !== id))}
+              onUpdatePrice={(id, newPrice) => {
+                setBlueprints(prev => prev.map(bp => bp.id === id ? { ...bp, price: newPrice } : bp));
+              }}
+              onUpdateStrategy={(id, newStrategy) => {
+                setBlueprints(prev => prev.map(bp => bp.id === id ? { ...bp, strategy: newStrategy } : bp));
+              }}
+              onRefresh={refreshBlueprint}
+            />
+          </div>
+        )}
+      </div>
       
       <style>{`
         .custom-scrollbar::-webkit-scrollbar {

@@ -37,6 +37,7 @@ export function processGameTick(s) {
   let nextFactories    = s.totalFactories;
   let nextLines        = s.productionLines.map(l => ({ ...l }));
   let nextInv          = structuredClone(s.inventory);
+  let nextBlueprints   = s.blueprints.map(bp => ({ ...bp, totalSold: bp.totalSold || 0 }));
   let nextMarkets      = structuredClone(s.markets);
   let nextAiProducts   = structuredClone(s.aiProducts);
   let nextOrgStructure = structuredClone(s.orgStructure);
@@ -125,9 +126,19 @@ export function processGameTick(s) {
 
   // --- AI 企業の収支・価格戦略の更新 ---
   updateAiFinancials({
-    nextAiFinances, nextAiProducts, nextMarkets, salesResults,
     newTick, dateStr, newLogs
   });
+  
+  // プレイヤーの設計図統計の更新
+  if (salesResults.blueprintSales) {
+    nextBlueprints = nextBlueprints.map(bp => {
+      const soldThisTick = salesResults.blueprintSales[bp.id] || 0;
+      if (soldThisTick > 0) {
+        return { ...bp, totalSold: (bp.totalSold || 0) + soldThisTick };
+      }
+      return bp;
+    });
+  }
 
   const financeResults = updateFinanceSystem(
     s.money, salesResults.currentRevenue - (prodResults.currentVarCost + prodResults.repairCostThisTick),
@@ -160,6 +171,7 @@ export function processGameTick(s) {
       ticks: newTick,
       productionLines: nextLines,
       inventory: nextInv,
+      blueprints: nextBlueprints,
       markets: nextMarkets,
       aiProducts: nextAiProducts,
       aiFinances: nextAiFinances,

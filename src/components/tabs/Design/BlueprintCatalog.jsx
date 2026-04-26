@@ -16,21 +16,15 @@ export const BlueprintCatalog = ({
 }) => {
   const { contentOwned, currentEffects } = useGame();
   
-  const strategies = [
-    { id: 'high-end', name: 'H', label: 'HIGH-END', color: 'amber' },
-    { id: 'mainstream', name: 'M', label: 'MAINSTREAM', color: 'blue' },
-    { id: 'budget', name: 'B', label: 'BUDGET', color: 'emerald' },
-  ];
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 h-full flex flex-col">
       <div className="flex items-center justify-between px-2">
         <h3 className="font-black text-slate-400 text-sm uppercase tracking-widest flex items-center gap-2">
           Design Archive <span className="text-slate-600">({blueprints.length})</span>
         </h3>
       </div>
       
-      <div className="grid grid-cols-1 gap-4 overflow-y-auto max-h-[700px] pr-2 custom-scrollbar">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-auto pr-2 custom-scrollbar flex-1 pb-24">
         {[...blueprints].reverse().map(bp => {
           const age = currentYear - (bp.launchYear || currentYear);
           const refreshCost = Math.max(8000, bp.cost * 3);
@@ -40,10 +34,15 @@ export const BlueprintCatalog = ({
           const appealLoss = bp.baseAppeal - Math.floor(currentApp);
 
           return (
-            <Card key={bp.id} className="p-5 bg-slate-900/60 border-slate-800 hover:border-slate-700 transition-all group">
+            <Card key={bp.id} className="p-6 bg-slate-900/60 border-slate-800 hover:border-indigo-500/30 transition-all group relative overflow-hidden">
+              {/* 背景の装飾デコレーション */}
+              <div className="absolute -right-4 -top-4 opacity-[0.03] pointer-events-none font-black text-6xl italic group-hover:opacity-[0.07] transition-opacity">
+                {bp.generation || 1}
+              </div>
+
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <div className="font-black text-yellow-500 text-lg tracking-tight group-hover:text-yellow-400 transition-colors">
+                  <div className="font-black text-yellow-500 text-xl tracking-tight group-hover:text-yellow-400 transition-colors">
                     {bp.name}
                   </div>
                   <div className="text-[10px] text-slate-500 font-bold mt-1 uppercase tracking-tighter">
@@ -64,82 +63,54 @@ export const BlueprintCatalog = ({
                 </button>
               </div>
 
-              {/* 戦略切り替えセクション */}
-              <div className="flex items-center gap-2 mb-3 bg-slate-950/60 p-1 rounded-xl border border-slate-800/50 w-fit">
-                {strategies.map(s => (
-                  <button
-                    key={s.id}
-                    onClick={() => onUpdateStrategy && onUpdateStrategy(bp.id, s.id)}
-                    className={`px-3 py-1 rounded-lg text-[9px] font-black transition-all ${
-                      (bp.strategy || 'mainstream') === s.id
-                        ? `bg-${s.color}-500/20 text-${s.color}-400 border border-${s.color}-500/40 shadow-sm`
-                        : 'text-slate-600 hover:text-slate-400'
-                    }`}
-                    title={s.label}
-                  >
-                    {s.name}
-                  </button>
-                ))}
-                
-                <div className="ml-2 pr-2 border-l border-slate-800 pl-2">
-                  {bp.strategy === 'high-end' && bp.price < bp.cost * 2.5 && (
-                    <span className="text-[8px] font-black text-rose-500 animate-pulse flex items-center gap-1">
-                      <span className="w-1 h-1 bg-rose-500 rounded-full" /> 価格不足
-                    </span>
-                  )}
-                  {bp.strategy === 'mainstream' && (
-                    <span className="text-[7px] font-bold text-slate-500 uppercase">シェア連動</span>
-                  )}
-                  {bp.strategy === 'budget' && (
-                    <span className="text-[7px] font-bold text-emerald-500 uppercase">低価格特化</span>
-                  )}
+              {/* 統計グリッド */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-slate-950/60 p-3 rounded-2xl border border-slate-800/50">
+                  <div className="text-[8px] text-slate-500 font-black uppercase mb-1">累計販売台数</div>
+                  <div className="text-lg font-black text-emerald-400">
+                    {(bp.totalSold || 0).toLocaleString()} <span className="text-[10px] text-slate-600">units</span>
+                  </div>
                 </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3 mb-4">
-                <div className="bg-slate-950/40 p-2 rounded-lg border border-slate-800/50 relative overflow-hidden">
-                  <div className="text-[8px] text-slate-600 font-black uppercase">Market Appeal</div>
+                <div className="bg-slate-950/60 p-3 rounded-2xl border border-slate-800/50">
+                  <div className="text-[8px] text-slate-500 font-black uppercase mb-1">現在の魅力度</div>
                   <div className="flex items-baseline gap-1">
-                    <div className="text-sm font-black text-white">{Math.floor(currentApp)}</div>
+                    <div className="text-lg font-black text-white">{Math.floor(currentApp)}</div>
                     {appealLoss > 0 && (
-                      <div className="text-[9px] font-bold text-rose-500 flex items-center">
-                        <TrendingDown size={8} /> {appealLoss}
+                      <div className="text-[10px] font-bold text-rose-500 flex items-center">
+                        <TrendingDown size={10} /> {appealLoss}
                       </div>
                     )}
                   </div>
-                  <div className="text-[7px] text-slate-500 font-bold uppercase mt-0.5">Base: {bp.baseAppeal}</div>
-                </div>
-                <div className="bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
-                  <div className="text-[8px] text-slate-600 font-black uppercase">Unit Cost</div>
-                  <div className="text-sm font-black text-slate-300">${bp.cost}k</div>
-                </div>
-                <div className="bg-slate-900 p-2 rounded-lg border border-emerald-500/20 ring-1 ring-emerald-500/10 shadow-inner">
-                  <div className="text-[8px] text-emerald-500 font-black uppercase flex justify-between items-center">
-                    <span>Price</span>
-                    <span className="animate-pulse">SET</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs font-black text-emerald-400">$</span>
-                    <input 
-                      type="number"
-                      value={bp.price}
-                      onChange={(e) => onUpdatePrice(bp.id, parseInt(e.target.value) || 0)}
-                      className="bg-transparent border-none p-0 w-full text-sm font-black text-white focus:ring-0 placeholder-slate-700"
-                    />
-                  </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between mb-4 px-1">
-                <div className="flex flex-col">
-                  <span className="text-[9px] text-slate-600 font-black uppercase">Product Age</span>
-                  <span className={`text-[10px] font-bold ${age >= 4 ? 'text-amber-500 animate-pulse' : 'text-slate-500'}`}>
-                    {age}年経過 {age >= 4 && ' (要更新)'}
-                  </span>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="space-y-1">
+                  <div className="text-[9px] text-slate-600 font-black uppercase">製造原価 / 市場価格</div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-slate-400">${bp.cost}k</span>
+                    <span className="text-slate-700">→</span>
+                    <div className="flex items-center gap-1 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
+                      <span className="text-xs font-black text-emerald-400">$</span>
+                      <input 
+                        type="number"
+                        value={bp.price}
+                        onChange={(e) => onUpdatePrice(bp.id, parseInt(e.target.value) || 0)}
+                        className="bg-transparent border-none p-0 w-16 text-xs font-black text-white focus:ring-0"
+                      />
+                    </div>
+                  </div>
                 </div>
-                {age >= 4 && (
-                  <div className="w-1.5 h-1.5 bg-amber-500 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
-                )}
+                
+                <div className="space-y-1">
+                  <div className="text-[9px] text-slate-600 font-black uppercase">製品の鮮度</div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs font-black ${age >= 4 ? 'text-amber-500 animate-pulse' : 'text-slate-400'}`}>
+                      {age}年経過
+                    </span>
+                    {age >= 4 && <div className="w-1.5 h-1.5 bg-amber-500 rounded-full" />}
+                  </div>
+                </div>
               </div>
 
               <button
@@ -148,18 +119,18 @@ export const BlueprintCatalog = ({
                 className={`w-full py-3 rounded-xl text-[10px] font-black flex items-center justify-center gap-2 transition-all ${
                   money < refreshCost 
                     ? 'bg-slate-800 text-slate-600 cursor-not-allowed border border-slate-700' 
-                    : 'bg-emerald-600/10 border border-emerald-500/50 text-emerald-400 hover:bg-emerald-600 hover:text-white'
+                    : 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-500'
                 }`}
               >
                 <RefreshCcw size={12} />
-                次世代モデル開発 (-${(refreshCost / 1000).toFixed(1)}M)
+                次世代モデルを開発して更新 (-${(refreshCost / 1000).toFixed(1)}M)
               </button>
             </Card>
           );
         })}
 
         {blueprints.length === 0 && (
-          <div className="text-center p-12 bg-slate-900/30 border-2 border-dashed border-slate-800 rounded-3xl">
+          <div className="text-center p-12 bg-slate-900/30 border-2 border-dashed border-slate-800 rounded-3xl col-span-2">
             <div className="text-slate-700 font-black uppercase tracking-[0.2em] text-xs">No Design History</div>
           </div>
         )}
