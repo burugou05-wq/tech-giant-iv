@@ -34,6 +34,8 @@ export const BlueprintCatalog = ({
           const currentApp = calculateEffectiveAppeal(bp, currentYear, contentOwned, currentEffects);
           const appealLoss = bp.baseAppeal - Math.floor(currentApp);
 
+          const isPriceLowForHighEnd = bp.strategy === 'high-end' && bp.price < bp.cost * 2.5;
+
           return (
             <Card key={bp.id} className="p-7 bg-slate-900/40 border-slate-800/80 hover:border-indigo-500/40 transition-all group relative overflow-hidden backdrop-blur-sm">
               {/* 背景の装飾デコレーション */}
@@ -65,8 +67,8 @@ export const BlueprintCatalog = ({
                 </button>
               </div>
 
-              {/* 戦略選択（復活） */}
-              <div className="flex items-center gap-2 mb-6 bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800/50 w-full shadow-inner">
+              {/* 戦略選択 */}
+              <div className="flex items-center gap-2 mb-6 bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800/50 w-full shadow-inner relative">
                 {[
                   { id: 'mainstream', name: '標準', color: 'indigo', label: 'バランス型' },
                   { id: 'high-end', name: '高級', color: 'amber', label: '利益重視' },
@@ -84,6 +86,14 @@ export const BlueprintCatalog = ({
                     {s.name}
                   </button>
                 ))}
+                
+                {/* ハイエンド警告 */}
+                {isPriceLowForHighEnd && (
+                  <div className="absolute -top-3 right-4 px-2 py-0.5 bg-rose-500 text-white text-[8px] font-black rounded-full animate-bounce shadow-lg flex items-center gap-1">
+                    <span className="w-1 h-1 bg-white rounded-full animate-pulse" />
+                    価格不足
+                  </div>
+                )}
               </div>
 
               {/* 統計グリッド */}
@@ -111,11 +121,20 @@ export const BlueprintCatalog = ({
 
               <div className="grid grid-cols-2 gap-6 mb-8 px-1">
                 <div className="space-y-2">
-                  <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest">製造原価 / 市場価格</div>
+                  <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest flex justify-between items-center pr-2">
+                    <span>市場価格設定</span>
+                    <span className="text-emerald-500 animate-pulse">● SET</span>
+                  </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold text-slate-400 font-mono">${bp.cost}k</span>
-                    <span className="text-slate-700">→</span>
-                    <div className="flex items-center gap-1.5 bg-emerald-500/5 px-3 py-1.5 rounded-xl border border-emerald-500/20 group-hover:border-emerald-500/40 transition-colors">
+                    <div className="flex flex-col">
+                      <span className="text-[8px] text-slate-600 font-bold">原価: ${bp.cost}k</span>
+                      <span className="text-slate-700 font-bold">→</span>
+                    </div>
+                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all ${
+                      isPriceLowForHighEnd 
+                        ? 'bg-rose-500/10 border-rose-500/50 ring-1 ring-rose-500/20' 
+                        : 'bg-emerald-500/5 border-emerald-500/20 group-hover:border-emerald-500/40'
+                    }`}>
                       <span className="text-sm font-black text-emerald-500">$</span>
                       <input 
                         type="number"

@@ -25,13 +25,17 @@ const System = () => {
   };
 
   const handleLoad = (slot) => {
-    if (loadGame) loadGame(slot);
+    if (window.confirm(`スロット ${slot === 'auto' ? 'オートセーブ' : slot} からデータを読み込みますか？現在の進行状況は失われます。`)) {
+      if (loadGame) loadGame(slot);
+    }
   };
 
   const handleDelete = (slot) => {
-    if (deleteSlot) {
-      deleteSlot(slot);
-      refreshSlots();
+    if (window.confirm(`スロット ${slot} のデータを削除しますか？`)) {
+      if (deleteSlot) {
+        deleteSlot(slot);
+        refreshSlots();
+      }
     }
   };
 
