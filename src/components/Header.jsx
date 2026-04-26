@@ -47,7 +47,7 @@ export default function Header() {
           )}
           {canSelectFocus && (
             <button 
-              onClick={() => setActiveTab('focus')}
+              onClick={() => setActiveTab('corporate')}
               className="flex items-center gap-2 px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-indigo-500 animate-pulse hover:bg-indigo-500/20 transition-colors"
             >
               <ClipboardList size={14} className="animate-bounce" />
