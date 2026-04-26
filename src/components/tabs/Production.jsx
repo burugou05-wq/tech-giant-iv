@@ -42,11 +42,10 @@ export default function Production() {
   const handleCloseFactories = () => {
     if (totalFactories <= 0) return;
     if (totalFactories <= totalUsedFactories) {
-      alert("稼働中の工場を閉鎖することはできません。まず生産ラインの工場割り当てを減らしてください。");
+      addLog("稼働中の工場を閉鎖することはできません。まず生産ラインの工場割り当てを減らしてください。", "error", "text-rose-400");
       return;
     }
     const refund = 5000; // 売却益 $5M
-    if (!confirm(`工場を1棟閉鎖（売却）しますか？\n売却益: $${(refund/1000).toFixed(1)}M が返還されます。`)) return;
     
     setMoney(prev => prev + refund);
     setTotalFactories(prev => prev - 1);
