@@ -1,5 +1,6 @@
-import { Globe, Play, Pause, TrendingUp, Wrench, Target, AlertTriangle, AlertCircle, Sun, Moon } from 'lucide-react';
+import { Globe, Play, Pause, TrendingUp, Wrench, Target, AlertTriangle, AlertCircle, Sun, Moon, FlaskConical, ClipboardList } from 'lucide-react';
 import { useGame } from '../context/GameContext.jsx';
+import { CHASSIS_TECH, COMPONENT_TECH } from '../constants/index.js';
 
 const IconMap = { TrendingUp, Wrench, Globe, Target, AlertTriangle, AlertCircle };
 
@@ -7,16 +8,53 @@ export default function Header() {
   const { 
     money, leadershipPower, currentYear, currentMonth, 
     isPaused, setIsPaused, currentSpirits, gameSpeed, setGameSpeed,
-    theme, setTheme 
+    theme, setTheme, researchPoints, unlockedChassis, unlockedModules,
+    completedFocuses, activeFocus, setActiveTab
   } = useGame();
 
+  // 通知判定ロジック
+  const allUnlocked = [...unlockedChassis, ...unlockedModules];
+  const canResearch = [...CHASSIS_TECH, ...COMPONENT_TECH].some(tech => {
+    if (allUnlocked.includes(tech.id)) return false;
+    if (researchPoints < tech.cost) return false;
+    return !tech.req || tech.req.length === 0 || tech.req.every(r => (
+      allUnlocked.includes(r) || completedFocuses.includes(r)
+    ));
+  });
+
+  const canSelectFocus = !activeFocus;
+
   return (
-    <header className="flex shrink-0 items-center justify-between bg-white dark:bg-slate-900 p-4 md:px-8 rounded-3xl border-2 border-slate-200 dark:border-slate-800 mb-6 shadow-2xl transition-colors">
-      <div className="flex flex-col">
-        <h1 className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-green-400 tracking-tighter">
-          TECH GIANT IV
-        </h1>
-        <div className="text-[10px] font-black tracking-widest text-slate-600">ローカルPC版</div>
+    <header className="flex shrink-0 items-center justify-between bg-white dark:bg-slate-900 p-4 md:px-8 rounded-3xl border-2 border-slate-200 dark:border-slate-800 mb-6 shadow-2xl transition-colors relative overflow-hidden">
+      <div className="flex items-center gap-6">
+        <div className="flex flex-col">
+          <h1 className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-green-400 tracking-tighter">
+            TECH GIANT IV
+          </h1>
+          <div className="text-[10px] font-black tracking-widest text-slate-600">ローカルPC版</div>
+        </div>
+
+        {/* 通知エリア */}
+        <div className="hidden lg:flex items-center gap-3">
+          {canResearch && (
+            <button 
+              onClick={() => setActiveTab('research')}
+              className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-500 animate-pulse hover:bg-amber-500/20 transition-colors"
+            >
+              <FlaskConical size={14} className="animate-bounce" />
+              <span className="text-[10px] font-black uppercase tracking-wider">技術開発可能</span>
+            </button>
+          )}
+          {canSelectFocus && (
+            <button 
+              onClick={() => setActiveTab('focus')}
+              className="flex items-center gap-2 px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-indigo-500 animate-pulse hover:bg-indigo-500/20 transition-colors"
+            >
+              <ClipboardList size={14} className="animate-bounce" />
+              <span className="text-[10px] font-black uppercase tracking-wider">方針未選択</span>
+            </button>
+          )}
+        </div>
       </div>
       <div className="flex items-center gap-4 md:gap-8">
         <div className="hidden md:flex gap-2">
